@@ -1,0 +1,18 @@
+{
+  "name": "갈림길",
+  "short_name": "갈림길",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#071116",
+  "theme_color": "#101828",
+  "lang": "ko-KR",
+  "description": "별자리와 손금 상징으로 오늘의 A/B 선택을 정리하는 엔터테인먼트 자기성찰 앱입니다.",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

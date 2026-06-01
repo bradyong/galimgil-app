@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: galimgil-app
+    runtime: python
+    plan: free
+    buildCommand: echo "No build step required"
+    startCommand: python server.py
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.12
+      - key: OPENAI_API_KEY
+        sync: false

@@ -585,6 +585,14 @@ input[type="range"] {
   line-height: 1.55;
 }
 
+.mobile-submit-dock {
+  display: none;
+}
+
+.mobile-submit-dock.hidden {
+  display: none;
+}
+
 .notice strong {
   color: var(--text);
 }
@@ -600,6 +608,29 @@ a {
 }
 
 @media (max-width: 600px) {
+  .app-shell {
+    padding-bottom: 74px;
+  }
+
+  .mobile-submit-dock {
+    position: fixed;
+    z-index: 5;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    padding: 10px 16px max(10px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    background: rgba(7, 17, 22, 0.94);
+    backdrop-filter: blur(16px);
+  }
+
+  .mobile-submit-dock .wide-button {
+    width: min(100%, 488px);
+    margin: 0 auto;
+    display: block;
+  }
+
   .hero {
     min-height: clamp(430px, 50svh, 540px);
   }

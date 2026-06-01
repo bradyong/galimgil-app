@@ -10,7 +10,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 ROOT = pathlib.Path(__file__).resolve().parent
 HOST = "0.0.0.0"
 PORT = int(os.getenv("PORT", "8787"))
-MAX_BODY = 12 * 1024 * 1024
+MAX_BODY = 16 * 1024 * 1024
 
 
 PALM_PROMPT = """
@@ -76,7 +76,7 @@ class AppHandler(BaseHTTPRequestHandler):
         try:
             length = int(self.headers.get("Content-Length", "0"))
             if length <= 0 or length > MAX_BODY:
-                raise ValueError("사진 용량이 너무 커요. 8MB 이하 사진으로 다시 시도해주세요.")
+                raise ValueError("사진 용량이 너무 커요. 다른 사진으로 다시 시도해주세요.")
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
             image = payload.get("image", "")
             if not image.startswith("data:image/"):
@@ -115,7 +115,14 @@ class AppHandler(BaseHTTPRequestHandler):
             json_response(self, 200, result)
         except urllib.error.HTTPError as error:
             detail = error.read().decode("utf-8", "replace")
-            json_response(self, 502, {"error": f"OpenAI API 요청이 실패했어요. ({error.code})", "detail": detail[:500]})
+            try:
+                api_message = json.loads(detail).get("error", {}).get("message", "")
+            except json.JSONDecodeError:
+                api_message = ""
+            message = f"OpenAI API 요청이 실패했어요. ({error.code})"
+            if api_message:
+                message = f"{message} {api_message}"
+            json_response(self, 502, {"error": message})
         except (ValueError, json.JSONDecodeError) as error:
             json_response(self, 400, {"error": str(error)})
         except Exception:

@@ -233,6 +233,7 @@ function setActiveTab(tabName) {
   document.querySelectorAll(".screen").forEach((screen) => {
     screen.classList.toggle("active", screen.id === tabName);
   });
+  document.querySelector(".mobile-submit-dock").classList.toggle("hidden", tabName !== "choice");
 }
 
 function renderArchive() {
@@ -392,11 +393,14 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
   const loader = document.getElementById("analysisLoader");
   const loaderText = document.getElementById("loaderText");
   const submitButton = document.getElementById("choiceSubmitButton");
+  const mobileSubmitButton = document.getElementById("mobileChoiceSubmitButton");
   document.getElementById("choiceResult").classList.remove("show");
   loader.classList.add("show");
   loader.scrollIntoView({ behavior: "smooth", block: "center" });
   submitButton.disabled = true;
   submitButton.textContent = "리포트 작성 중...";
+  mobileSubmitButton.disabled = true;
+  mobileSubmitButton.textContent = "리포트 작성 중...";
   loaderSteps.forEach((step, index) => {
     setTimeout(() => {
       if (loader.classList.contains("show")) {
@@ -505,6 +509,8 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
       submitButton.disabled = false;
       submitButton.textContent = "선택 리포트 받기";
+      mobileSubmitButton.disabled = false;
+      mobileSubmitButton.textContent = "선택 리포트 받기";
     }, 650);
   } catch (error) {
     loader.classList.remove("show");
@@ -522,6 +528,8 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
     submitButton.disabled = false;
     submitButton.textContent = "선택 리포트 받기";
+    mobileSubmitButton.disabled = false;
+    mobileSubmitButton.textContent = "선택 리포트 받기";
   }
 });
 
@@ -545,6 +553,29 @@ document.getElementById("checkAiStatusButton").addEventListener("click", checkAi
 const palmInput = document.getElementById("palmInput");
 const palmPreview = document.getElementById("palmPreview");
 let palmSeed = 0;
+
+function preparePalmImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("사진을 읽지 못했어요. 다른 사진으로 다시 시도해주세요."));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error("사진 형식을 확인하지 못했어요. JPG 또는 PNG 사진으로 다시 시도해주세요."));
+      image.onload = () => {
+        const maxEdge = 1600;
+        const scale = Math.min(1, maxEdge / Math.max(image.width, image.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 document.getElementById("selectPalmButton").addEventListener("click", () => {
   palmInput.click();
@@ -586,13 +617,13 @@ document.getElementById("palmButton").addEventListener("click", () => {
   palmButton.disabled = true;
   palmButton.textContent = "AI 해석 중...";
 
-  const reader = new FileReader();
-  reader.onload = async () => {
+  (async () => {
     try {
+      const preparedImage = await preparePalmImage(palmInput.files[0]);
       const response = await fetch("/api/palm-reading", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: reader.result })
+        body: JSON.stringify({ image: preparedImage })
       });
       const data = await response.json();
       if (!response.ok) {
@@ -634,8 +665,7 @@ document.getElementById("palmButton").addEventListener("click", () => {
       palmButton.disabled = false;
       palmButton.textContent = "AI 손금 해석하기";
     }
-  };
-  reader.readAsDataURL(palmInput.files[0]);
+  })();
 });
 
 renderArchive();

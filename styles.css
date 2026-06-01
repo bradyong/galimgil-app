@@ -227,6 +227,10 @@ select {
   border-radius: 8px;
 }
 
+.mobile-early-submit {
+  display: none;
+}
+
 .wide-button:disabled {
   cursor: wait;
   opacity: 0.72;
@@ -592,6 +596,14 @@ a {
 }
 
 @media (max-width: 600px) {
+  .mobile-early-submit {
+    display: block;
+  }
+
+  .desktop-submit {
+    display: none;
+  }
+
   .app-shell {
     padding-bottom: max(18px, env(safe-area-inset-bottom));
   }

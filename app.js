@@ -391,12 +391,14 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const loader = document.getElementById("analysisLoader");
   const loaderText = document.getElementById("loaderText");
-  const submitButton = document.getElementById("choiceSubmitButton");
+  const submitButtons = document.querySelectorAll("#choiceForm button[type='submit']");
   document.getElementById("choiceResult").classList.remove("show");
   loader.classList.add("show");
   loader.scrollIntoView({ behavior: "smooth", block: "center" });
-  submitButton.disabled = true;
-  submitButton.textContent = "리포트 작성 중...";
+  submitButtons.forEach((button) => {
+    button.disabled = true;
+    button.textContent = "리포트 작성 중...";
+  });
   loaderSteps.forEach((step, index) => {
     setTimeout(() => {
       if (loader.classList.contains("show")) {
@@ -503,8 +505,10 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       showResult(document.getElementById("choiceResult"), resultHtml);
       document.getElementById("shareChoiceButton").addEventListener("click", () => shareText(shareCopy));
       document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
-      submitButton.disabled = false;
-      submitButton.textContent = "선택 리포트 받기";
+      submitButtons.forEach((button) => {
+        button.disabled = false;
+        button.textContent = "선택 리포트 받기";
+      });
     }, 650);
   } catch (error) {
     loader.classList.remove("show");
@@ -520,8 +524,10 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       </div>
     `);
     document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
-    submitButton.disabled = false;
-    submitButton.textContent = "선택 리포트 받기";
+    submitButtons.forEach((button) => {
+      button.disabled = false;
+      button.textContent = "선택 리포트 받기";
+    });
   }
 });
 

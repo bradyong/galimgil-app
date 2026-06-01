@@ -233,7 +233,6 @@ function setActiveTab(tabName) {
   document.querySelectorAll(".screen").forEach((screen) => {
     screen.classList.toggle("active", screen.id === tabName);
   });
-  document.querySelector(".mobile-submit-dock").classList.toggle("hidden", tabName !== "choice");
 }
 
 function renderArchive() {
@@ -393,14 +392,11 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
   const loader = document.getElementById("analysisLoader");
   const loaderText = document.getElementById("loaderText");
   const submitButton = document.getElementById("choiceSubmitButton");
-  const mobileSubmitButton = document.getElementById("mobileChoiceSubmitButton");
   document.getElementById("choiceResult").classList.remove("show");
   loader.classList.add("show");
   loader.scrollIntoView({ behavior: "smooth", block: "center" });
   submitButton.disabled = true;
   submitButton.textContent = "리포트 작성 중...";
-  mobileSubmitButton.disabled = true;
-  mobileSubmitButton.textContent = "리포트 작성 중...";
   loaderSteps.forEach((step, index) => {
     setTimeout(() => {
       if (loader.classList.contains("show")) {
@@ -509,8 +505,6 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
       submitButton.disabled = false;
       submitButton.textContent = "선택 리포트 받기";
-      mobileSubmitButton.disabled = false;
-      mobileSubmitButton.textContent = "선택 리포트 받기";
     }, 650);
   } catch (error) {
     loader.classList.remove("show");
@@ -528,8 +522,6 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
     submitButton.disabled = false;
     submitButton.textContent = "선택 리포트 받기";
-    mobileSubmitButton.disabled = false;
-    mobileSubmitButton.textContent = "선택 리포트 받기";
   }
 });
 
@@ -576,10 +568,6 @@ function preparePalmImage(file) {
     reader.readAsDataURL(file);
   });
 }
-
-document.getElementById("selectPalmButton").addEventListener("click", () => {
-  palmInput.click();
-});
 
 palmInput.addEventListener("change", () => {
   const file = palmInput.files[0];

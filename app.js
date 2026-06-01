@@ -625,7 +625,13 @@ document.getElementById("palmButton").addEventListener("click", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image: preparedImage })
       });
-      const data = await response.json();
+      const responseText = await response.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        throw new Error(`서버 응답을 읽지 못했어요. HTTP ${response.status}`);
+      }
       if (!response.ok) {
         throw new Error(data.error || "AI 손금 해석을 완료하지 못했어요.");
       }
@@ -658,8 +664,9 @@ document.getElementById("palmButton").addEventListener("click", () => {
       showResult(document.getElementById("palmResult"), `
         <h3>AI 손금 해석을 시작하지 못했어요</h3>
         <p>${escapeHtml(error.message)}</p>
-        <p class="fine-print">실제 AI 기능은 로컬 서버 실행과 OpenAI API 키 설정이 필요합니다.</p>
+        <p class="fine-print">오류 문구를 캡처해주면 바로 원인을 확인할 수 있어요.</p>
       `);
+      document.getElementById("palmResult").scrollIntoView({ behavior: "smooth", block: "start" });
     } finally {
       palmLoader.classList.remove("show");
       palmButton.disabled = false;

@@ -609,7 +609,7 @@ a {
 
 @media (max-width: 600px) {
   .app-shell {
-    padding-bottom: 74px;
+    padding-bottom: 92px;
   }
 
   .mobile-submit-dock {
@@ -619,7 +619,7 @@ a {
     bottom: 0;
     left: 0;
     display: block;
-    padding: 10px 16px max(10px, env(safe-area-inset-bottom));
+    padding: 9px 16px max(24px, calc(env(safe-area-inset-bottom) + 12px));
     border-top: 1px solid var(--line);
     background: rgba(7, 17, 22, 0.94);
     backdrop-filter: blur(16px);
@@ -627,6 +627,7 @@ a {
 
   .mobile-submit-dock .wide-button {
     width: min(100%, 488px);
+    min-height: 52px;
     margin: 0 auto;
     display: block;
   }

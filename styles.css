@@ -601,15 +601,15 @@ a {
 
 @media (max-width: 600px) {
   .hero {
-    min-height: clamp(500px, 58svh, 620px);
+    min-height: clamp(430px, 50svh, 540px);
   }
 
   .hero-bg {
-    object-position: center 68%;
+    object-position: center 72%;
   }
 
   .hero-content {
-    padding: 0 20px 26px;
+    padding: 0 20px 20px;
   }
 
   .subcopy {
@@ -618,7 +618,7 @@ a {
   }
 
   .primary-action {
-    margin-top: 16px;
+    margin-top: 14px;
   }
 
   .choice-pair {

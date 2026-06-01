@@ -599,7 +599,28 @@ a {
   color: var(--gold);
 }
 
-@media (max-width: 420px) {
+@media (max-width: 600px) {
+  .hero {
+    min-height: clamp(500px, 58svh, 620px);
+  }
+
+  .hero-bg {
+    object-position: center 68%;
+  }
+
+  .hero-content {
+    padding: 0 20px 26px;
+  }
+
+  .subcopy {
+    margin-top: 10px;
+    line-height: 1.45;
+  }
+
+  .primary-action {
+    margin-top: 16px;
+  }
+
   .choice-pair {
     grid-template-columns: 1fr;
   }

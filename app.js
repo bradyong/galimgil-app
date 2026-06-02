@@ -78,6 +78,35 @@ const missions = [
   "선택 이후 생긴 첫 감정을 캡처하듯 메모하기"
 ];
 
+const chemistryStrengths = [
+  "둘은 말이 많지 않아도 분위기를 빠르게 읽는 편이에요. 한쪽이 지쳐 있을 때 다른 한쪽이 무리하게 캐묻지 않는 배려가 강점입니다.",
+  "함께 있을 때 평소보다 솔직해질 수 있는 조합이에요. 사소한 농담이 긴장을 풀어주고, 어색했던 순간도 비교적 빨리 회복하는 힘이 있습니다.",
+  "서로 다른 장점을 자연스럽게 나눠 쓰는 케미예요. 한쪽이 방향을 잡으면 다른 한쪽이 현실적인 디테일을 채워줄 수 있습니다.",
+  "둘 사이에는 익숙함 속에서도 작은 새로움을 만드는 힘이 있어요. 같이 무언가를 계획하거나 처음 해보는 일을 시작할 때 리듬이 잘 맞습니다."
+];
+
+const chemistryFrictions = [
+  "다만 한쪽은 바로 말하고 싶을 때, 다른 한쪽은 혼자 정리할 시간이 필요할 수 있어요. 답이 늦다고 마음까지 멀어진 것은 아닐 가능성이 큽니다.",
+  "서로 기대하는 배려의 모양이 조금 다를 수 있어요. 알아서 눈치채주길 기다리기보다 원하는 것을 짧고 구체적으로 말하면 훨씬 편해집니다.",
+  "가까운 사이일수록 농담과 진심의 경계가 흐려질 때가 있어요. 서운한 일이 생기면 오래 쌓아두지 말고 그날의 감정만 작게 꺼내보세요.",
+  "둘 다 자기 방식이 분명해서, 사소한 결정에서도 은근히 줄다리기가 생길 수 있어요. 누가 이겼는지보다 이번에는 누가 더 중요한지 정하는 게 좋습니다."
+];
+
+const chemistryMessages = [
+  "오늘은 정답보다 네 생각을 먼저 듣고 싶어.",
+  "내가 혼자 추측하지 않게, 네 마음을 조금만 알려줘.",
+  "우리 방식이 달라도 사이가 틀린 건 아니라고 생각해.",
+  "오늘은 거창한 얘기 말고 편하게 같이 웃고 싶어."
+];
+
+const chemistryMissions = [
+  "서로에게 최근 고마웠던 일을 하나씩 말해보기",
+  "각자 먹고 싶은 메뉴를 하나씩 말하고 동전 던지기로 정하기",
+  "사진첩에서 함께 웃겼던 사진 하나를 골라 보내기",
+  "10분 동안 조언 없이 상대의 얘기만 들어보기",
+  "서로가 요즘 자주 듣는 노래를 한 곡씩 공유하기"
+];
+
 const archiveKey = "crossroads-choice-cards-v1";
 const lastDateKey = "crossroads-last-date-v1";
 const streakKey = "crossroads-streak-v1";
@@ -370,9 +399,14 @@ document.getElementById("todayDate").textContent = new Intl.DateTimeFormat("ko-K
 }).format(new Date());
 
 const signInput = document.getElementById("signInput");
+const chemMySign = document.getElementById("chemMySign");
+const chemTheirSign = document.getElementById("chemTheirSign");
 signs.forEach(([name, symbol]) => {
   signInput.add(new Option(`${symbol} ${name}`, name));
+  chemMySign.add(new Option(`${symbol} ${name}`, name));
+  chemTheirSign.add(new Option(`${symbol} ${name}`, name));
 });
+chemTheirSign.selectedIndex = 6;
 updateStreak();
 updateMoodLabel(Number(document.getElementById("moodInput").value));
 document.getElementById("moodInput").addEventListener("input", (event) => {
@@ -543,6 +577,83 @@ document.getElementById("checkinForm").addEventListener("submit", (event) => {
   saveArchive();
   renderArchive();
   document.getElementById("checkinMemo").value = "";
+});
+
+document.getElementById("chemistryForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const relation = document.getElementById("relationInput").value;
+  const myName = document.getElementById("myNameInput").value.trim() || "나";
+  const theirName = document.getElementById("theirNameInput").value.trim() || "상대";
+  const mySignName = chemMySign.value || "양자리";
+  const theirSignName = chemTheirSign.value || "천칭자리";
+  const relationMood = Number(document.getElementById("relationMoodInput").value);
+  const question = document.getElementById("chemQuestionInput").value.trim() || "우리 사이의 리듬은 잘 맞을까?";
+  const seed = hashText(`${relation}-${myName}-${theirName}-${mySignName}-${theirSignName}-${relationMood}-${question}`);
+  const score = 62 + (seed % 36);
+  const trust = 58 + ((seed * 3 + relationMood) % 39);
+  const talk = 55 + ((seed * 5 + relationMood * 2) % 42);
+  const fun = 61 + ((seed * 7 + relationMood * 3) % 37);
+  const pace = 52 + ((seed * 11 + relationMood) % 44);
+  const mySignData = signs.find(([name]) => name === mySignName) || signs[0];
+  const theirSignData = signs.find(([name]) => name === theirSignName) || signs[6];
+  const loader = document.getElementById("chemistryLoader");
+  const result = document.getElementById("chemistryResult");
+  result.classList.remove("show");
+  loader.classList.add("show");
+  loader.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  setTimeout(() => {
+    loader.classList.remove("show");
+    showResult(result, `
+      <div class="report-hero">
+        <span>${escapeHtml(relation)} CHEMISTRY CARD</span>
+        <h3>${escapeHtml(myName)} × ${escapeHtml(theirName)}</h3>
+        <p>${escapeHtml(mySignName)}의 ${mySignData[2]}과 ${escapeHtml(theirSignName)}의 ${theirSignData[2]}이 만난 조합이에요. 둘 사이의 리듬을 재미로 펼쳐봤어요.</p>
+      </div>
+      <div class="chemistry-score">
+        <div><span>오늘의 케미</span><strong>${score}</strong></div>
+      </div>
+      <div class="metric-grid">
+        <div><span>신뢰</span><strong>${trust}</strong></div>
+        <div><span>대화</span><strong>${talk}</strong></div>
+        <div><span>재미</span><strong>${fun}</strong></div>
+        <div><span>속도</span><strong>${pace}</strong></div>
+      </div>
+      <div class="report-section">
+        <h4>둘이 잘 맞는 부분</h4>
+        <p>${pick(chemistryStrengths, seed)}</p>
+      </div>
+      <div class="report-section">
+        <h4>가끔 엇갈리는 지점</h4>
+        <p>${pick(chemistryFrictions, seed + 9)}</p>
+      </div>
+      <div class="report-section">
+        <h4>지금 궁금한 점에 대한 힌트</h4>
+        <p><strong>${escapeHtml(question)}</strong></p>
+        <p>오늘은 상대의 마음을 단정하기보다, 가볍게 확인하는 방식이 잘 맞아요. 무거운 결론보다 작은 대화 하나가 둘 사이의 온도를 더 정확하게 알려줄 수 있습니다.</p>
+      </div>
+      <div class="report-section">
+        <h4>오늘 먼저 건넬 말</h4>
+        <p>${pick(chemistryMessages, seed + 17)}</p>
+      </div>
+      <div class="report-section">
+        <h4>같이 해볼 작은 미션</h4>
+        <p>${pick(chemistryMissions, seed + 23)}</p>
+      </div>
+      <button class="secondary-button" id="shareChemistryButton" type="button">케미 카드 공유/복사</button>
+      <p class="fine-print">케미 카드는 오락 및 관계 성찰용 결과입니다. 실제 관계를 단정하지 않습니다.</p>
+    `);
+    const shareCopy = [
+      "[갈림길 케미 카드]",
+      `${myName} × ${theirName}`,
+      `관계: ${relation}`,
+      `오늘의 케미: ${score}`,
+      `먼저 건넬 말: ${pick(chemistryMessages, seed + 17)}`,
+      `같이 해볼 미션: ${pick(chemistryMissions, seed + 23)}`
+    ].join("\n");
+    document.getElementById("shareChemistryButton").addEventListener("click", () => shareText(shareCopy));
+    result.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 750);
 });
 
 document.getElementById("downloadCardButton").addEventListener("click", downloadLatestCard);

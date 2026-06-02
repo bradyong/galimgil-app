@@ -24,6 +24,7 @@
       <nav class="tabbar" aria-label="주요 메뉴">
         <button class="tab active" data-tab="choice">선택</button>
         <button class="tab" data-tab="ritual">AI 손금</button>
+        <button class="tab" data-tab="chemistry">케미 보기</button>
         <button class="tab" data-tab="archive">나의 기록</button>
         <button class="tab" data-tab="settings">설정</button>
       </nav>
@@ -102,6 +103,61 @@
           <p>주요 선과 전체 인상을 살펴보고 있어요.</p>
         </article>
         <article class="result-card" id="palmResult"></article>
+      </section>
+
+      <section class="screen" id="chemistry">
+        <div class="section-head">
+          <h2>우리 사이 케미는?</h2>
+          <span>chemistry card</span>
+        </div>
+        <form class="panel" id="chemistryForm">
+          <label>
+            어떤 사이인가요?
+            <select id="relationInput">
+              <option>연인</option>
+              <option>썸</option>
+              <option>친구</option>
+              <option>직장 동료</option>
+              <option>형제·자매</option>
+              <option>부모·자녀</option>
+            </select>
+          </label>
+          <div class="choice-pair">
+            <label>
+              나의 이름
+              <input id="myNameInput" type="text" placeholder="예: 지수">
+            </label>
+            <label>
+              상대 이름
+              <input id="theirNameInput" type="text" placeholder="예: 민호">
+            </label>
+          </div>
+          <div class="choice-pair">
+            <label>
+              나의 별자리
+              <select id="chemMySign"></select>
+            </label>
+            <label>
+              상대 별자리
+              <select id="chemTheirSign"></select>
+            </label>
+          </div>
+          <label>
+            요즘 관계 온도
+            <input id="relationMoodInput" type="range" min="1" max="10" value="7">
+          </label>
+          <label>
+            요즘 궁금한 점
+            <input id="chemQuestionInput" type="text" placeholder="예: 왜 대화가 자꾸 엇갈릴까?">
+          </label>
+          <button class="wide-button" type="submit">케미 카드 열기</button>
+        </form>
+        <article class="analysis-loader" id="chemistryLoader" aria-live="polite">
+          <div class="loader-orbit"></div>
+          <strong>둘 사이의 리듬을 맞춰보는 중</strong>
+          <p>서로 닮은 점과 다른 점을 펼쳐보고 있어요.</p>
+        </article>
+        <article class="result-card" id="chemistryResult"></article>
       </section>
 
       <section class="screen" id="archive">

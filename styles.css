@@ -117,7 +117,7 @@ h1 {
   top: 0;
   z-index: 3;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 6px;
   padding: 10px;
   background: rgba(7, 17, 22, 0.92);
@@ -132,6 +132,7 @@ h1 {
   background: #101b22;
   color: var(--muted);
   cursor: pointer;
+  font-size: 13px;
 }
 
 .tab.active {
@@ -574,6 +575,29 @@ input[type="range"] {
   font-size: 12px;
 }
 
+.chemistry-score {
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  margin: 14px auto;
+  border: 1px solid rgba(244, 200, 102, 0.48);
+  border-radius: 50%;
+  background: rgba(84, 210, 194, 0.09);
+  text-align: center;
+}
+
+.chemistry-score span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.chemistry-score strong {
+  display: block;
+  color: var(--gold);
+  font-size: 34px;
+}
+
 .notice {
   margin: 22px 16px 28px;
   padding: 16px;
@@ -596,6 +620,17 @@ a {
 }
 
 @media (max-width: 600px) {
+  .tabbar {
+    gap: 4px;
+    padding: 8px 6px;
+  }
+
+  .tab {
+    min-height: 40px;
+    padding: 0 3px;
+    font-size: 12px;
+  }
+
   .mobile-early-submit {
     display: block;
   }

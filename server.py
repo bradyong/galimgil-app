@@ -4,13 +4,22 @@ import os
 import pathlib
 import urllib.error
 import urllib.request
+from collections import defaultdict
+from datetime import date
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from threading import Lock
 
 
 ROOT = pathlib.Path(__file__).resolve().parent
 HOST = "0.0.0.0"
 PORT = int(os.getenv("PORT", "8787"))
 MAX_BODY = 16 * 1024 * 1024
+DAILY_LIMIT_PER_IP = 3
+DAILY_GLOBAL_LIMIT = 30
+usage_lock = Lock()
+usage_day = date.today()
+usage_by_ip = defaultdict(int)
+global_usage = 0
 
 
 PALM_PROMPT = """
@@ -40,6 +49,23 @@ def extract_output_text(response):
             if content.get("type") == "output_text":
                 return content.get("text", "")
     return ""
+
+
+def reserve_ai_request(client_ip):
+    global usage_day, global_usage
+    today = date.today()
+    with usage_lock:
+        if usage_day != today:
+            usage_day = today
+            usage_by_ip.clear()
+            global_usage = 0
+        if usage_by_ip[client_ip] >= DAILY_LIMIT_PER_IP:
+            return False, "오늘의 무료 AI 손금 체험 횟수를 모두 사용했어요."
+        if global_usage >= DAILY_GLOBAL_LIMIT:
+            return False, "오늘의 AI 손금 체험이 마감됐어요. 내일 다시 이용해주세요."
+        usage_by_ip[client_ip] += 1
+        global_usage += 1
+        return True, ""
 
 
 class AppHandler(BaseHTTPRequestHandler):
@@ -72,6 +98,12 @@ class AppHandler(BaseHTTPRequestHandler):
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             json_response(self, 503, {"error": "OpenAI API 키가 아직 설정되지 않았어요."})
+            return
+        forwarded_for = self.headers.get("X-Forwarded-For", "")
+        client_ip = forwarded_for.split(",", 1)[0].strip() or self.client_address[0]
+        allowed, message = reserve_ai_request(client_ip)
+        if not allowed:
+            json_response(self, 429, {"error": message})
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))

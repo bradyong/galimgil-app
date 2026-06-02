@@ -609,7 +609,7 @@ a {
   }
 
   .hero {
-    min-height: clamp(430px, 50svh, 540px);
+    min-height: clamp(360px, 43svh, 460px);
   }
 
   .hero-bg {
@@ -617,7 +617,7 @@ a {
   }
 
   .hero-content {
-    padding: 0 20px 20px;
+    padding: 0 20px 16px;
   }
 
   .subcopy {
@@ -626,11 +626,36 @@ a {
   }
 
   .primary-action {
-    margin-top: 14px;
+    margin-top: 12px;
   }
 
   .choice-pair {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .screen {
+    padding-top: 18px;
+  }
+
+  .panel {
+    gap: 10px;
+    padding: 13px;
+  }
+
+  .vibe-strip div {
+    min-height: 62px;
+    padding: 9px;
+  }
+
+  .vibe-strip strong {
+    margin-top: 3px;
+    font-size: 20px;
+  }
+
+  input,
+  select {
+    min-height: 42px;
   }
 
   .score-row {

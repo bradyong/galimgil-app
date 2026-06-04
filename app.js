@@ -20,8 +20,8 @@ const wordLexicon = [
   { keys: ["계곡", "바다", "강", "물놀이", "수영"], label: "물가", element: "물", meaning: "감정을 식히고 몸의 긴장을 풀어주는 장소", advice: "복잡한 대화보다 같이 숨 돌릴 장면을 만드는 쪽이 맞아요." },
   { keys: ["카페", "커피", "차", "디저트"], label: "카페", element: "바람", meaning: "무거운 결론을 부드러운 대화로 바꾸는 공간", advice: "대화의 목적을 결론이 아니라 확인으로 두면 좋아요." },
   { keys: ["여행", "이동", "놀러", "나들이"], label: "이동", element: "불", meaning: "멈춘 분위기를 새 장면으로 바꾸고 싶은 욕구", advice: "큰 계획보다 오늘 가능한 작은 이동이 운을 열 수 있어요." },
-  { keys: ["돈", "구매", "살까", "계약", "투자", "가격"], label: "돈", element: "땅", meaning: "마음보다 기준과 지속성을 먼저 보라는 신호", advice: "끌림이 강할수록 조건을 숫자로 적어보면 선명해져요." },
-  { keys: ["일", "회사", "이직", "퇴사", "공부", "시험", "프로젝트"], label: "일", element: "땅", meaning: "지금의 나를 다음 단계로 옮기는 현실 감각", advice: "감정의 크기보다 반복 가능한 한 걸음을 고르는 게 좋아요." },
+  { keys: ["돈", "구매", "살까", "계약", "투자", "가격", "매수", "매도", "관망"], label: "돈", element: "땅", meaning: "마음보다 기준과 지속성을 먼저 보라는 신호", advice: "끌림이 강할수록 조건을 숫자로 적어보면 선명해져요." },
+  { keys: ["일", "회사", "이직", "퇴사", "공부", "시험", "프로젝트", "출근", "결근", "지각", "근무"], label: "일", element: "땅", meaning: "내 컨디션과 책임의 균형을 현실에서 확인하는 문제", advice: "감정의 크기보다 오늘 감당 가능한 기준을 먼저 보는 게 좋아요." },
   { keys: ["고백", "사과", "화해", "만날", "만남", "데이트"], label: "마음 표현", element: "불", meaning: "숨겨둔 진심을 장면 밖으로 꺼내는 일", advice: "세게 증명하기보다 담백하게 보여주는 쪽이 오래 갑니다." },
   { keys: ["친구", "연인", "남친", "여친", "가족", "형", "동생", "엄마", "아빠"], label: "관계", element: "바람", meaning: "나와 상대 사이의 거리와 말투를 조절하는 문제", advice: "상대의 마음을 맞히려 하기보다 내 기준을 짧게 말해보세요." },
   { keys: ["부부", "반려자", "배우자", "남편", "아내", "와이프", "신랑", "신부"], label: "반려", element: "땅", meaning: "설렘을 넘어 생활의 리듬과 신뢰를 함께 맞추는 관계", advice: "오늘은 이기는 말보다 같이 오래 갈 수 있는 말을 고르는 게 좋아요." },
@@ -374,7 +374,70 @@ function timingAdvice(metrics, mood) {
   return "오늘은 완전히 멈추기보다 아주 작은 확인이 잘 맞습니다. 10분 안에 끝낼 수 있는 행동 하나만 정해보세요.";
 }
 
-function reasonBullets(metrics, mood, wordInsights, recommended) {
+function includesAny(text, words) {
+  return words.some((word) => text.includes(word));
+}
+
+function choiceProfile(question, choiceA, choiceB) {
+  const text = `${question} ${choiceA} ${choiceB}`.toLowerCase();
+  const a = choiceA.toLowerCase();
+  const b = choiceB.toLowerCase();
+  const profile = { type: "general", forced: null };
+  if (includesAny(text, ["출근", "결근", "지각", "근무", "회사 가", "일하러"])) {
+    profile.type = "attendance";
+    const healthReason = includesAny(text, ["아프", "열", "몸살", "병원", "독감", "응급", "다쳤", "쓰러", "생리통", "장염"]);
+    if (healthReason) {
+      profile.forced = includesAny(a, ["안", "쉬", "결근", "병원"]) ? "A" : includesAny(b, ["안", "쉬", "결근", "병원"]) ? "B" : null;
+    } else {
+      profile.forced = includesAny(a, ["출근", "회사", "근무", "간다", "가"]) ? "A" : includesAny(b, ["출근", "회사", "근무", "간다", "가"]) ? "B" : null;
+    }
+  } else if (includesAny(text, ["퇴사", "이직", "그만둘", "관둘"])) {
+    profile.type = "career";
+    profile.forced = includesAny(a, ["유지", "계속", "보류", "기다"]) ? "A" : includesAny(b, ["유지", "계속", "보류", "기다"]) ? "B" : null;
+  } else if (includesAny(text, ["매수", "매도", "투자", "코인", "주식", "살까"])) {
+    profile.type = "money";
+    profile.forced = includesAny(a, ["관망", "기다", "보류"]) ? "A" : includesAny(b, ["관망", "기다", "보류"]) ? "B" : null;
+  } else if (includesAny(text, ["고백", "연락", "사과", "화해"])) {
+    profile.type = "relationship";
+  }
+  return profile;
+}
+
+function decideRecommendation(seed, mood, profile) {
+  if (profile.forced === "A") return true;
+  if (profile.forced === "B") return false;
+  return (seed + mood) % 2 === 0;
+}
+
+function reasonBullets(metrics, mood, wordInsights, recommended, profile) {
+  if (profile.type === "attendance") {
+    return [
+      "출근 여부는 운보다 책임, 컨디션, 이후 부담을 같이 봐야 하는 현실형 선택입니다.",
+      `${recommended} 쪽은 오늘 당장의 귀찮음보다 내일 생길 부담을 더 작게 만드는 방향입니다.`,
+      "몸이 정말 아픈 상황이 아니라면, 짧게라도 움직이는 쪽이 후회를 줄일 가능성이 큽니다."
+    ];
+  }
+  if (profile.type === "career") {
+    return [
+      "퇴사나 이직은 감정이 아니라 다음 생활비와 회복 시간을 같이 봐야 하는 선택입니다.",
+      `${recommended} 쪽은 오늘의 분노보다 이후의 안정성을 더 지키는 방향입니다.`,
+      "지금은 결론보다 조건표를 만드는 게 먼저입니다."
+    ];
+  }
+  if (profile.type === "money") {
+    return [
+      "돈이 걸린 선택은 확신보다 손실 한도를 먼저 정해야 합니다.",
+      `${recommended} 쪽은 감정적인 진입보다 리스크 관리에 더 가깝습니다.`,
+      "오늘은 기회보다 원칙을 지키는지가 더 중요합니다."
+    ];
+  }
+  if (profile.type === "relationship") {
+    return [
+      "관계 선택은 상대의 답보다 내가 어떤 말투로 다가가는지가 더 중요합니다.",
+      `${recommended} 쪽은 마음을 숨기기보다 부담을 줄여 확인하는 방향입니다.`,
+      "오늘은 크게 증명하기보다 짧고 정확하게 표현하는 편이 좋습니다."
+    ];
+  }
   const main = wordInsights[0];
   const bullets = [
     `지금은 ${main.label}의 의미처럼 ${main.meaning}이 중요한 흐름입니다.`,
@@ -384,7 +447,28 @@ function reasonBullets(metrics, mood, wordInsights, recommended) {
   return bullets.slice(0, 3);
 }
 
-function cautionBullets(metrics, mood) {
+function cautionBullets(metrics, mood, profile) {
+  if (profile.type === "attendance") {
+    return [
+      "정말 아픈 게 아니라면 단순한 피곤함만으로 결근 결정을 크게 만들지 마세요.",
+      "가야 한다면 완벽하게 버티려 하지 말고, 오늘 할 최소 업무만 정하세요.",
+      "쉬어야 할 정도라면 무단으로 넘기지 말고 먼저 연락과 사유 정리를 하세요."
+    ];
+  }
+  if (profile.type === "career") {
+    return [
+      "화난 날 바로 퇴사 결정을 확정하지 마세요.",
+      "생활비, 다음 일정, 인수인계처럼 현실 조건을 적기 전에는 말부터 꺼내지 마세요.",
+      "버티는 선택을 하더라도 그냥 참지만 말고 바꿀 조건 하나를 정하세요."
+    ];
+  }
+  if (profile.type === "money") {
+    return [
+      "남의 말이나 분위기만 보고 들어가지 마세요.",
+      "손실 한도를 정하지 않은 선택은 하지 마세요.",
+      "오늘 놓치면 끝이라는 생각이 들수록 한 번 더 멈추세요."
+    ];
+  }
   const bullets = [
     mood >= 8 ? "조급한 마음으로 긴 메시지를 보내지 마세요." : "너무 오래 재다가 선택권을 흐리지 마세요.",
     metrics.clarity < 60 ? "확신이 낮다면 주변 의견보다 내 기준을 먼저 적어보세요." : "확신이 생겨도 한 번에 모든 걸 바꾸려 하지 마세요.",
@@ -393,7 +477,11 @@ function cautionBullets(metrics, mood) {
   return bullets;
 }
 
-function oneLineAdvice(seed, metrics, mood) {
+function oneLineAdvice(seed, metrics, mood, profile) {
+  if (profile.type === "attendance") return "가기 싫은 날일수록, 오늘의 최소 기준만 지켜도 이긴다.";
+  if (profile.type === "career") return "큰 결정은 감정이 지나간 뒤에도 같은 이유가 남을 때 한다.";
+  if (profile.type === "money") return "돈이 걸린 선택은 기회보다 원칙이 먼저다.";
+  if (profile.type === "relationship") return "마음은 크게 느껴도, 말은 작고 정확하게 건네라.";
   const lines = [
     "조급함은 기회를 놓치게 만든다.",
     "결정은 빠르게, 행동은 신중하게.",
@@ -407,6 +495,23 @@ function oneLineAdvice(seed, metrics, mood) {
   if (mood >= 8) return "뜨거운 마음일수록 짧고 신중하게 움직여라.";
   if (metrics.clarity < 60) return "흐린 날에는 원칙이 방향이 된다.";
   return pick(lines, seed + metrics.timing);
+}
+
+function resultHeadline(profile, recommendA) {
+  const side = recommendA ? "A" : "B";
+  if (profile.type === "attendance") {
+    return `오늘은 ${side} 선택이 현실적으로 더 안전합니다.`;
+  }
+  if (profile.type === "career") {
+    return `오늘은 ${side} 선택이 후회를 줄이기 쉽습니다.`;
+  }
+  if (profile.type === "money") {
+    return `오늘은 ${side} 선택이 리스크 관리에 더 가깝습니다.`;
+  }
+  if (profile.type === "relationship") {
+    return `오늘은 ${side} 선택이 마음을 덜 흐리게 합니다.`;
+  }
+  return `오늘은 ${side} 선택이 조금 더 유리합니다.`;
 }
 
 function bulletList(items) {
@@ -681,7 +786,8 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     const signName = signInput.value || "양자리";
     const sign = signs.find(([name]) => name === signName) || signs[0];
     const seed = hashText(`${question}-${choiceA}-${choiceB}-${mood}-${signName}-${new Date().toDateString()}`);
-    const recommendA = (seed + mood) % 2 === 0;
+    const profile = choiceProfile(question, choiceA, choiceB);
+    const recommendA = decideRecommendation(seed, mood, profile);
     const recommended = recommendA ? choiceA : choiceB;
     const caution = mood >= 8 ? "지금 마음 온도가 높아서, 결정 직후 바로 메시지를 길게 보내는 건 피하는 편이 좋아요." : "오늘은 너무 오래 재지 말고, 작게 확인하는 쪽이 흐름을 살립니다.";
     const wordInsights = findWordInsights(question, choiceA, choiceB);
@@ -695,9 +801,9 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     const [typeName, typeDescription] = questionType(question);
     const metrics = buildMetrics(seed, mood, choiceA, choiceB);
     const code = reportCode(seed);
-    const shortReasons = reasonBullets(metrics, mood, wordInsights, recommended);
-    const cautions = cautionBullets(metrics, mood);
-    const adviceLine = oneLineAdvice(seed, metrics, mood);
+    const shortReasons = reasonBullets(metrics, mood, wordInsights, recommended, profile);
+    const cautions = cautionBullets(metrics, mood, profile);
+    const adviceLine = oneLineAdvice(seed, metrics, mood, profile);
 
     archive.unshift({
       date: new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric" }).format(new Date()),
@@ -737,7 +843,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     const resultHtml = `
     <div class="report-hero">
       <span>${code} · 오늘의 갈림길</span>
-      <h3>오늘은 ${recommendA ? "A" : "B"} 선택이 조금 더 유리합니다.</h3>
+      <h3>${resultHeadline(profile, recommendA)}</h3>
       <p><strong>${escapeHtml(recommended)}</strong></p>
     </div>
     <div class="report-section">

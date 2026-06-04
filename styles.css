@@ -39,12 +39,21 @@ select {
   box-shadow: var(--shadow);
 }
 
-.hero {
+.hero,
+.home-hero {
   position: relative;
-  min-height: 72vh;
   overflow: hidden;
   display: flex;
   align-items: flex-end;
+}
+
+.hero {
+  min-height: 72vh;
+}
+
+.home-hero {
+  min-height: auto;
+  padding: 18px 14px 20px;
 }
 
 .hero-bg,
@@ -63,9 +72,18 @@ select {
   background: linear-gradient(180deg, rgba(7, 17, 22, 0.18), rgba(7, 17, 22, 0.92) 82%, #071116);
 }
 
+.home-hero .hero-shade {
+  background: linear-gradient(180deg, rgba(7, 17, 22, 0.48), rgba(7, 17, 22, 0.96));
+}
+
 .hero-content {
   position: relative;
   padding: 0 22px 34px;
+}
+
+.home-content {
+  position: relative;
+  width: 100%;
 }
 
 .eyebrow,
@@ -86,6 +104,12 @@ h1 {
   font-size: clamp(42px, 13vw, 64px);
   line-height: 0.98;
   letter-spacing: 0;
+}
+
+.home-hero h1 {
+  max-width: 26rem;
+  font-size: clamp(30px, 8vw, 42px);
+  line-height: 1.08;
 }
 
 .subcopy {
@@ -110,6 +134,137 @@ h1 {
   min-height: 48px;
   padding: 0 20px;
   border-radius: 999px;
+}
+
+.home-choice-form {
+  margin-top: 18px;
+  background: rgba(12, 24, 31, 0.88);
+  backdrop-filter: blur(10px);
+}
+
+.optional-label {
+  color: var(--gold);
+  font-size: 11px;
+}
+
+.advanced-options {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+
+.advanced-options summary {
+  cursor: pointer;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.advanced-options label {
+  margin-top: 12px;
+}
+
+.home-section {
+  padding: 22px 16px 0;
+}
+
+.recent-list,
+.support-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.recent-card,
+.support-card,
+.link-button,
+.ghost-button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(16, 27, 34, 0.95);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.recent-card {
+  display: grid;
+  gap: 5px;
+  min-height: 76px;
+  padding: 12px;
+}
+
+.recent-card span,
+.support-card span {
+  color: var(--gold);
+  font-size: 12px;
+}
+
+.recent-card strong {
+  font-size: 15px;
+}
+
+.recent-card em {
+  color: var(--muted);
+  font-size: 13px;
+  font-style: normal;
+}
+
+.home-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.home-stats div {
+  min-height: 68px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(84, 210, 194, 0.07);
+}
+
+.home-stats span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.home-stats strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--gold);
+  font-size: 22px;
+}
+
+.support-card {
+  display: grid;
+  gap: 7px;
+  padding: 14px;
+}
+
+.support-card strong {
+  line-height: 1.4;
+}
+
+.link-button {
+  min-height: 32px;
+  padding: 0 10px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ghost-button {
+  min-height: 44px;
+  padding: 0 12px;
+  text-align: center;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 10px;
 }
 
 .tabbar {
@@ -350,6 +505,33 @@ select {
   margin-top: 10px;
 }
 
+.result-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.result-list li {
+  color: #dce8ea;
+}
+
+.advice-quote {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid rgba(244, 200, 102, 0.35);
+  border-radius: 8px;
+  background: rgba(244, 200, 102, 0.09);
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.detail-report {
+  color: var(--muted);
+}
+
 .word-chip-row {
   display: flex;
   flex-wrap: wrap;
@@ -368,6 +550,18 @@ select {
   color: var(--text);
   font-size: 12px;
   font-weight: 800;
+}
+
+.share-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.share-actions .secondary-button,
+.share-actions .ghost-button {
+  width: 100%;
 }
 
 .metric-grid {
@@ -527,6 +721,10 @@ input[type="range"] {
   color: var(--muted);
 }
 
+.empty-state.compact {
+  padding: 14px;
+}
+
 .palm-panel {
   gap: 12px;
 }
@@ -559,6 +757,23 @@ input[type="range"] {
 
 .upload-box small {
   color: var(--muted);
+}
+
+.privacy-note {
+  padding: 12px;
+  border: 1px solid rgba(84, 210, 194, 0.28);
+  border-radius: 8px;
+  background: rgba(84, 210, 194, 0.07);
+}
+
+.privacy-note strong {
+  color: var(--text);
+}
+
+.privacy-note p {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .consent-row {

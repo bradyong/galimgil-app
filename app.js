@@ -157,6 +157,7 @@ const chemistryMissionObjects = [
 const archiveKey = "crossroads-choice-cards-v1";
 const lastDateKey = "crossroads-last-date-v1";
 const streakKey = "crossroads-streak-v1";
+const productionUrl = "https://galimgil-app.onrender.com/";
 let archive = loadArchive();
 
 function hashText(text) {
@@ -243,6 +244,22 @@ function chemistryReading(relation, question, mySignData, theirSignData, insight
 function showResult(element, html) {
   element.innerHTML = html;
   element.classList.add("show");
+}
+
+function getShareUrl() {
+  if (location.protocol === "https:" && !location.hostname.includes("127.0.0.1") && !location.hostname.includes("localhost")) {
+    return `${location.origin}${location.pathname}`;
+  }
+  return productionUrl;
+}
+
+function shareActionMarkup(cardId) {
+  return `
+    <div class="share-actions">
+      <button class="secondary-button" id="${cardId}ShareButton" type="button">내 카드 공유</button>
+      <button class="ghost-button" id="${cardId}InviteButton" type="button">친구에게 보내기</button>
+    </div>
+  `;
 }
 
 function escapeHtml(value) {
@@ -357,6 +374,45 @@ function timingAdvice(metrics, mood) {
   return "오늘은 완전히 멈추기보다 아주 작은 확인이 잘 맞습니다. 10분 안에 끝낼 수 있는 행동 하나만 정해보세요.";
 }
 
+function reasonBullets(metrics, mood, wordInsights, recommended) {
+  const main = wordInsights[0];
+  const bullets = [
+    `지금은 ${main.label}의 의미처럼 ${main.meaning}이 중요한 흐름입니다.`,
+    metrics.balance >= 70 ? "두 선택 중 균형감이 더 살아나는 쪽을 고르는 편이 좋습니다." : "완벽한 답보다 후회를 줄이는 기준이 더 중요합니다.",
+    mood >= 8 ? "감정이 강한 날이라 결론보다 표현 방식을 조심해야 합니다." : `${recommended} 쪽이 오늘의 리스크를 조금 더 작게 관리합니다.`
+  ];
+  return bullets.slice(0, 3);
+}
+
+function cautionBullets(metrics, mood) {
+  const bullets = [
+    mood >= 8 ? "조급한 마음으로 긴 메시지를 보내지 마세요." : "너무 오래 재다가 선택권을 흐리지 마세요.",
+    metrics.clarity < 60 ? "확신이 낮다면 주변 의견보다 내 기준을 먼저 적어보세요." : "확신이 생겨도 한 번에 모든 걸 바꾸려 하지 마세요.",
+    metrics.timing < 65 ? "오늘 안에 결론을 강요하지 마세요." : "좋은 타이밍이어도 상대나 상황의 속도를 무시하지 마세요."
+  ];
+  return bullets;
+}
+
+function oneLineAdvice(seed, metrics, mood) {
+  const lines = [
+    "조급함은 기회를 놓치게 만든다.",
+    "결정은 빠르게, 행동은 신중하게.",
+    "확신이 없을수록 원칙을 지켜라.",
+    "오늘의 답은 큰 결론보다 작은 기준에 있다.",
+    "마음이 흔들릴수록 선택은 단순해야 한다.",
+    "기다림도 기준이 있으면 선택이 된다.",
+    "좋은 선택은 나를 덜 흐리게 만든다.",
+    "지금 필요한 건 완벽한 답보다 다음 한 걸음이다."
+  ];
+  if (mood >= 8) return "뜨거운 마음일수록 짧고 신중하게 움직여라.";
+  if (metrics.clarity < 60) return "흐린 날에는 원칙이 방향이 된다.";
+  return pick(lines, seed + metrics.timing);
+}
+
+function bulletList(items) {
+  return `<ul class="result-list">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+}
+
 function reportCode(seed) {
   return `GL-${todayKey().replace(/-/g, "").slice(2)}-${String(seed % 997).padStart(3, "0")}`;
 }
@@ -382,6 +438,35 @@ function setActiveTab(tabName) {
   document.querySelectorAll(".screen").forEach((screen) => {
     screen.classList.toggle("active", screen.id === tabName);
   });
+  const target = document.getElementById(tabName);
+  if (target) {
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+function renderHomeRecent() {
+  const list = document.getElementById("recentList");
+  if (!list) return;
+  const recent = archive.slice(0, 3);
+  if (!recent.length) {
+    list.innerHTML = `
+      <article class="empty-state compact">
+        <strong>아직 기록이 없어요</strong>
+        <p>첫 갈림길을 분석하면 최근 결과가 여기에 쌓입니다.</p>
+      </article>
+    `;
+    return;
+  }
+  list.innerHTML = recent.map((card) => `
+    <button class="recent-card" type="button" data-tab="archive">
+      <span>${escapeHtml(card.date)}</span>
+      <strong>${escapeHtml(card.choiceA || card.question)} ${card.choiceB ? "vs " + escapeHtml(card.choiceB) : ""}</strong>
+      <em>${escapeHtml(card.recommended || card.choice || "")}</em>
+    </button>
+  `).join("");
+  list.querySelectorAll("[data-tab]").forEach((button) => {
+    button.addEventListener("click", () => setActiveTab(button.dataset.tab));
+  });
 }
 
 function renderArchive() {
@@ -394,17 +479,21 @@ function renderArchive() {
         <p>오늘의 갈림길을 열면 선택 카드가 여기에 쌓입니다.</p>
       </article>
     `;
+    renderHomeRecent();
     return;
   }
   list.innerHTML = archive.map((card) => `
     <article class="archive-card">
       <span>${escapeHtml(card.date)}</span>
       <h3>${escapeHtml(card.question)}</h3>
-      <p>${escapeHtml(card.choice)}</p>
+      ${card.choiceA && card.choiceB ? `<p><strong>A:</strong> ${escapeHtml(card.choiceA)} · <strong>B:</strong> ${escapeHtml(card.choiceB)}</p>` : ""}
+      <p>${escapeHtml(card.recommended || card.choice)}</p>
+      ${card.advice ? `<p><strong>한 줄 조언:</strong> ${escapeHtml(card.advice)}</p>` : ""}
       ${card.outcome ? `<p><strong>체크인:</strong> ${escapeHtml(card.outcome)}</p>` : ""}
       ${card.memo ? `<p><strong>메모:</strong> ${escapeHtml(card.memo)}</p>` : ""}
     </article>
   `).join("");
+  renderHomeRecent();
 }
 
 function drawRoundedRect(ctx, x, y, width, height, radius) {
@@ -482,7 +571,20 @@ function downloadLatestCard() {
 
   ctx.fillStyle = "#a9bbc2";
   ctx.font = "500 44px Malgun Gothic";
-  y = wrapText(ctx, card.choice, 150, y + 170, 780, 62);
+  if (card.choiceA && card.choiceB) {
+    y = wrapText(ctx, `${card.choiceA} vs ${card.choiceB}`, 150, y + 150, 780, 58);
+    ctx.fillStyle = "#f4c866";
+    ctx.font = "800 54px Malgun Gothic";
+    y = wrapText(ctx, card.recommended || card.choice, 150, y + 70, 780, 70);
+  } else {
+    y = wrapText(ctx, card.choice, 150, y + 170, 780, 62);
+  }
+
+  if (card.advice) {
+    ctx.fillStyle = "#f7fbff";
+    ctx.font = "800 46px Malgun Gothic";
+    y = wrapText(ctx, `"${card.advice}"`, 150, y + 90, 780, 62);
+  }
 
   if (card.memo) {
     ctx.fillStyle = "#f7fbff";
@@ -503,13 +605,24 @@ function downloadLatestCard() {
   link.click();
 }
 
-async function shareText(text) {
+async function shareText(text, title = "갈림길", url = getShareUrl()) {
+  const shareUrl = url || getShareUrl();
   if (navigator.share) {
-    await navigator.share({ title: "갈림길 선택 카드", text });
+    await navigator.share({ title, text, url: shareUrl });
     return;
   }
-  await navigator.clipboard.writeText(text);
-  alert("선택 카드 문구를 복사했어요.");
+  const copyText = `${text}\n\n${shareUrl}`;
+  if (navigator.clipboard) {
+    await navigator.clipboard.writeText(copyText);
+  } else {
+    const textarea = document.createElement("textarea");
+    textarea.value = copyText;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+  }
+  alert("공유 문구와 앱 링크를 복사했어요.");
 }
 
 document.getElementById("todayDate").textContent = new Intl.DateTimeFormat("ko-KR", {
@@ -537,8 +650,8 @@ document.querySelectorAll("[data-tab]").forEach((button) => {
   button.addEventListener("click", () => setActiveTab(button.dataset.tab));
 });
 
-document.querySelector("[data-scroll-target]").addEventListener("click", () => {
-  document.querySelector(".tabbar").scrollIntoView({ behavior: "smooth" });
+document.querySelector("[data-scroll-target]")?.addEventListener("click", () => {
+  document.getElementById("choiceA").scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
 document.getElementById("choiceForm").addEventListener("submit", (event) => {
@@ -551,7 +664,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
   loader.scrollIntoView({ behavior: "smooth", block: "center" });
   submitButtons.forEach((button) => {
     button.disabled = true;
-    button.textContent = "리포트 작성 중...";
+    button.textContent = "분석 중...";
   });
   loaderSteps.forEach((step, index) => {
     setTimeout(() => {
@@ -582,11 +695,18 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     const [typeName, typeDescription] = questionType(question);
     const metrics = buildMetrics(seed, mood, choiceA, choiceB);
     const code = reportCode(seed);
+    const shortReasons = reasonBullets(metrics, mood, wordInsights, recommended);
+    const cautions = cautionBullets(metrics, mood);
+    const adviceLine = oneLineAdvice(seed, metrics, mood);
 
     archive.unshift({
       date: new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric" }).format(new Date()),
       question,
       choice: `추천 선택: ${recommended}`,
+      choiceA,
+      choiceB,
+      recommended: `추천: ${recommendA ? "A" : "B"} · ${recommended}`,
+      advice: adviceLine,
       sign: signName,
       mood,
       createdAt: new Date().toISOString()
@@ -602,22 +722,45 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       `A: ${choiceA}`,
       `B: ${choiceB}`,
       `오늘의 추천: ${recommended}`,
-      `미션: ${mission}`
+      `오늘의 조언: ${adviceLine}`,
+      `미션: ${mission}`,
+      "",
+      "너도 오늘 고민 A/B로 열어봐."
+    ].join("\n");
+    const inviteCopy = [
+      "나 방금 갈림길에서 선택 리포트 봤는데 은근 잘 맞아.",
+      `내 고민은 "${question}"였고, 오늘 추천은 "${recommended}" 나왔어.`,
+      `한 줄 조언은 "${adviceLine}"래.`,
+      "너도 오늘 고민 하나 넣어서 봐봐."
     ].join("\n");
 
     const resultHtml = `
     <div class="report-hero">
-      <span>${code} · ${typeName}</span>
-      <h3>${recommendA ? "A" : "B"} · ${escapeHtml(recommended)}</h3>
-      <p>${opener}</p>
+      <span>${code} · 오늘의 갈림길</span>
+      <h3>오늘은 ${recommendA ? "A" : "B"} 선택이 조금 더 유리합니다.</h3>
+      <p><strong>${escapeHtml(recommended)}</strong></p>
     </div>
     <div class="report-section">
-      <h4>오늘의 분석 지표</h4>
+      <h4>추천 이유</h4>
+      ${bulletList(shortReasons)}
+    </div>
+    <div class="report-section">
+      <h4>주의할 점</h4>
+      ${bulletList(cautions)}
+    </div>
+    <div class="report-section">
+      <h4>한 줄 조언</h4>
+      <blockquote class="advice-quote">${escapeHtml(adviceLine)}</blockquote>
+    </div>
+    <div class="share-actions">
+      <button class="secondary-button" id="downloadChoiceButton" type="button">이미지 저장</button>
+      <button class="ghost-button" id="choiceShareButton" type="button">결과 공유</button>
+    </div>
+    <div class="report-section detail-report">
+      <h4>자세한 리포트</h4>
+      <p>${opener}</p>
       ${metricMarkup(metrics)}
       <p>${typeDescription}</p>
-    </div>
-    <div class="report-section">
-      <h4>지금의 흐름</h4>
       <p><strong>${sign[1]} ${escapeHtml(signName)}</strong>의 오늘 키워드는 ${sign[2]}입니다. ${sign[3]}이라서, ${pick(tones, seed)}</p>
       <p>${moodReading(mood)}</p>
     </div>
@@ -637,36 +780,24 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
         <p>${bStory}</p>
       </div>
     </div>
-    <div class="decision-line">
-      <span>추천</span>
-      <strong>${escapeHtml(recommended)}</strong>
-    </div>
-    <div class="report-section">
-      <h4>왜 이 선택인가요?</h4>
-      <p>${reason}</p>
-      <p>특히 지금 고민은 <strong>${escapeHtml(question)}</strong>라는 질문 안에 <strong>${wordInsights.map((item) => escapeHtml(item.label)).join(", ")}</strong>의 뜻과 감정의 타이밍이 함께 들어 있어요. 그래서 오늘은 크게 판을 바꾸는 결정보다, 내 마음을 덜 흐리게 만드는 방향을 고르는 게 더 중요합니다.</p>
-      <p>${timingAdvice(metrics, mood)}</p>
-    </div>
     <div class="report-section">
       <h4>오늘 사용할 문장</h4>
       <p>${script}</p>
-      <p><strong>주의할 말:</strong> ${caution}</p>
-    </div>
-    <div class="report-section">
-      <h4>오늘의 미션</h4>
-      <p>${mission}</p>
+      <p><strong>작은 미션:</strong> ${mission}</p>
       <p>${checkin}</p>
     </div>
-    <button class="secondary-button" id="shareChoiceButton" type="button">선택 카드 공유/복사</button>
+    <button class="ghost-button full-width" id="choiceInviteButton" type="button">친구에게 앱 보내기</button>
   `;
     setTimeout(() => {
       loader.classList.remove("show");
       showResult(document.getElementById("choiceResult"), resultHtml);
-      document.getElementById("shareChoiceButton").addEventListener("click", () => shareText(shareCopy));
+      document.getElementById("downloadChoiceButton").addEventListener("click", downloadLatestCard);
+      document.getElementById("choiceShareButton").addEventListener("click", () => shareText(shareCopy, "갈림길 선택 카드"));
+      document.getElementById("choiceInviteButton").addEventListener("click", () => shareText(inviteCopy, "갈림길"));
       document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
       submitButtons.forEach((button) => {
         button.disabled = false;
-        button.textContent = "선택 리포트 받기";
+        button.textContent = "분석하기";
       });
     }, 650);
   } catch (error) {
@@ -685,7 +816,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
     submitButtons.forEach((button) => {
       button.disabled = false;
-      button.textContent = "선택 리포트 받기";
+      button.textContent = "분석하기";
     });
   }
 });
@@ -772,7 +903,7 @@ document.getElementById("chemistryForm").addEventListener("submit", (event) => {
         <h4>같이 해볼 작은 미션</h4>
         <p>${chemistryMission}</p>
       </div>
-      <button class="secondary-button" id="shareChemistryButton" type="button">케미 카드 공유/복사</button>
+      ${shareActionMarkup("chemistry")}
       <p class="fine-print">케미 카드는 오락 및 관계 성찰용 결과입니다. 실제 관계를 단정하지 않습니다.</p>
     `);
     const shareCopy = [
@@ -781,14 +912,27 @@ document.getElementById("chemistryForm").addEventListener("submit", (event) => {
       `관계: ${relation}`,
       `오늘의 케미: ${score}`,
       `먼저 건넬 말: ${chemistryMessage}`,
-      `같이 해볼 미션: ${chemistryMission}`
+      `같이 해볼 미션: ${chemistryMission}`,
+      "",
+      "너도 우리 케미 한번 열어봐."
     ].join("\n");
-    document.getElementById("shareChemistryButton").addEventListener("click", () => shareText(shareCopy));
+    const inviteCopy = [
+      "우리 케미 갈림길에서 한번 봤는데 재밌다.",
+      `${myName} × ${theirName} 케미 점수는 ${score} 나왔어.`,
+      `같이 해볼 미션은 "${chemistryMission}"래.`,
+      "너도 이름이랑 관계 넣어서 한번 봐봐."
+    ].join("\n");
+    document.getElementById("chemistryShareButton").addEventListener("click", () => shareText(shareCopy, "갈림길 케미 카드"));
+    document.getElementById("chemistryInviteButton").addEventListener("click", () => shareText(inviteCopy, "갈림길 케미 보기"));
     result.scrollIntoView({ behavior: "smooth", block: "start" });
   }, 750);
 });
 
 document.getElementById("downloadCardButton").addEventListener("click", downloadLatestCard);
+document.getElementById("shareAppButton").addEventListener("click", () => shareText(
+  "오늘 고민을 A/B로 열어보는 앱이야. 선택 리포트, AI 손금, 케미 보기까지 있어서 지인끼리 해보기 좋아.",
+  "갈림길"
+));
 document.getElementById("checkAiStatusButton").addEventListener("click", checkAiStatus);
 
 const palmInput = document.getElementById("palmInput");
@@ -894,8 +1038,25 @@ document.getElementById("palmButton").addEventListener("click", () => {
           <p>${escapeHtml(data.today_message)}</p>
           <p><strong>작은 리추얼:</strong> ${escapeHtml(data.ritual)}</p>
         </div>
+        ${shareActionMarkup("palm")}
         <p class="fine-print">AI 이미지 해석을 활용한 오락 및 자기성찰용 결과입니다. 실제 미래나 건강 상태를 판단하지 않습니다.</p>
       `);
+      const palmShareCopy = [
+        "[갈림길 AI 손금 카드]",
+        `키워드: ${data.card_keyword}`,
+        `제목: ${data.title}`,
+        `오늘의 메시지: ${data.today_message}`,
+        `작은 리추얼: ${data.ritual}`,
+        "",
+        "너도 손바닥 사진으로 재미용 손금 카드 열어봐."
+      ].join("\n");
+      const palmInviteCopy = [
+        "나 갈림길에서 AI 손금 봤는데 결과 카드가 꽤 재밌어.",
+        `내 키워드는 "${data.card_keyword}" 나왔어.`,
+        "너도 사진 하나로 재미용 손금 카드 열어봐."
+      ].join("\n");
+      document.getElementById("palmShareButton").addEventListener("click", () => shareText(palmShareCopy, "갈림길 AI 손금 카드"));
+      document.getElementById("palmInviteButton").addEventListener("click", () => shareText(palmInviteCopy, "갈림길 AI 손금"));
       document.getElementById("palmResult").scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (error) {
       showResult(document.getElementById("palmResult"), `

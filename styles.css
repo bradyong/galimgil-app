@@ -350,6 +350,26 @@ select {
   margin-top: 10px;
 }
 
+.word-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 0 12px;
+}
+
+.word-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 6px 10px;
+  border: 1px solid rgba(118, 224, 207, 0.38);
+  border-radius: 999px;
+  background: rgba(118, 224, 207, 0.11);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

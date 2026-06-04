@@ -30,7 +30,10 @@ prediction. If the palm is unclear, say so gently. Return JSON only with these k
 card_keyword, title, summary, visual_note, life_line, head_line, heart_line, fate_line,
 today_message, ritual. Every value must be a Korean string. Keep each line warm,
 specific, reflective, and concise. Mention that the result is for entertainment and
-self-reflection where appropriate.
+self-reflection where appropriate. Avoid stock fortune-telling templates. Make the
+card feel different for each photo by grounding the wording in the visible image
+quality, palm orientation, and line impressions. Do not repeat the same sentence
+structure across fields.
 """.strip()
 
 

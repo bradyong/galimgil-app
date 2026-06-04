@@ -13,6 +13,22 @@ const signs = [
   ["물고기자리", "♓", "물", "직감과 분위기를 잘 읽는 별"]
 ];
 
+const wordLexicon = [
+  { keys: ["연락", "전화", "문자", "카톡", "메시지", "답장"], label: "연락", element: "바람", meaning: "마음을 밖으로 꺼내 확인하는 행동", advice: "말을 길게 쌓기보다 첫 문장을 가볍게 여는 쪽이 좋아요." },
+  { keys: ["기다", "보류", "참을", "미룰", "나중"], label: "기다림", element: "물", meaning: "흐름이 스스로 드러날 시간을 주는 태도", advice: "기다림에 끝 시간을 붙이면 회피가 아니라 관찰이 됩니다." },
+  { keys: ["아이", "자녀", "아들", "딸", "육아"], label: "아이", element: "물", meaning: "보호하고 싶은 마음과 책임감이 동시에 켜지는 단어", advice: "정답보다 안심을 먼저 만들 때 마음이 덜 흔들려요." },
+  { keys: ["계곡", "바다", "강", "물놀이", "수영"], label: "물가", element: "물", meaning: "감정을 식히고 몸의 긴장을 풀어주는 장소", advice: "복잡한 대화보다 같이 숨 돌릴 장면을 만드는 쪽이 맞아요." },
+  { keys: ["카페", "커피", "차", "디저트"], label: "카페", element: "바람", meaning: "무거운 결론을 부드러운 대화로 바꾸는 공간", advice: "대화의 목적을 결론이 아니라 확인으로 두면 좋아요." },
+  { keys: ["여행", "이동", "놀러", "나들이"], label: "이동", element: "불", meaning: "멈춘 분위기를 새 장면으로 바꾸고 싶은 욕구", advice: "큰 계획보다 오늘 가능한 작은 이동이 운을 열 수 있어요." },
+  { keys: ["돈", "구매", "살까", "계약", "투자", "가격"], label: "돈", element: "땅", meaning: "마음보다 기준과 지속성을 먼저 보라는 신호", advice: "끌림이 강할수록 조건을 숫자로 적어보면 선명해져요." },
+  { keys: ["일", "회사", "이직", "퇴사", "공부", "시험", "프로젝트"], label: "일", element: "땅", meaning: "지금의 나를 다음 단계로 옮기는 현실 감각", advice: "감정의 크기보다 반복 가능한 한 걸음을 고르는 게 좋아요." },
+  { keys: ["고백", "사과", "화해", "만날", "만남", "데이트"], label: "마음 표현", element: "불", meaning: "숨겨둔 진심을 장면 밖으로 꺼내는 일", advice: "세게 증명하기보다 담백하게 보여주는 쪽이 오래 갑니다." },
+  { keys: ["친구", "연인", "남친", "여친", "가족", "형", "동생", "엄마", "아빠"], label: "관계", element: "바람", meaning: "나와 상대 사이의 거리와 말투를 조절하는 문제", advice: "상대의 마음을 맞히려 하기보다 내 기준을 짧게 말해보세요." },
+  { keys: ["부부", "반려자", "배우자", "남편", "아내", "와이프", "신랑", "신부"], label: "반려", element: "땅", meaning: "설렘을 넘어 생활의 리듬과 신뢰를 함께 맞추는 관계", advice: "오늘은 이기는 말보다 같이 오래 갈 수 있는 말을 고르는 게 좋아요." },
+  { keys: ["휴식", "쉴까", "잠", "피곤", "쉬기"], label: "휴식", element: "물", meaning: "몸이 먼저 보내는 속도 조절 신호", advice: "오늘은 더 밀어붙이는 것보다 회복 후 선택하는 편이 낫습니다." },
+  { keys: ["정리", "청소", "버릴", "끊을", "끝낼"], label: "정리", element: "땅", meaning: "흐린 마음을 실제 행동으로 가볍게 만드는 과정", advice: "전부 끝내려 하지 말고 하나만 치워도 흐름이 바뀝니다." }
+];
+
 const tones = [
   "오늘은 감정보다 리듬을 믿어도 괜찮아요.",
   "이미 마음은 반쯤 알고 있고, 남은 건 표현 방식이에요.",
@@ -107,6 +123,37 @@ const chemistryMissions = [
   "서로가 요즘 자주 듣는 노래를 한 곡씩 공유하기"
 ];
 
+const chemistryOpeners = [
+  "둘의 케미는 큰 사건보다 작은 반응에서 더 잘 보여요.",
+  "오늘 이 조합은 서로를 맞히려 하기보다 리듬을 확인할 때 좋아요.",
+  "둘 사이에는 말보다 분위기가 먼저 움직이는 구간이 있어요.",
+  "지금은 누가 더 맞는지보다, 서로가 편해지는 속도를 보는 게 중요해요.",
+  "이 관계는 익숙한 말투 하나에도 온도가 달라지는 타입이에요.",
+  "오늘은 관계를 단정하기보다, 작은 장면 하나로 힌트를 얻는 날이에요."
+];
+
+const chemistryAdvicePieces = [
+  "질문을 크게 던지기보다 하나만 물어보면 답이 더 부드럽게 나옵니다.",
+  "상대의 반응이 느려도 마음이 없는 쪽으로 바로 해석하지 마세요.",
+  "오늘은 농담을 섞되, 핵심 문장은 흐리지 않는 게 좋아요.",
+  "같이 웃을 수 있는 장면을 먼저 만들면 진짜 대화가 뒤따라오기 쉽습니다.",
+  "이미 아는 사이라고 해도 오늘의 기분은 새로 확인하는 편이 안전해요.",
+  "서운함을 꺼낼 때는 과거 전체보다 오늘 생긴 감정 하나만 말해보세요.",
+  "두 사람의 속도가 다르면 빠른 쪽이 한 박자만 낮춰주는 게 좋아요.",
+  "결론을 요구하기보다 선택지를 둘 정도로 좁혀주면 편해집니다."
+];
+
+const chemistryMissionObjects = [
+  "서로에게 오늘 좋았던 장면 하나를 사진처럼 설명하기",
+  "답을 정하기 전에 각자 원하는 분위기를 한 단어로 말하기",
+  "상대가 고른 메뉴나 장소에 이유를 하나만 물어보기",
+  "오늘 밤 짧은 음성이나 메시지로 고마운 점 하나 남기기",
+  "서운했던 말 대신 바랐던 행동을 한 문장으로 바꿔 말하기",
+  "같이 할 수 있는 아주 작은 약속 하나만 정하기",
+  "각자 요즘 자주 생각나는 장소를 하나씩 공유하기",
+  "상대가 말할 때 바로 해결책을 주지 않고 마지막까지 듣기"
+];
+
 const archiveKey = "crossroads-choice-cards-v1";
 const lastDateKey = "crossroads-last-date-v1";
 const streakKey = "crossroads-streak-v1";
@@ -118,6 +165,79 @@ function hashText(text) {
 
 function pick(list, seed) {
   return list[Math.abs(seed) % list.length];
+}
+
+function findWordInsights(...values) {
+  const text = values.join(" ").toLowerCase();
+  const found = wordLexicon.filter((entry) => entry.keys.some((key) => text.includes(key)));
+  if (found.length) {
+    return found.slice(0, 3);
+  }
+  return [wordLexicon[Math.abs(hashText(text || "갈림길")) % wordLexicon.length]];
+}
+
+function elementBridge(element, signElement) {
+  const bridges = {
+    "불-불": "불의 기운이 겹쳐져서 오늘은 생각보다 행동이 먼저 나올 수 있어요.",
+    "불-물": "불은 움직이고 물은 식히려 해서, 속도와 감정 조절이 핵심이에요.",
+    "불-땅": "불의 추진력에 땅의 기준이 붙으면 충동이 계획으로 바뀝니다.",
+    "불-바람": "불과 바람은 말을 빠르게 키우니, 표현은 선명하되 짧게 가는 게 좋아요.",
+    "물-불": "물의 감정과 불의 추진력이 만나서, 마음은 깊고 결정은 빠를 수 있어요.",
+    "물-물": "물의 기운이 겹쳐 감정의 결이 섬세해지는 날이에요.",
+    "물-땅": "물의 감정을 땅의 기준으로 받쳐주면 흔들림이 덜해집니다.",
+    "물-바람": "물과 바람이 만나면 마음과 말 사이의 간격을 조심해야 해요.",
+    "땅-불": "땅의 현실감과 불의 용기가 만나, 작지만 확실한 행동이 좋아요.",
+    "땅-물": "땅은 기준을 세우고 물은 마음을 살피니, 안정감 있는 선택이 강해집니다.",
+    "땅-땅": "땅의 기운이 겹쳐서 오늘은 감보다 조건과 지속성이 중요해요.",
+    "땅-바람": "땅의 기준과 바람의 대화가 만나면, 말로 정리할수록 답이 보입니다.",
+    "바람-불": "바람은 불을 키우니, 한마디가 흐름을 크게 바꿀 수 있어요.",
+    "바람-물": "바람의 말과 물의 감정이 만나, 다정하지만 정확한 표현이 필요합니다.",
+    "바람-땅": "바람의 아이디어를 땅의 현실감으로 붙잡아야 오래 갑니다.",
+    "바람-바람": "바람의 기운이 겹쳐 생각과 대화가 많아지는 날이에요."
+  };
+  return bridges[`${element}-${signElement}`] || "오늘의 단어와 별자리 키워드가 만나, 선택의 의미를 조금 더 또렷하게 보여줍니다.";
+}
+
+function wordChipMarkup(insights) {
+  return `<div class="word-chip-row">${insights.map((item) => `<span class="word-chip">${escapeHtml(item.label)} · ${escapeHtml(item.element)}</span>`).join("")}</div>`;
+}
+
+function choiceWordReading(insights, sign, recommended) {
+  const main = insights[0];
+  const second = insights[1] || insights[0];
+  return `
+    ${wordChipMarkup(insights)}
+    <p><strong>${escapeHtml(main.label)}</strong>은 사전적으로 ${main.meaning}에 가까운 단어예요. 오늘 고민 안에서 이 단어는 단순한 장소나 행동이 아니라, 내가 어떤 방식으로 안심하고 싶은지를 보여줍니다.</p>
+    <p>${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운과 만나면, ${elementBridge(main.element, sign[2])} 그래서 <strong>${escapeHtml(recommended)}</strong> 쪽은 ${second.advice}</p>
+  `;
+}
+
+function pathStory(label, choice, baseStory, insights, seed) {
+  const insight = pick(insights, seed);
+  const endings = [
+    `${insight.label}의 뜻으로 보면 이 선택은 '${insight.meaning}'을 현실에서 시험해보는 쪽이에요.`,
+    `이 선택 안에는 ${insight.label}이라는 단어가 가진 '${insight.meaning}'의 결이 숨어 있어요.`,
+    `${insight.label}의 기운을 빌리면, 이 길은 ${insight.advice}`
+  ];
+  return `${baseStory} ${pick(endings, seed + label.charCodeAt(0))}`;
+}
+
+function chemistryReading(relation, question, mySignData, theirSignData, insights, seed) {
+  const main = pick(insights, seed + relation.length);
+  const relationTone = relation.includes("부부") || relation.includes("반려자")
+    ? "설렘보다 생활의 리듬과 신뢰가 더 크게 작동하는 관계"
+    : relation.includes("연인")
+    ? "설렘과 확인 욕구가 같이 움직이는 관계"
+    : relation.includes("친구")
+      ? "편함 속에서도 말투 하나에 온도가 달라지는 관계"
+      : relation.includes("가족")
+        ? "익숙해서 더 조심히 말해야 하는 관계"
+        : "역할과 친밀감이 섞여 리듬 조절이 중요한 관계";
+  return `
+    ${wordChipMarkup(insights)}
+    <p><strong>${escapeHtml(main.label)}</strong>은 ${main.meaning}이라는 뜻으로 읽혀요. 지금 질문인 <strong>${escapeHtml(question)}</strong> 안에서는 이 단어가 두 사람 사이에서 무엇을 확인하고 싶은지 보여줍니다.</p>
+    <p>${escapeHtml(relation)}은 ${relationTone}예요. ${mySignData[1]} ${mySignData[2]}과 ${theirSignData[1]} ${theirSignData[2]}이 만나면 ${elementBridge(main.element, theirSignData[2])} 오늘은 ${main.advice}</p>
+  `;
 }
 
 function showResult(element, html) {
@@ -451,8 +571,9 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     const recommendA = (seed + mood) % 2 === 0;
     const recommended = recommendA ? choiceA : choiceB;
     const caution = mood >= 8 ? "지금 마음 온도가 높아서, 결정 직후 바로 메시지를 길게 보내는 건 피하는 편이 좋아요." : "오늘은 너무 오래 재지 말고, 작게 확인하는 쪽이 흐름을 살립니다.";
-    const aStory = pick(aScenes, seed);
-    const bStory = pick(bScenes, seed + 7);
+    const wordInsights = findWordInsights(question, choiceA, choiceB);
+    const aStory = pathStory("A", choiceA, pick(aScenes, seed), wordInsights, seed);
+    const bStory = pathStory("B", choiceB, pick(bScenes, seed + 7), wordInsights, seed + 7);
     const mission = pick(missions, seed);
     const opener = pick(insightOpeners, seed + mood);
     const reason = pick(recommendedReasons, seed + 13);
@@ -500,6 +621,10 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       <p><strong>${sign[1]} ${escapeHtml(signName)}</strong>의 오늘 키워드는 ${sign[2]}입니다. ${sign[3]}이라서, ${pick(tones, seed)}</p>
       <p>${moodReading(mood)}</p>
     </div>
+    <div class="report-section">
+      <h4>단어의 숨은 뜻</h4>
+      ${choiceWordReading(wordInsights, sign, recommended)}
+    </div>
     <div class="path-cards">
       <div class="path-card">
         <span>A</span>
@@ -519,7 +644,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     <div class="report-section">
       <h4>왜 이 선택인가요?</h4>
       <p>${reason}</p>
-      <p>특히 지금 고민은 <strong>${escapeHtml(question)}</strong>라는 질문 안에 감정과 타이밍이 함께 들어 있어요. 그래서 오늘은 크게 판을 바꾸는 결정보다, 내 마음을 덜 흐리게 만드는 방향을 고르는 게 더 중요합니다.</p>
+      <p>특히 지금 고민은 <strong>${escapeHtml(question)}</strong>라는 질문 안에 <strong>${wordInsights.map((item) => escapeHtml(item.label)).join(", ")}</strong>의 뜻과 감정의 타이밍이 함께 들어 있어요. 그래서 오늘은 크게 판을 바꾸는 결정보다, 내 마음을 덜 흐리게 만드는 방향을 고르는 게 더 중요합니다.</p>
       <p>${timingAdvice(metrics, mood)}</p>
     </div>
     <div class="report-section">
@@ -596,6 +721,9 @@ document.getElementById("chemistryForm").addEventListener("submit", (event) => {
   const pace = 52 + ((seed * 11 + relationMood) % 44);
   const mySignData = signs.find(([name]) => name === mySignName) || signs[0];
   const theirSignData = signs.find(([name]) => name === theirSignName) || signs[6];
+  const chemistryInsights = findWordInsights(relation, question, myName, theirName);
+  const chemistryMessage = `${pick(chemistryMessages, seed + 17)} ${pick(chemistryAdvicePieces, seed + 29)}`;
+  const chemistryMission = `${pick(chemistryMissions, seed + 23)}. ${pick(chemistryMissionObjects, seed + 41)}`;
   const loader = document.getElementById("chemistryLoader");
   const result = document.getElementById("chemistryResult");
   result.classList.remove("show");
@@ -608,7 +736,7 @@ document.getElementById("chemistryForm").addEventListener("submit", (event) => {
       <div class="report-hero">
         <span>${escapeHtml(relation)} CHEMISTRY CARD</span>
         <h3>${escapeHtml(myName)} × ${escapeHtml(theirName)}</h3>
-        <p>${escapeHtml(mySignName)}의 ${mySignData[2]}과 ${escapeHtml(theirSignName)}의 ${theirSignData[2]}이 만난 조합이에요. 둘 사이의 리듬을 재미로 펼쳐봤어요.</p>
+        <p>${pick(chemistryOpeners, seed)} ${escapeHtml(mySignName)}의 ${mySignData[2]}과 ${escapeHtml(theirSignName)}의 ${theirSignData[2]}이 만난 조합으로 펼쳐봤어요.</p>
       </div>
       <div class="chemistry-score">
         <div><span>오늘의 케미</span><strong>${score}</strong></div>
@@ -621,24 +749,28 @@ document.getElementById("chemistryForm").addEventListener("submit", (event) => {
       </div>
       <div class="report-section">
         <h4>둘이 잘 맞는 부분</h4>
-        <p>${pick(chemistryStrengths, seed)}</p>
+        <p>${pick(chemistryStrengths, seed)} ${pick(chemistryAdvicePieces, seed + score)}</p>
       </div>
       <div class="report-section">
         <h4>가끔 엇갈리는 지점</h4>
-        <p>${pick(chemistryFrictions, seed + 9)}</p>
+        <p>${pick(chemistryFrictions, seed + 9)} ${pick(chemistryAdvicePieces, seed + pace)}</p>
+      </div>
+      <div class="report-section">
+        <h4>관계 단어 해석</h4>
+        ${chemistryReading(relation, question, mySignData, theirSignData, chemistryInsights, seed)}
       </div>
       <div class="report-section">
         <h4>지금 궁금한 점에 대한 힌트</h4>
         <p><strong>${escapeHtml(question)}</strong></p>
-        <p>오늘은 상대의 마음을 단정하기보다, 가볍게 확인하는 방식이 잘 맞아요. 무거운 결론보다 작은 대화 하나가 둘 사이의 온도를 더 정확하게 알려줄 수 있습니다.</p>
+        <p>오늘은 상대의 마음을 단정하기보다, 가볍게 확인하는 방식이 잘 맞아요. 무거운 결론보다 작은 대화 하나가 둘 사이의 온도를 더 정확하게 알려줄 수 있습니다. 특히 <strong>${chemistryInsights.map((item) => escapeHtml(item.label)).join(", ")}</strong> 키워드가 보여서, 말의 내용보다 말이 오가는 분위기가 중요해요.</p>
       </div>
       <div class="report-section">
         <h4>오늘 먼저 건넬 말</h4>
-        <p>${pick(chemistryMessages, seed + 17)}</p>
+        <p>${chemistryMessage}</p>
       </div>
       <div class="report-section">
         <h4>같이 해볼 작은 미션</h4>
-        <p>${pick(chemistryMissions, seed + 23)}</p>
+        <p>${chemistryMission}</p>
       </div>
       <button class="secondary-button" id="shareChemistryButton" type="button">케미 카드 공유/복사</button>
       <p class="fine-print">케미 카드는 오락 및 관계 성찰용 결과입니다. 실제 관계를 단정하지 않습니다.</p>
@@ -648,8 +780,8 @@ document.getElementById("chemistryForm").addEventListener("submit", (event) => {
       `${myName} × ${theirName}`,
       `관계: ${relation}`,
       `오늘의 케미: ${score}`,
-      `먼저 건넬 말: ${pick(chemistryMessages, seed + 17)}`,
-      `같이 해볼 미션: ${pick(chemistryMissions, seed + 23)}`
+      `먼저 건넬 말: ${chemistryMessage}`,
+      `같이 해볼 미션: ${chemistryMission}`
     ].join("\n");
     document.getElementById("shareChemistryButton").addEventListener("click", () => shareText(shareCopy));
     result.scrollIntoView({ behavior: "smooth", block: "start" });

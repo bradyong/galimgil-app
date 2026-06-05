@@ -548,17 +548,66 @@ function realityReading(profile, question, choiceA, choiceB, recommended, mood) 
   return `지금 고민은 <strong>${escapeHtml(question)}</strong>라는 질문 안에서 마음의 끌림과 현실의 부담이 같이 움직이고 있어요. 오늘은 완벽한 답보다 실행 후 후회가 적은 쪽을 고르는 게 중요합니다. 그래서 <strong>${escapeHtml(recommended)}</strong> 쪽이 조금 더 안정적인 선택으로 보입니다.`;
 }
 
-function fortuneReading(sign, mood, wordInsights, seed, profile) {
+function fortuneReading(sign, mood, wordInsights, seed, profile, question, choiceA, choiceB, recommended) {
   const main = wordInsights[0];
+  const safeQuestion = escapeHtml(question);
+  const safeA = escapeHtml(choiceA);
+  const safeB = escapeHtml(choiceB);
+  const safeRecommended = escapeHtml(recommended);
+  const elementTone = {
+    "불": [
+      "불의 기운은 아이디어보다 움직임을 먼저 켜지만, 오늘은 속도를 반 박자 낮출 때 운이 안정됩니다.",
+      "불의 흐름이 강한 날이라 시작은 빠르지만, 마무리를 짧게 잡아야 좋은 기억으로 남아요.",
+      "오늘의 불 기운은 큰 결심보다 작은 실행에 잘 붙습니다."
+    ],
+    "땅": [
+      "땅의 기운은 몸의 컨디션과 실제 동선을 먼저 보라고 말합니다.",
+      "오늘의 땅 기운은 화려한 선택보다 관리하기 쉬운 선택에 힘을 실어줘요.",
+      "땅의 흐름이 강해서 비용, 시간, 체력처럼 손에 잡히는 기준이 중요합니다."
+    ],
+    "바람": [
+      "바람의 기운은 분위기와 이동 흐름을 살피게 하지만, 변수가 많으면 금방 산만해질 수 있어요.",
+      "오늘의 바람은 답을 크게 정하기보다 가볍게 움직여보고 조정하는 쪽에 가깝습니다.",
+      "바람의 흐름은 선택을 복잡하게 만들 수 있어서, 기준을 짧게 잡을수록 좋아요."
+    ],
+    "물": [
+      "물의 기운은 감정과 피로도를 민감하게 읽습니다. 오늘은 편안하게 끝나는 선택이 복을 부릅니다.",
+      "오늘의 물 흐름은 자극보다 안정, 설렘보다 회복에 더 가깝습니다.",
+      "물의 기운이 강한 날에는 마음이 편하게 닫히는 일정이 오래 기억에 남아요."
+    ]
+  };
   const moodLine = mood >= 8
-    ? "마음 온도가 높아서 별의 흐름도 빠르게 반응하는 쪽으로 기울어 있어요."
+    ? pick(["마음 온도가 높아서 별의 흐름도 빠르게 반응합니다.", "오늘은 마음이 앞서기 쉬워서 운도 짧고 선명한 선택을 좋아합니다.", "감정의 불이 큰 날이라 오래 끄는 일정은 피로로 바뀔 수 있어요."], seed + 3)
     : mood <= 3
-      ? "마음이 비교적 차분해서 작은 신호를 읽기 좋은 날이에요."
-      : "마음이 살짝 흔들리는 만큼, 별의 흐름은 균형을 되찾는 쪽을 가리킵니다.";
+      ? pick(["마음이 비교적 차분해서 작은 신호를 읽기 좋은 날이에요.", "오늘은 큰 자극보다 조용히 만족이 쌓이는 흐름입니다.", "감정의 파도가 낮아서 현실 기준을 운세처럼 써도 좋은 날이에요."], seed + 5)
+      : pick(["마음이 살짝 흔들리는 만큼, 별의 흐름은 균형을 되찾는 쪽을 가리킵니다.", "오늘은 설렘과 피로가 같이 보이는 날이라 선택을 단순하게 잡는 게 좋아요.", "흐름이 애매할수록 오래 버티는 선택보다 빨리 정리되는 선택이 맞습니다."], seed + 7);
+  const signTone = pick(elementTone[sign[2]] || elementTone["땅"], seed + sign[0].length);
   if (profile.type === "childcare") {
-    return `${sign[1]} ${escapeHtml(sign[0])}의 오늘 키워드는 <strong>${sign[2]}</strong>입니다. 여기에 <strong>${escapeHtml(main.label)}</strong>의 기운이 섞이면, 오늘은 아이를 더 신나게 몰아붙이는 운보다 <strong>아이의 리듬을 읽고 안전하게 마무리하는 운</strong>이 강해요. 별자리 흐름으로 봐도 큰 자극보다 작고 안정적인 만족이 더 오래 남는 날입니다.`;
+    const childFlows = [
+      `${sign[1]} ${escapeHtml(sign[0])}의 오늘 흐름은 <strong>${sign[2]}</strong> 기운이에요. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 놓고 보면, ${signTone} 그래서 <strong>${safeQuestion}</strong>에는 아이를 더 신나게 몰아붙이는 운보다 <strong>아이의 리듬을 읽고 안전하게 마무리하는 운</strong>이 더 강하게 붙습니다.`,
+      `오늘 ${sign[1]} ${escapeHtml(sign[0])}에게 들어온 별자리 흐름은 "무리하지 않는 즐거움" 쪽이에요. ${moodLine} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중에서는 큰 자극보다 <strong>짧게 놀고 웃으며 돌아오기 쉬운 쪽</strong>, 즉 <strong>${safeRecommended}</strong>의 흐름이 더 자연스럽습니다.`,
+      `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운은 오늘 보호자 감각을 예민하게 켜줍니다. <strong>${safeQuestion}</strong>처럼 아이가 포함된 선택에서는 운세적으로도 재미의 크기보다 <strong>위험을 빨리 알아차리고 조절할 수 있는 선택</strong>이 좋아요. 그래서 별의 흐름은 <strong>${safeRecommended}</strong> 쪽으로 살짝 기웁니다.`
+    ];
+    return pick(childFlows, seed + mood);
   }
-  return `${sign[1]} ${escapeHtml(sign[0])}의 오늘 키워드는 <strong>${sign[2]}</strong>입니다. ${sign[3]}이라서, ${moodLine} 여기에 <strong>${escapeHtml(main.label)}</strong>의 기운이 섞이면 ${elementBridge(main.element, sign[2])} 운세 감성으로 보면 오늘은 큰 모험보다 <strong>편안하게 끝낼 수 있는 선택</strong>이 복을 부르는 흐름이에요.`;
+  if (profile.type === "attendance") {
+    return `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운은 오늘 "해야 할 일을 작게라도 끝내는 운"에 가깝습니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 비교하면, ${signTone} 운세 감성으로 봐도 <strong>${safeRecommended}</strong>처럼 최소 기준을 지키는 쪽이 하루의 흐름을 덜 꼬이게 합니다.`;
+  }
+  if (profile.type === "money") {
+    return `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 흐름은 오늘 무리한 확장보다 기준을 지키는 쪽에 힘을 줍니다. <strong>${safeQuestion}</strong>에서는 ${signTone} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 감정이 덜 흔들리는 <strong>${safeRecommended}</strong> 쪽이 운세 흐름과 더 맞습니다.`;
+  }
+  if (profile.type === "career") {
+    return `${sign[1]} ${escapeHtml(sign[0])}의 별자리 흐름은 오늘 큰 결론보다 다음 발판을 보는 쪽입니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 사이에서는 ${signTone} 그래서 별자리 흐름은 당장의 감정보다 내일도 납득할 수 있는 <strong>${safeRecommended}</strong> 쪽을 더 밀어줍니다.`;
+  }
+  if (profile.type === "relationship") {
+    return `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운은 말의 온도에 민감하게 반응합니다. <strong>${safeQuestion}</strong>에서는 ${moodLine} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 상대가 받아들이기 쉬운 <strong>${safeRecommended}</strong> 쪽이 오늘의 별 흐름과 더 잘 맞아요.`;
+  }
+  const generalFlows = [
+    `${sign[1]} ${escapeHtml(sign[0])}의 오늘 키워드는 <strong>${sign[2]}</strong>입니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 비교하면, ${signTone} 여기에 <strong>${escapeHtml(main.label)}</strong>의 기운이 섞여 <strong>${safeRecommended}</strong> 쪽으로 흐름이 모입니다.`,
+    `${sign[1]} ${escapeHtml(sign[0])}의 별자리 흐름은 오늘 선택을 크게 벌리기보다 정리하는 쪽입니다. <strong>${safeQuestion}</strong>에서는 ${moodLine} 그래서 마음이 편하게 닫히는 <strong>${safeRecommended}</strong>이 더 오래 갑니다.`,
+    `오늘의 ${sign[1]} ${escapeHtml(sign[0])} 운은 결과보다 리듬을 봅니다. ${signTone} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 지금 감당 가능한 <strong>${safeRecommended}</strong>이 운을 살리는 쪽이에요.`
+  ];
+  return pick(generalFlows, seed + main.label.length);
 }
 
 function crossroadsReading(profile, choiceA, choiceB, recommended, wordInsights) {
@@ -872,7 +921,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     const cautions = cautionBullets(metrics, mood, profile);
     const adviceLine = oneLineAdvice(seed, metrics, mood, profile);
     const realityText = realityReading(profile, question, choiceA, choiceB, recommended, mood);
-    const fortuneText = fortuneReading(sign, mood, wordInsights, seed, profile);
+    const fortuneText = fortuneReading(sign, mood, wordInsights, seed, profile, question, choiceA, choiceB, recommended);
     const crossroadsText = crossroadsReading(profile, choiceA, choiceB, recommended, wordInsights);
     const finalText = finalRecommendationText(profile, recommended, adviceLine);
 

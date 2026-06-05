@@ -886,16 +886,38 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const loserSubjectName = loser.subjectName || loser.name;
   const hasQuestionContext = subjectName !== winner.name || loserSubjectName !== loser.name;
   const winnerActionText = scenarioActionText(subjectName, winner.name, category, winner.intent);
-  const signToneByElement = {
-    "불": "생각을 오래 굴리기보다 한 번 움직여보는 쪽에 힘이 있어요.",
-    "땅": "괜히 새 판을 키우기보다 몸이 편하게 따라갈 수 있는 쪽을 좋아해요.",
-    "바람": "가볍게 시작하고, 중간에 조정할 수 있는 선택을 밀어줘요.",
-    "물": "기분을 세게 몰아붙이기보다 마음이 편안하게 끝나는 쪽을 봐요."
+  const fortuneSubject = hasQuestionContext ? subjectName : winner.name;
+  const funnyFortunes = {
+    food: [
+      `${sign[1]} ${escapeHtml(sign[0])}가 오늘은 <strong>${escapeHtml(fortuneSubject)}</strong> 냄새에 먼저 고개를 돌렸네요.`,
+      `별들이 식탁 앞에서 회의했는데, 오늘은 <strong>${escapeHtml(winner.name)}</strong> 쪽 접시에 손을 들었습니다. 진지한 회의는 아니고, 거의 야식 투표였어요.`
+    ],
+    childcare: [
+      `${sign[1]} ${escapeHtml(sign[0])}가 오늘은 집 소파보다 <strong>${escapeHtml(fortuneSubject)}</strong> 쪽을 더 재밌어 보인다고 하네요.`,
+      `오늘 별은 아이 웃음소리 나는 쪽에 먼저 반응했습니다. 그래서 <strong>${escapeHtml(winner.name)}</strong> 편을 살짝 들고 있어요.`
+    ],
+    place: [
+      `${sign[1]} ${escapeHtml(sign[0])}가 오늘은 지도 위에서 <strong>${escapeHtml(fortuneSubject)}</strong> 쪽을 콕 찍었습니다.`,
+      `오늘 별은 가만히 있기보다 살짝 분위기 바꾸는 쪽을 재밌어하네요. 그래서 <strong>${escapeHtml(winner.name)}</strong> 쪽에 표를 던졌어요.`
+    ],
+    attendance: [
+      `${sign[1]} ${escapeHtml(sign[0])}가 오늘 알람 소리를 듣고 한숨은 쉬었지만, 그래도 <strong>${escapeHtml(winner.name)}</strong> 쪽으로 손을 들었습니다.`,
+      `오늘 별은 이불보다 내일의 내 편을 들어주는 중이에요. 그래서 <strong>${escapeHtml(winner.name)}</strong> 쪽이 살짝 이겼습니다.`
+    ],
+    money: [
+      `${sign[1]} ${escapeHtml(sign[0])}가 오늘 지갑을 슬쩍 닫아보더니 <strong>${escapeHtml(winner.name)}</strong> 쪽을 가리켰어요.`,
+      `별들이 숫자 계산은 못 하지만 촉은 봅니다. 오늘은 <strong>${escapeHtml(winner.name)}</strong> 쪽이 덜 찜찜해 보이나 봐요.`
+    ],
+    relationship: [
+      `${sign[1]} ${escapeHtml(sign[0])}가 오늘 말풍선을 하나 띄웠는데, 그 안에 <strong>${escapeHtml(winner.name)}</strong>이 적혀 있었어요.`,
+      `오늘 별은 긴 설명보다 타이밍 좋은 한마디를 좋아하네요. 그래서 <strong>${escapeHtml(winner.name)}</strong> 쪽에 살짝 기대고 있습니다.`
+    ],
+    daily: [
+      `${sign[1]} ${escapeHtml(sign[0])}가 오늘 고민판을 보더니 <strong>${escapeHtml(winner.name)}</strong> 칸에 별가루를 조금 뿌렸어요.`,
+      `오늘 별은 완벽한 답보다 덜 찝찝한 답을 좋아하네요. 그래서 <strong>${escapeHtml(winner.name)}</strong> 쪽이 조금 더 반짝입니다.`
+    ]
   };
-  const fortuneBase = signToneByElement[sign[2]] || signToneByElement["땅"];
-  const fortune = winner.intent === "skip"
-    ? `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 속도를 줄이고 컨디션을 먼저 챙기는 쪽이 편해요. ${fortuneBase} 그래서 형이 보기엔 <strong>${escapeHtml(winner.name)}</strong> 쪽에 운이 조금 더 붙습니다.`
-    : `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 머릿속에서만 재기보다 작게라도 움직여보는 쪽이 편해요. ${fortuneBase} 그래서 형이 보기엔 <strong>${escapeHtml(winner.name)}</strong> 쪽에 운이 조금 더 붙습니다.`;
+  const fortune = pick(funnyFortunes[category] || funnyFortunes.daily, seed + sign[0].length + winner.name.length);
   const defaultWhy = [
     `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 확실한 선택이에요.`,
     `이 선택은 지금 고민에서 바로 체감되는 변화가 있다는 쪽에 가까워요.`,

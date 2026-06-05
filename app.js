@@ -554,6 +554,69 @@ function fortuneReading(sign, mood, wordInsights, seed, profile, question, choic
   const safeA = escapeHtml(choiceA);
   const safeB = escapeHtml(choiceB);
   const safeRecommended = escapeHtml(recommended);
+  const signLens = {
+    "양자리": {
+      focus: "바로 움직이고 싶은 마음",
+      childcare: "아이가 먼저 뛰어나가려는 순간을 잡아주는 보호자 속도",
+      warning: "시작은 빠르지만 멈추는 타이밍을 놓치기 쉬워요."
+    },
+    "황소자리": {
+      focus: "몸이 편하고 오래 유지되는 안정감",
+      childcare: "아이의 체력과 간식, 귀가 시간을 현실적으로 맞추는 감각",
+      warning: "익숙한 선택만 고르면 새 즐거움이 줄어들 수 있어요."
+    },
+    "쌍둥이자리": {
+      focus: "장소보다 분위기와 반응을 빨리 읽는 감각",
+      childcare: "아이 표정이 바뀌는 순간 바로 코스를 바꾸는 유연함",
+      warning: "선택지가 많아지면 오히려 집중이 흐려질 수 있어요."
+    },
+    "게자리": {
+      focus: "안전하고 편안하게 마무리되는 느낌",
+      childcare: "아이가 낯선 자극에 놀라지 않게 품을 만들어주는 흐름",
+      warning: "걱정이 커지면 재미를 시작하기 전부터 줄일 수 있어요."
+    },
+    "사자자리": {
+      focus: "즐겁게 기억에 남는 장면을 만드는 힘",
+      childcare: "아이에게 '오늘 재밌었다'는 표정을 남겨주는 선택",
+      warning: "더 신나게 해주려다 과한 자극으로 넘어갈 수 있어요."
+    },
+    "처녀자리": {
+      focus: "동선, 준비물, 위험 요소를 미리 정리하는 감각",
+      childcare: "신발, 물, 간식, 화장실 위치까지 챙기는 현실 운",
+      warning: "완벽하게 준비하려다 출발이 늦어질 수 있어요."
+    },
+    "천칭자리": {
+      focus: "아이의 즐거움과 보호자의 편함 사이 균형",
+      childcare: "재미와 안전을 동시에 맞추는 장소 감각",
+      warning: "둘 다 좋아 보이면 결정이 늦어질 수 있어요."
+    },
+    "전갈자리": {
+      focus: "겉으로 보이는 재미보다 숨은 피로를 읽는 감각",
+      childcare: "아이의 흥분 뒤에 오는 피곤함까지 미리 보는 흐름",
+      warning: "예민하게 읽다 보면 작은 변수도 크게 느껴질 수 있어요."
+    },
+    "사수자리": {
+      focus: "답답함을 풀어주는 넓은 장면",
+      childcare: "아이가 몸을 쓰며 기분을 풀 수 있는 열린 흐름",
+      warning: "너무 멀리 가면 귀가 타이밍이 흔들릴 수 있어요."
+    },
+    "염소자리": {
+      focus: "무리 없이 끝낼 수 있는 현실적인 계획",
+      childcare: "놀고, 정리하고, 돌아오는 시간표가 살아나는 운",
+      warning: "재미보다 효율만 보면 아이의 만족이 줄어들 수 있어요."
+    },
+    "물병자리": {
+      focus: "늘 하던 방식 말고 다른 선택지를 보는 감각",
+      childcare: "아이에게 새로운 자극을 주되 거리를 두고 관찰하는 흐름",
+      warning: "새로움이 많으면 아이가 산만해질 수 있어요."
+    },
+    "물고기자리": {
+      focus: "분위기와 컨디션을 부드럽게 읽는 직감",
+      childcare: "아이의 말보다 표정과 몸짓을 먼저 읽는 흐름",
+      warning: "감정에 맞춰주다 보면 귀가 기준이 흐려질 수 있어요."
+    }
+  };
+  const lens = signLens[sign[0]] || signLens["염소자리"];
   const elementTone = {
     "불": [
       "불의 기운은 아이디어보다 움직임을 먼저 켜지만, 오늘은 속도를 반 박자 낮출 때 운이 안정됩니다.",
@@ -584,28 +647,28 @@ function fortuneReading(sign, mood, wordInsights, seed, profile, question, choic
   const signTone = pick(elementTone[sign[2]] || elementTone["땅"], seed + sign[0].length);
   if (profile.type === "childcare") {
     const childFlows = [
-      `${sign[1]} ${escapeHtml(sign[0])}의 오늘 흐름은 <strong>${sign[2]}</strong> 기운이에요. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 놓고 보면, ${signTone} 그래서 <strong>${safeQuestion}</strong>에는 아이를 더 신나게 몰아붙이는 운보다 <strong>아이의 리듬을 읽고 안전하게 마무리하는 운</strong>이 더 강하게 붙습니다.`,
-      `오늘 ${sign[1]} ${escapeHtml(sign[0])}에게 들어온 별자리 흐름은 "무리하지 않는 즐거움" 쪽이에요. ${moodLine} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중에서는 큰 자극보다 <strong>짧게 놀고 웃으며 돌아오기 쉬운 쪽</strong>, 즉 <strong>${safeRecommended}</strong>의 흐름이 더 자연스럽습니다.`,
-      `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운은 오늘 보호자 감각을 예민하게 켜줍니다. <strong>${safeQuestion}</strong>처럼 아이가 포함된 선택에서는 운세적으로도 재미의 크기보다 <strong>위험을 빨리 알아차리고 조절할 수 있는 선택</strong>이 좋아요. 그래서 별의 흐름은 <strong>${safeRecommended}</strong> 쪽으로 살짝 기웁니다.`
+      `${sign[1]} ${escapeHtml(sign[0])}의 오늘 흐름은 <strong>${lens.childcare}</strong>에 가까워요. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 놓고 보면, 별자리는 재미의 크기보다 아이가 과열되기 전에 멈출 수 있는지를 봅니다. 그래서 <strong>${safeQuestion}</strong>에는 <strong>${safeRecommended}</strong> 쪽 흐름이 더 자연스럽습니다.`,
+      `오늘 ${sign[1]} ${escapeHtml(sign[0])} 운은 <strong>${lens.focus}</strong>을 먼저 봅니다. ${lens.warning} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중에서는 아이가 신나도 보호자가 바로 조절할 수 있는 <strong>${safeRecommended}</strong>이 별자리 흐름과 더 맞아요.`,
+      `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운은 <strong>${safeQuestion}</strong>에서 "${lens.focus}"을 켭니다. <strong>${escapeHtml(main.label)}</strong> 키워드까지 겹치면, 운세적으로도 많이 노는 곳보다 <strong>다치지 않고 기분 좋게 돌아올 수 있는 곳</strong>, 즉 <strong>${safeRecommended}</strong>이 좋아요.`
     ];
     return pick(childFlows, seed + mood);
   }
   if (profile.type === "attendance") {
-    return `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운은 오늘 "해야 할 일을 작게라도 끝내는 운"에 가깝습니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 비교하면, ${signTone} 운세 감성으로 봐도 <strong>${safeRecommended}</strong>처럼 최소 기준을 지키는 쪽이 하루의 흐름을 덜 꼬이게 합니다.`;
+    return `${sign[1]} ${escapeHtml(sign[0])}는 오늘 <strong>${lens.focus}</strong>을 통해 <strong>${safeQuestion}</strong>을 봅니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중에서는 ${lens.warning} 그래서 별자리 흐름도 <strong>${safeRecommended}</strong>처럼 하루의 최소 기준을 지키는 쪽을 더 밀어줍니다.`;
   }
   if (profile.type === "money") {
-    return `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 흐름은 오늘 무리한 확장보다 기준을 지키는 쪽에 힘을 줍니다. <strong>${safeQuestion}</strong>에서는 ${signTone} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 감정이 덜 흔들리는 <strong>${safeRecommended}</strong> 쪽이 운세 흐름과 더 맞습니다.`;
+    return `${sign[1]} ${escapeHtml(sign[0])}의 운은 오늘 <strong>${lens.focus}</strong>을 강조합니다. <strong>${safeQuestion}</strong>처럼 돈이 걸린 선택에서는 ${lens.warning} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 기준이 덜 흔들리는 <strong>${safeRecommended}</strong>이 더 맞아요.`;
   }
   if (profile.type === "career") {
-    return `${sign[1]} ${escapeHtml(sign[0])}의 별자리 흐름은 오늘 큰 결론보다 다음 발판을 보는 쪽입니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 사이에서는 ${signTone} 그래서 별자리 흐름은 당장의 감정보다 내일도 납득할 수 있는 <strong>${safeRecommended}</strong> 쪽을 더 밀어줍니다.`;
+    return `${sign[1]} ${escapeHtml(sign[0])}는 오늘 커리어 문제에서 <strong>${lens.focus}</strong>을 봅니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 사이에서는 ${lens.warning} 그래서 별자리 흐름은 당장의 감정보다 내일도 납득할 수 있는 <strong>${safeRecommended}</strong> 쪽을 더 밀어줍니다.`;
   }
   if (profile.type === "relationship") {
-    return `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운은 말의 온도에 민감하게 반응합니다. <strong>${safeQuestion}</strong>에서는 ${moodLine} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 상대가 받아들이기 쉬운 <strong>${safeRecommended}</strong> 쪽이 오늘의 별 흐름과 더 잘 맞아요.`;
+    return `${sign[1]} ${escapeHtml(sign[0])}의 별자리 흐름은 관계 안에서 <strong>${lens.focus}</strong>을 켭니다. <strong>${safeQuestion}</strong>에서는 ${lens.warning} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 상대가 받아들이기 쉬운 <strong>${safeRecommended}</strong> 쪽이 오늘의 별 흐름과 더 잘 맞아요.`;
   }
   const generalFlows = [
-    `${sign[1]} ${escapeHtml(sign[0])}의 오늘 키워드는 <strong>${sign[2]}</strong>입니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 비교하면, ${signTone} 여기에 <strong>${escapeHtml(main.label)}</strong>의 기운이 섞여 <strong>${safeRecommended}</strong> 쪽으로 흐름이 모입니다.`,
-    `${sign[1]} ${escapeHtml(sign[0])}의 별자리 흐름은 오늘 선택을 크게 벌리기보다 정리하는 쪽입니다. <strong>${safeQuestion}</strong>에서는 ${moodLine} 그래서 마음이 편하게 닫히는 <strong>${safeRecommended}</strong>이 더 오래 갑니다.`,
-    `오늘의 ${sign[1]} ${escapeHtml(sign[0])} 운은 결과보다 리듬을 봅니다. ${signTone} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 지금 감당 가능한 <strong>${safeRecommended}</strong>이 운을 살리는 쪽이에요.`
+    `${sign[1]} ${escapeHtml(sign[0])}의 오늘 운은 <strong>${lens.focus}</strong>으로 <strong>${safeQuestion}</strong>을 읽습니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 비교하면, ${lens.warning} 그래서 <strong>${safeRecommended}</strong> 쪽으로 흐름이 모입니다.`,
+    `${sign[1]} ${escapeHtml(sign[0])}는 오늘 <strong>${escapeHtml(main.label)}</strong> 키워드를 통해 선택을 봅니다. <strong>${safeQuestion}</strong>에서는 ${signTone} 마음이 편하게 닫히는 <strong>${safeRecommended}</strong>이 더 오래 갑니다.`,
+    `오늘의 ${sign[1]} ${escapeHtml(sign[0])} 운은 결과보다 리듬을 봅니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 ${lens.focus}을 살릴 수 있는 선택은 <strong>${safeRecommended}</strong> 쪽이에요.`
   ];
   return pick(generalFlows, seed + main.label.length);
 }

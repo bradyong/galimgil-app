@@ -882,23 +882,23 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const winnerSubject = withParticle(winner.name, "은", "는");
   const loserSubject = withParticle(loser.name, "은", "는");
   const winnerObject = withParticle(winner.name, "을", "를");
-  const winnerVibeSubject = withParticle(winner.vibe, "이", "가");
   const subjectName = winner.subjectName || winner.name;
   const loserSubjectName = loser.subjectName || loser.name;
   const hasQuestionContext = subjectName !== winner.name || loserSubjectName !== loser.name;
   const winnerActionText = scenarioActionText(subjectName, winner.name, category, winner.intent);
-  const foodFortune = category === "food"
-    ? `${sign[1]} ${escapeHtml(sign[0])}의 오늘 운세를 입맛으로 번역하면 <strong>${escapeHtml(winner.vibe)}</strong> 쪽이에요. 그래서 <strong>${escapeHtml(loser.name)}</strong>의 ${escapeHtml(loser.features[0])}도 좋지만, 지금은 <strong>${escapeHtml(winner.name)}</strong>의 ${escapeHtml(winner.features[0])}과 ${escapeHtml(winner.features[1])}이 더 끌리는 날로 보여요.`
-    : null;
-  const defaultFortune = `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 <strong>${winnerVibeSubject}</strong> 조금 더 반짝여요. <strong>${escapeHtml(choiceA)}</strong>와 <strong>${escapeHtml(choiceB)}</strong> 중에서는 <strong>${escapeHtml(winner.name)}</strong> 쪽이 지금 고민에 더 잘 붙습니다.`;
-  const contextualFortune = hasQuestionContext
-    ? winner.intent === "skip"
-      ? `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 <strong>${escapeHtml(subjectName)}</strong>을 꼭 밀어붙이기보다 컨디션을 아끼는 쪽에 힘이 실려요. 그래서 <strong>${escapeHtml(choiceA)}</strong>와 <strong>${escapeHtml(choiceB)}</strong> 중에서는 <strong>${escapeHtml(winner.name)}</strong> 쪽이 오늘 고민에 더 잘 붙습니다.`
-      : `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 <strong>${withParticle(subjectName, "을", "를")}</strong> 머릿속으로만 굴리기보다 몸으로 한 번 확인하는 쪽에 힘이 실려요. 그래서 <strong>${escapeHtml(choiceA)}</strong>와 <strong>${escapeHtml(choiceB)}</strong> 중에서는 <strong>${escapeHtml(winner.name)}</strong> 쪽이 오늘 고민에 더 잘 붙습니다.`
-    : null;
+  const signToneByElement = {
+    "불": "생각을 오래 굴리기보다 한 번 움직여보는 쪽에 힘이 있어요.",
+    "땅": "괜히 새 판을 키우기보다 몸이 편하게 따라갈 수 있는 쪽을 좋아해요.",
+    "바람": "가볍게 시작하고, 중간에 조정할 수 있는 선택을 밀어줘요.",
+    "물": "기분을 세게 몰아붙이기보다 마음이 편안하게 끝나는 쪽을 봐요."
+  };
+  const fortuneBase = signToneByElement[sign[2]] || signToneByElement["땅"];
+  const fortune = winner.intent === "skip"
+    ? `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 속도를 줄이고 컨디션을 먼저 챙기는 쪽이 편해요. ${fortuneBase} 그래서 형이 보기엔 <strong>${escapeHtml(winner.name)}</strong> 쪽에 운이 조금 더 붙습니다.`
+    : `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 머릿속에서만 재기보다 작게라도 움직여보는 쪽이 편해요. ${fortuneBase} 그래서 형이 보기엔 <strong>${escapeHtml(winner.name)}</strong> 쪽에 운이 조금 더 붙습니다.`;
   const defaultWhy = [
     `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 확실한 선택이에요.`,
-    `${escapeHtml(loser.name)}도 ${escapeHtml(loser.features[0])}이라는 장점이 있지만, 오늘 질문에서는 ${escapeHtml(winner.name)}의 ${winnerVibeSubject} 더 잘 맞아 보여요.`,
+    `이 선택은 지금 고민에서 바로 체감되는 변화가 있다는 쪽에 가까워요.`,
     `그래서 형이 보기엔 ${escapeHtml(winner.name)} 쪽이 선택하고 나서 후회가 더 적어 보입니다.`
   ].join(" ");
   const whyByCategory = {
@@ -908,7 +908,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
         : `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}, ${escapeHtml(winner.features[2])}이 같이 올라오는 메뉴예요.`,
       hasQuestionContext
         ? `그래서 <strong>${escapeHtml(winner.name)}</strong>는 단순히 "${escapeHtml(winner.name)}"가 아니라, 오늘 ${escapeHtml(subjectName)}의 맛을 실제로 가져가는 선택으로 보여요.`
-        : `${escapeHtml(loser.name)}의 ${escapeHtml(loser.features[0])}도 좋지만, 오늘 고민은 그냥 배 채우기보다 ${escapeHtml(winner.name)}처럼 먹고 나서 만족감이 또렷한 쪽에 가까워 보여요.`,
+        : `지금 고민이 메뉴 선택이라면, ${escapeHtml(winner.name)} 쪽이 입에 들어갔을 때 바로 차이가 느껴지는 편이에요.`,
       `솔직히 나라면 오늘은 ${winnerObject} 고를 것 같아요.`
     ].join(" "),
     childcare: [
@@ -939,15 +939,18 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     ].join(" ")
   };
   const adviceByCategory = {
-    food: `오늘은 무난함보다 한 입 먹고 "아 좋다" 싶은 쪽을 고르세요.`,
-    childcare: `오늘은 장소보다 아이가 마음껏 웃고 무사히 돌아오는 시간이 더 중요합니다.`,
-    attendance: `오늘은 완벽히 해내는 것보다 최소한 판을 망치지 않는 게 이기는 겁니다.`,
-    money: `오늘은 기회보다 원칙이 먼저입니다.`,
-    relationship: `오늘은 마음을 크게 던지기보다 받을 수 있게 건네세요.`,
-    shopping: `오늘은 갖고 싶은 마음보다 실제로 쓸 장면을 먼저 떠올려보세요.`,
-    place: `오늘은 멋진 장소보다 돌아오는 길이 편한 장소가 이깁니다.`,
-    daily: `오늘은 하고 나서 덜 찝찝한 쪽을 고르세요.`
+    food: `오늘은 먹고 난 뒤 표정이 밝아질 쪽으로 가세요.`,
+    childcare: `오늘은 아이보다 어른이 먼저 지치지 않는 계획이 이깁니다.`,
+    attendance: `오늘은 내일의 나에게 빚을 덜 남기는 쪽이 낫습니다.`,
+    money: `오늘은 벌 생각보다 잃어도 버틸 선을 먼저 보세요.`,
+    relationship: `오늘은 길게 설명하기보다 짧게 건네는 쪽이 낫습니다.`,
+    shopping: `오늘은 사고 싶은 이유보다 계속 쓸 이유를 보세요.`,
+    place: `오늘은 나가는 순간보다 돌아오는 순간까지 계산하세요.`,
+    daily: `오늘은 끝내고 나서 마음이 가벼울 쪽을 고르세요.`
   };
+  const oppositeText = hasQuestionContext
+    ? `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${escapeHtml(loser.features[0])}, ${escapeHtml(loser.features[1])}이 장점이에요. ${escapeHtml(loser.caution)}`
+    : `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${escapeHtml(loser.features[0])}, ${escapeHtml(loser.features[1])}이 장점이에요. ${escapeHtml(loser.caution)}`;
   return {
     category,
     recommendA,
@@ -957,10 +960,8 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     loserScore,
     advice: adviceByCategory[category] || adviceByCategory.daily,
     why: whyByCategory[category] || defaultWhy,
-    opposite: hasQuestionContext
-      ? `${escapeHtml(loser.caution)} 특히 ${escapeHtml(loser.features[0])}이나 ${escapeHtml(loser.features[1])}이 더 중요해 보이면 <strong>${escapeHtml(loser.name)}</strong>도 충분히 괜찮아요.`
-      : `${escapeHtml(loser.caution)} 특히 ${escapeHtml(loser.name)}의 ${escapeHtml(loser.features[0])}이나 ${escapeHtml(loser.features[1])}이 오늘 더 끌린다면 반대 선택도 충분히 괜찮아요.`,
-    fortune: contextualFortune || foodFortune || defaultFortune,
+    opposite: oppositeText,
+    fortune,
     finalText: `<strong>${escapeHtml(winner.name)} ${winnerScore}%</strong><br><strong>${escapeHtml(loser.name)} ${loserScore}%</strong>`
   };
 }

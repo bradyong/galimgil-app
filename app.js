@@ -284,6 +284,13 @@ function withParticle(value, batchimParticle, noBatchimParticle) {
   return `${escapeHtml(value)}${hasBatchim(value) ? batchimParticle : noBatchimParticle}`;
 }
 
+function scenarioActionText(subject, option, category, intent) {
+  if (intent === "skip") return `${escapeHtml(subject)}은 ${escapeHtml(option)}`;
+  if (category === "food") return `${withParticle(subject, "을", "를")} ${escapeHtml(option)}`;
+  if (category === "childcare" || category === "place") return `${escapeHtml(subject)}에 ${escapeHtml(option)}`;
+  return `${escapeHtml(subject)} ${escapeHtml(option)}`;
+}
+
 function loadArchive() {
   try {
     return JSON.parse(localStorage.getItem(archiveKey)) || [];
@@ -763,16 +770,96 @@ function analyzeOption(option, category) {
   return { name: option, category, features: fallback.features, caution: fallback.caution, vibe: fallback.vibe };
 }
 
+function optionIntent(option) {
+  const text = String(option).replace(/\s/g, "").toLowerCase();
+  if (includesAny(text, ["만다", "안간", "안한다", "말자", "보류", "쉬", "쉰", "기다", "관망", "패스"])) return "skip";
+  if (includesAny(text, ["간다", "가기", "간", "한다", "먹", "산다", "살래", "매수", "연락", "고백", "출근"])) return "go";
+  return "specific";
+}
+
+function findScenario(question, category) {
+  const text = String(question).toLowerCase();
+  const found = optionFeatureBank.find((item) => item.keys.some((key) => text.includes(key)));
+  if (!found) return null;
+  const key = found.keys.find((itemKey) => text.includes(itemKey)) || found.keys[0];
+  return {
+    name: key,
+    category: found.category || category,
+    features: found.features,
+    caution: found.caution,
+    vibe: found.vibe
+  };
+}
+
+function skipFeaturesForScenario(option, scenario, category) {
+  const scenarioName = scenario.name;
+  const byCategory = {
+    childcare: {
+      features: [`${scenarioName}의 사람 많은 시간을 피할 수 있는 점`, "아이 컨디션을 집에서 지켜볼 수 있는 점", "큰 아이들과 부딪히거나 자극이 과해질 위험을 줄이는 점", "부모도 체력을 아낄 수 있는 점"],
+      caution: `며칠 동안 집에만 있었거나 아이가 에너지가 넘친다면 ${scenarioName}에 안 가는 선택이 오히려 아쉬울 수 있어요.`,
+      vibe: "회복"
+    },
+    food: {
+      features: [`${scenarioName}의 자극이나 무거움을 피할 수 있는 점`, "속 상태를 편하게 둘 수 있는 점", "지금 배고픔이 애매할 때 부담을 줄이는 점", "다른 메뉴를 고를 여지를 남기는 점"],
+      caution: `배가 확실히 고프거나 ${scenarioName} 맛이 계속 생각난다면 안 먹는 쪽이 더 찝찝할 수 있어요.`,
+      vibe: "속 편함"
+    },
+    place: {
+      features: [`${scenarioName}까지 이동하는 피로를 줄이는 점`, "사람 많은 공간을 피할 수 있는 점", "집에서 시간을 정리할 수 있는 점", "비용과 체력을 아낄 수 있는 점"],
+      caution: `답답함이 오래 쌓였다면 ${scenarioName}에 안 가는 선택이 기분 전환 기회를 놓칠 수 있어요.`,
+      vibe: "쉬어가기"
+    },
+    daily: {
+      features: [`${scenarioName}을 미루며 부담을 줄이는 점`, "오늘 컨디션을 먼저 볼 수 있는 점", "급하게 움직이지 않아도 되는 점", "다른 선택지를 남겨두는 점"],
+      caution: `계속 생각나는 일이라면 ${scenarioName}을 미루는 선택이 더 찝찝할 수 있어요.`,
+      vibe: "보류"
+    }
+  };
+  const picked = byCategory[category] || byCategory.daily;
+  return {
+    name: option,
+    category,
+    subjectName: scenarioName,
+    intent: "skip",
+    features: picked.features,
+    caution: picked.caution,
+    vibe: picked.vibe
+  };
+}
+
+function contextualizeOption(option, category, question) {
+  const scenario = findScenario(question, category);
+  const intent = optionIntent(option);
+  const base = analyzeOption(option, category);
+  if (!scenario || intent === "specific") {
+    return { ...base, subjectName: base.name, intent };
+  }
+  if (intent === "skip") return skipFeaturesForScenario(option, scenario, category);
+  return {
+    name: option,
+    category: scenario.category || category,
+    subjectName: scenario.name,
+    intent: "go",
+    features: scenario.features,
+    caution: scenario.caution,
+    vibe: scenario.vibe
+  };
+}
+
 function scoreOption(analysis, category, question, mood, seed) {
-  const text = `${analysis.name} ${question}`.toLowerCase();
+  const text = `${analysis.name} ${analysis.subjectName || ""} ${question}`.toLowerCase();
   let score = 50 + (hashText(`${analysis.name}-${seed}`) % 9) - 4;
   if (category === "food") {
     if (includesAny(text, ["김치", "라면", "짬뽕", "떡볶이", "치킨"]) && mood >= 5) score += 8;
     if (includesAny(text, ["된장", "국밥", "담백", "속 편"]) && (mood <= 4 || includesAny(question, ["속", "편", "부담"]))) score += 10;
+    if (analysis.intent === "go" && !includesAny(question, ["속", "부담", "다이어트", "아프"])) score += 7;
+    if (analysis.intent === "skip" && includesAny(question, ["속", "부담", "다이어트", "아프"])) score += 9;
   }
   if (category === "childcare") {
     if (includesAny(text, ["놀이터", "공원"]) && !includesAny(question, ["비", "춥", "미세먼지", "폭염", "한파"])) score += 12;
     if (includesAny(text, ["키즈카페", "실내"]) && includesAny(question, ["비", "춥", "미세먼지", "폭염", "한파"])) score += 14;
+    if (analysis.intent === "go" && !includesAny(question, ["아프", "감기", "열", "주말", "사람 많", "피곤"])) score += 10;
+    if (analysis.intent === "skip" && includesAny(question, ["아프", "감기", "열", "주말", "사람 많", "피곤"])) score += 14;
   }
   if (category === "attendance" && includesAny(text, ["출근", "근무"])) score += 12;
   if (category === "money" && includesAny(text, ["관망", "기다"])) score += 10;
@@ -781,8 +868,8 @@ function scoreOption(analysis, category, question, mood, seed) {
 
 function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed) {
   const category = inferCategory(question, choiceA, choiceB, profile);
-  const a = analyzeOption(choiceA, category);
-  const b = analyzeOption(choiceB, category);
+  const a = contextualizeOption(choiceA, category, question);
+  const b = contextualizeOption(choiceB, category, question);
   let aScore = scoreOption(a, category, question, mood, seed);
   let bScore = scoreOption(b, category, question, mood, seed + 11);
   if (profile.forced === "A") aScore = Math.max(aScore, bScore + 12);
@@ -796,10 +883,19 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const loserSubject = withParticle(loser.name, "은", "는");
   const winnerObject = withParticle(winner.name, "을", "를");
   const winnerVibeSubject = withParticle(winner.vibe, "이", "가");
+  const subjectName = winner.subjectName || winner.name;
+  const loserSubjectName = loser.subjectName || loser.name;
+  const hasQuestionContext = subjectName !== winner.name || loserSubjectName !== loser.name;
+  const winnerActionText = scenarioActionText(subjectName, winner.name, category, winner.intent);
   const foodFortune = category === "food"
     ? `${sign[1]} ${escapeHtml(sign[0])}의 오늘 운세를 입맛으로 번역하면 <strong>${escapeHtml(winner.vibe)}</strong> 쪽이에요. 그래서 <strong>${escapeHtml(loser.name)}</strong>의 ${escapeHtml(loser.features[0])}도 좋지만, 지금은 <strong>${escapeHtml(winner.name)}</strong>의 ${escapeHtml(winner.features[0])}과 ${escapeHtml(winner.features[1])}이 더 끌리는 날로 보여요.`
     : null;
   const defaultFortune = `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 <strong>${winnerVibeSubject}</strong> 조금 더 반짝여요. <strong>${escapeHtml(choiceA)}</strong>와 <strong>${escapeHtml(choiceB)}</strong> 중에서는 <strong>${escapeHtml(winner.name)}</strong> 쪽이 지금 고민에 더 잘 붙습니다.`;
+  const contextualFortune = hasQuestionContext
+    ? winner.intent === "skip"
+      ? `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 <strong>${escapeHtml(subjectName)}</strong>을 꼭 밀어붙이기보다 컨디션을 아끼는 쪽에 힘이 실려요. 그래서 <strong>${escapeHtml(choiceA)}</strong>와 <strong>${escapeHtml(choiceB)}</strong> 중에서는 <strong>${escapeHtml(winner.name)}</strong> 쪽이 오늘 고민에 더 잘 붙습니다.`
+      : `${sign[1]} ${escapeHtml(sign[0])} 카드로 보면 오늘은 <strong>${withParticle(subjectName, "을", "를")}</strong> 머릿속으로만 굴리기보다 몸으로 한 번 확인하는 쪽에 힘이 실려요. 그래서 <strong>${escapeHtml(choiceA)}</strong>와 <strong>${escapeHtml(choiceB)}</strong> 중에서는 <strong>${escapeHtml(winner.name)}</strong> 쪽이 오늘 고민에 더 잘 붙습니다.`
+    : null;
   const defaultWhy = [
     `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 확실한 선택이에요.`,
     `${escapeHtml(loser.name)}도 ${escapeHtml(loser.features[0])}이라는 장점이 있지만, 오늘 질문에서는 ${escapeHtml(winner.name)}의 ${winnerVibeSubject} 더 잘 맞아 보여요.`,
@@ -807,14 +903,24 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   ].join(" ");
   const whyByCategory = {
     food: [
-      `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}, ${escapeHtml(winner.features[2])}이 같이 올라오는 메뉴예요.`,
-      `${escapeHtml(loser.name)}의 ${escapeHtml(loser.features[0])}도 좋지만, 오늘 고민은 그냥 배 채우기보다 ${escapeHtml(winner.name)}처럼 먹고 나서 만족감이 또렷한 쪽에 가까워 보여요.`,
+      hasQuestionContext
+        ? `${escapeHtml(question)}라면 핵심은 <strong>${escapeHtml(subjectName)}</strong> 자체예요. ${escapeHtml(subjectName)}에는 ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}, ${escapeHtml(winner.features[2])}이 같이 있어요.`
+        : `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}, ${escapeHtml(winner.features[2])}이 같이 올라오는 메뉴예요.`,
+      hasQuestionContext
+        ? `그래서 <strong>${escapeHtml(winner.name)}</strong>는 단순히 "${escapeHtml(winner.name)}"가 아니라, 오늘 ${escapeHtml(subjectName)}의 맛을 실제로 가져가는 선택으로 보여요.`
+        : `${escapeHtml(loser.name)}의 ${escapeHtml(loser.features[0])}도 좋지만, 오늘 고민은 그냥 배 채우기보다 ${escapeHtml(winner.name)}처럼 먹고 나서 만족감이 또렷한 쪽에 가까워 보여요.`,
       `솔직히 나라면 오늘은 ${winnerObject} 고를 것 같아요.`
     ].join(" "),
     childcare: [
-      `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 있는 선택이에요.`,
-      `${escapeHtml(loser.name)}도 ${escapeHtml(loser.features[0])}은 좋지만, ${escapeHtml(loser.features[2])} 같은 변수를 생각하면 보호자가 계속 신경을 써야 할 수 있어요.`,
-      `형이 보기엔 오늘은 ${escapeHtml(winner.name)} 쪽이 아이도 편하고 어른도 덜 지치는 선택으로 보여요.`
+      hasQuestionContext
+        ? `${escapeHtml(question)}라면 핵심은 <strong>${escapeHtml(subjectName)}</strong>에 가느냐 마느냐예요. ${escapeHtml(subjectName)}에는 ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 있어요.`
+        : `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 있는 선택이에요.`,
+      hasQuestionContext && winner.intent === "go"
+        ? `특히 아이가 며칠 집에만 있었거나 몸을 쓰고 싶어 하는 날이면, ${escapeHtml(subjectName)}처럼 새로운 놀이를 하나 경험하는 쪽이 만족도가 높을 수 있어요.`
+        : hasQuestionContext
+          ? `다만 오늘 아이 컨디션이 애매하거나 사람이 많은 시간이면, ${escapeHtml(subjectName)}을 쉬어가는 선택도 충분히 현실적이에요.`
+          : `${escapeHtml(loser.name)}도 ${escapeHtml(loser.features[0])}은 좋지만, ${escapeHtml(loser.features[2])} 같은 변수를 생각하면 보호자가 계속 신경을 써야 할 수 있어요.`,
+      `형이 보기엔 오늘은 ${hasQuestionContext ? winnerActionText : escapeHtml(winner.name)} 쪽이 아이도 편하고 어른도 덜 지치는 선택으로 보여요.`
     ].join(" "),
     attendance: [
       `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 바로 따라오는 선택이에요.`,
@@ -851,8 +957,10 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     loserScore,
     advice: adviceByCategory[category] || adviceByCategory.daily,
     why: whyByCategory[category] || defaultWhy,
-    opposite: `${escapeHtml(loser.caution)} 특히 ${escapeHtml(loser.name)}의 ${escapeHtml(loser.features[0])}이나 ${escapeHtml(loser.features[1])}이 오늘 더 끌린다면 반대 선택도 충분히 괜찮아요.`,
-    fortune: foodFortune || defaultFortune,
+    opposite: hasQuestionContext
+      ? `${escapeHtml(loser.caution)} 특히 ${escapeHtml(loser.features[0])}이나 ${escapeHtml(loser.features[1])}이 더 중요해 보이면 <strong>${escapeHtml(loser.name)}</strong>도 충분히 괜찮아요.`
+      : `${escapeHtml(loser.caution)} 특히 ${escapeHtml(loser.name)}의 ${escapeHtml(loser.features[0])}이나 ${escapeHtml(loser.features[1])}이 오늘 더 끌린다면 반대 선택도 충분히 괜찮아요.`,
+    fortune: contextualFortune || foodFortune || defaultFortune,
     finalText: `<strong>${escapeHtml(winner.name)} ${winnerScore}%</strong><br><strong>${escapeHtml(loser.name)} ${loserScore}%</strong>`
   };
 }

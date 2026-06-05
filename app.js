@@ -924,6 +924,56 @@ function zodiacBoost(sign, analysis, question) {
   return { boost, traits: profile.traits, matchedTags: matches };
 }
 
+function zodiacCards(sign, seed) {
+  const profile = zodiacProfiles[sign[0]] || zodiacProfiles["황소자리"];
+  const pool = profile.traits;
+  const first = pick(pool, seed + sign[0].length);
+  const second = pick(pool.filter((item) => item !== first), seed + first.length + 17);
+  return [first, second];
+}
+
+function futureComment(category, winner, question, seed) {
+  const name = escapeHtml(winner.name);
+  const subject = escapeHtml(winner.subjectName || winner.name);
+  const comments = {
+    food: [
+      `${name} 선택, 미래의 내가 국물까지 인정했습니다.`,
+      `오늘 선택은 젓가락보다 숟가락이 먼저 박수칩니다.`,
+      `${subject} 쪽으로 간 나, 적어도 메뉴판 앞에서 더 헤매진 않았습니다.`
+    ],
+    drink: [
+      winner.intent === "skip" ? `내일 아침의 내가 방금 엄지척 눌렀습니다.` : `내일 아침의 내가 이미 물 한 컵을 예약했습니다.`,
+      winner.intent === "skip" ? `간이 조용히 연차를 즐기는 중입니다.` : `오늘의 나는 신났고, 내일의 나는 회의 중입니다.`
+    ],
+    childcare: [
+      `아이보다 부모가 먼저 뻗을 가능성 있음. 그래도 사진은 잘 나올 확률 높음.`,
+      `미래의 내가 말합니다. 물티슈 챙긴 사람은 결국 승자다.`,
+      `${subject} 선택, 웃음은 챙기고 체력은 살짝 반납하는 코스입니다.`
+    ],
+    attendance: [
+      `가기 싫었지만 미래의 내가 감사해할 확률이 꽤 높습니다.`,
+      `내일의 내가 오늘의 나에게 커피 한 잔 사주고 싶어합니다.`
+    ],
+    money: [
+      `지갑이 방금 심호흡했습니다.`,
+      `미래의 내가 잔고를 보고 표정 관리를 시도합니다.`
+    ],
+    relationship: [
+      `미래의 내가 말합니다. 말풍선 하나로 하루가 바뀔 수도 있다.`,
+      `오늘의 한마디가 내일의 해석회를 줄여줄지도 모릅니다.`
+    ],
+    place: [
+      `돌아오는 길의 내가 덜 투덜거리면 성공입니다.`,
+      `분위기는 이겼고, 체력은 협상 중입니다.`
+    ],
+    daily: [
+      `미래의 내가 "오, 이 정도면 괜찮은데?" 하고 있습니다.`,
+      `오늘의 선택이 내일의 핑곗거리를 하나 줄였습니다.`
+    ]
+  };
+  return pick(comments[category] || comments.daily, seed + name.length + question.length);
+}
+
 function scoreOption(analysis, category, question, mood, seed, sign) {
   const text = `${analysis.name} ${analysis.subjectName || ""} ${question}`.toLowerCase();
   let score = 50 + (hashText(`${analysis.name}-${seed}`) % 9) - 4;
@@ -973,6 +1023,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const winnerZodiac = zodiacBoost(sign, winner, question);
   const loserZodiac = zodiacBoost(sign, loser, question);
   const zodiacTraitText = winnerZodiac.traits.slice(0, 2).join(", ");
+  const cardLabels = zodiacCards(sign, seed);
   const situationOverruledStars = loserZodiac.boost > winnerZodiac.boost && includesAny(question, ["어제 술", "술 많이", "숙취", "해장", "아프", "피곤", "비", "춥", "미세먼지"]);
   const funnyFortunes = {
     food: [
@@ -1093,6 +1144,9 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     why: whyByCategory[category] || defaultWhy,
     opposite: oppositeText,
     fortune,
+    zodiacCards: cardLabels,
+    futureComment: futureComment(category, winner, question, seed),
+    resultTitle: `${escapeHtml(winner.name)} 승`,
     finalText: `<strong>${escapeHtml(winner.name)} ${winnerScore}%</strong><br><strong>${escapeHtml(loser.name)} ${loserScore}%</strong>`
   };
 }
@@ -1394,53 +1448,50 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     renderArchive();
 
     const shareCopy = [
-      "[갈림길 선택 카드]",
+      "[오늘의 갈림길 놀이 카드]",
       `리포트: ${code}`,
       `고민: ${question}`,
       `A: ${choiceA}`,
       `B: ${choiceB}`,
-      `오늘의 추천: ${recommendA ? "A" : "B"} · ${recommended}`,
-      `최종 판단: ${recommended} ${narrative.winnerScore}% / ${narrative.loser.name} ${narrative.loserScore}%`,
-      `오늘의 조언: ${adviceLine}`,
+      `별자리 카드: ${narrative.zodiacCards.join(" + ")}`,
+      `결과: ${recommended} 승`,
+      `미래의 나: ${narrative.futureComment.replace(/<[^>]+>/g, "")}`,
+      `확률: ${recommended} ${narrative.winnerScore}% / ${narrative.loser.name} ${narrative.loserScore}%`,
       "",
-      "너도 오늘 고민 A/B로 열어봐."
+      "너도 갈림길 한 번 돌려봐 ㅋㅋ"
     ].join("\n");
     const inviteCopy = [
-      "나 방금 갈림길에서 선택 리포트 봤는데 은근 잘 맞아.",
-      `내 고민은 "${question}"였고, 오늘 추천은 "${recommended}" 나왔어.`,
-      `한 줄 조언은 "${adviceLine}"래.`,
-      "너도 오늘 고민 하나 넣어서 봐봐."
+      "나 방금 갈림길 돌렸는데 결과가 좀 웃겨 ㅋㅋ",
+      `내 고민은 "${question}"였고, "${recommended}" 승 나왔어.`,
+      `미래의 나 댓글: "${narrative.futureComment.replace(/<[^>]+>/g, "")}"`,
+      "너도 하나 넣어서 돌려봐."
     ].join("\n");
 
     const resultHtml = `
     <div class="report-hero">
-      <span>${code} · 오늘의 추천</span>
-      <h3>오늘은 ${recommendA ? "A" : "B"}. ${escapeHtml(recommended)}를 추천합니다.</h3>
+      <span>${code} · 오늘의 갈림길 놀이</span>
+      <h3>오늘의 별자리 카드</h3>
       <p>${escapeHtml(choiceA)} vs ${escapeHtml(choiceB)}</p>
     </div>
     <div class="report-section">
-      <h4>왜 이쪽이냐면</h4>
-      <p>${narrative.why}</p>
+      <h4>🌟 오늘 ${escapeHtml(signName)} 카드</h4>
+      <p class="zodiac-card-row">${narrative.zodiacCards.map((card) => `<span>🎲 ${escapeHtml(card)}</span>`).join("")}</p>
     </div>
     <div class="report-section">
-      <h4>반대 선택이 좋은 경우</h4>
-      <p>${narrative.opposite}</p>
-    </div>
-    <div class="report-section">
-      <h4>별자리/운세 한 스푼</h4>
+      <h4>🌟 별의 참견</h4>
       <p>${narrative.fortune}</p>
     </div>
     <div class="report-section final-recommendation">
-      <h4>최종 판단</h4>
+      <h4>🏁 갈림길 결과</h4>
+      <p class="winner-line">${escapeHtml(recommended)} 승</p>
+    </div>
+    <div class="report-section">
+      <h4>💬 미래의 나 댓글</h4>
+      <blockquote class="advice-quote">${narrative.futureComment}</blockquote>
+    </div>
+    <div class="report-section">
+      <h4>🎯 확률</h4>
       <p>${narrative.finalText}</p>
-    </div>
-    <div class="report-section">
-      <h4>한 줄 조언</h4>
-      <blockquote class="advice-quote">${escapeHtml(adviceLine)}</blockquote>
-    </div>
-    <div class="report-section">
-      <h4>오늘의 작은 미션</h4>
-      <p><strong>작은 미션:</strong> ${mission}</p>
     </div>
     <div class="share-actions">
       <button class="secondary-button" id="downloadChoiceButton" type="button">이미지 저장</button>

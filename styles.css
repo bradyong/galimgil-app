@@ -528,6 +528,31 @@ select {
   line-height: 1.45;
 }
 
+.zodiac-card-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.zodiac-card-row span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid rgba(84, 210, 194, 0.28);
+  border-radius: 8px;
+  background: rgba(84, 210, 194, 0.12);
+  color: var(--text);
+  font-weight: 800;
+}
+
+.winner-line {
+  color: var(--text);
+  font-size: clamp(1.7rem, 8vw, 2.7rem);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
 .detail-report {
   color: var(--muted);
 }

@@ -399,6 +399,13 @@ function choiceProfile(question, choiceA, choiceB) {
     profile.forced = includesAny(a, ["관망", "기다", "보류"]) ? "A" : includesAny(b, ["관망", "기다", "보류"]) ? "B" : null;
   } else if (includesAny(text, ["고백", "연락", "사과", "화해"])) {
     profile.type = "relationship";
+  } else if (includesAny(text, ["아이", "아기", "개월", "키즈카페", "놀이터", "어린이집", "육아"])) {
+    profile.type = "childcare";
+    const badOutdoor = includesAny(text, ["비", "눈", "춥", "덥", "미세먼지", "황사", "폭염", "한파"]);
+    if (!badOutdoor && includesAny(a, ["놀이터", "공원", "산책"])) profile.forced = "A";
+    if (!badOutdoor && includesAny(b, ["놀이터", "공원", "산책"])) profile.forced = "B";
+    if (badOutdoor && includesAny(a, ["키즈카페", "실내", "카페"])) profile.forced = "A";
+    if (badOutdoor && includesAny(b, ["키즈카페", "실내", "카페"])) profile.forced = "B";
   }
   return profile;
 }
@@ -482,6 +489,7 @@ function oneLineAdvice(seed, metrics, mood, profile) {
   if (profile.type === "career") return "큰 결정은 감정이 지나간 뒤에도 같은 이유가 남을 때 한다.";
   if (profile.type === "money") return "돈이 걸린 선택은 기회보다 원칙이 먼저다.";
   if (profile.type === "relationship") return "마음은 크게 느껴도, 말은 작고 정확하게 건네라.";
+  if (profile.type === "childcare") return "아이와의 외출은 많이 노는 것보다 무사히 웃고 돌아오는 게 이긴다.";
   const lines = [
     "조급함은 기회를 놓치게 만든다.",
     "결정은 빠르게, 행동은 신중하게.",
@@ -511,7 +519,66 @@ function resultHeadline(profile, recommendA) {
   if (profile.type === "relationship") {
     return `오늘은 ${side} 선택이 마음을 덜 흐리게 합니다.`;
   }
+  if (profile.type === "childcare") {
+    return `오늘은 ${side} 선택이 아이와 보호자 모두에게 더 편합니다.`;
+  }
   return `오늘은 ${side} 선택이 조금 더 유리합니다.`;
+}
+
+function realityReading(profile, question, choiceA, choiceB, recommended, mood) {
+  if (profile.type === "childcare") {
+    const text = `${choiceA} ${choiceB} ${question}`.toLowerCase();
+    if (text.includes("키즈카페") && text.includes("놀이터")) {
+      return `이 고민은 단순히 어디가 더 재밌냐보다 <strong>36개월 아이가 덜 다치고 덜 과열되는 곳</strong>이 어디냐에 가까워요. 키즈카페는 실내라 편하고 장난감이 많지만, 큰 형아들이 뛰어다니면 부딪힐 위험이 있고 소리와 자극이 많아서 아이가 금방 흥분하거나 지칠 수 있어요. 놀이터는 날씨와 보호자 체력 변수가 있지만, 공간이 열려 있어 아이 속도를 맞추기 쉽고 위험한 순간에 바로 빼기 좋습니다. 그래서 오늘은 <strong>${escapeHtml(recommended)}</strong> 쪽이 더 현실적인 선택으로 보여요.`;
+    }
+    return `이 고민의 핵심은 장소 자체보다 <strong>아이 컨디션, 안전, 보호자 체력</strong>이에요. 36개월 전후의 아이는 재미보다 환경 변화에 더 크게 반응할 수 있어서, 오늘은 오래 버티는 장소보다 짧고 안정적으로 다녀올 수 있는 선택이 유리합니다. 그래서 <strong>${escapeHtml(recommended)}</strong> 쪽은 아이가 지쳤을 때 빠르게 정리하기 쉽고, 보호자도 변수를 덜 감당하는 방향이에요.`;
+  }
+  if (profile.type === "attendance") {
+    return `이 선택은 기분보다 <strong>내일의 부담과 책임</strong>이 더 크게 걸려 있어요. 몸이 정말 아픈 상황이 아니라면 오늘 빠지는 선택은 잠깐 편할 수 있지만, 이후 설명과 업무 부담이 다시 돌아올 가능성이 큽니다. 그래서 <strong>${escapeHtml(recommended)}</strong> 쪽이 현실적으로 더 안전합니다.`;
+  }
+  if (profile.type === "career") {
+    return `지금 감정이 세게 올라와도 퇴사와 이직은 생활비, 다음 일정, 회복 시간을 같이 봐야 하는 결정이에요. 오늘은 결론을 확정하기보다 조건을 정리하는 쪽이 후회를 줄입니다. <strong>${escapeHtml(recommended)}</strong> 쪽은 감정의 파도보다 현실의 바닥을 먼저 확인하는 선택입니다.`;
+  }
+  if (profile.type === "money") {
+    return `돈이 걸린 선택에서는 설렘보다 손실 한도와 기준이 먼저예요. 오늘은 기회를 잡는 감각보다 무리하지 않는 선을 지키는 쪽이 더 중요합니다. <strong>${escapeHtml(recommended)}</strong> 쪽이 리스크를 작게 관리하는 방향입니다.`;
+  }
+  if (profile.type === "relationship") {
+    return `관계 문제는 맞고 틀림보다 말투와 타이밍이 결과를 많이 바꿔요. 오늘은 마음을 크게 증명하기보다 부담을 줄여 확인하는 방식이 좋습니다. <strong>${escapeHtml(recommended)}</strong> 쪽은 감정을 숨기지 않으면서도 상황을 덜 무겁게 만드는 선택입니다.`;
+  }
+  return `지금 고민은 <strong>${escapeHtml(question)}</strong>라는 질문 안에서 마음의 끌림과 현실의 부담이 같이 움직이고 있어요. 오늘은 완벽한 답보다 실행 후 후회가 적은 쪽을 고르는 게 중요합니다. 그래서 <strong>${escapeHtml(recommended)}</strong> 쪽이 조금 더 안정적인 선택으로 보입니다.`;
+}
+
+function fortuneReading(sign, mood, wordInsights, seed, profile) {
+  const main = wordInsights[0];
+  const moodLine = mood >= 8
+    ? "마음 온도가 높아서 별의 흐름도 빠르게 반응하는 쪽으로 기울어 있어요."
+    : mood <= 3
+      ? "마음이 비교적 차분해서 작은 신호를 읽기 좋은 날이에요."
+      : "마음이 살짝 흔들리는 만큼, 별의 흐름은 균형을 되찾는 쪽을 가리킵니다.";
+  if (profile.type === "childcare") {
+    return `${sign[1]} ${escapeHtml(sign[0])}의 오늘 키워드는 <strong>${sign[2]}</strong>입니다. 여기에 <strong>${escapeHtml(main.label)}</strong>의 기운이 섞이면, 오늘은 아이를 더 신나게 몰아붙이는 운보다 <strong>아이의 리듬을 읽고 안전하게 마무리하는 운</strong>이 강해요. 별자리 흐름으로 봐도 큰 자극보다 작고 안정적인 만족이 더 오래 남는 날입니다.`;
+  }
+  return `${sign[1]} ${escapeHtml(sign[0])}의 오늘 키워드는 <strong>${sign[2]}</strong>입니다. ${sign[3]}이라서, ${moodLine} 여기에 <strong>${escapeHtml(main.label)}</strong>의 기운이 섞이면 ${elementBridge(main.element, sign[2])} 운세 감성으로 보면 오늘은 큰 모험보다 <strong>편안하게 끝낼 수 있는 선택</strong>이 복을 부르는 흐름이에요.`;
+}
+
+function crossroadsReading(profile, choiceA, choiceB, recommended, wordInsights) {
+  const main = wordInsights[0];
+  if (profile.type === "childcare") {
+    const aKind = choiceA.includes("키즈카페") ? "실내 자극과 편의" : choiceA.includes("놀이터") ? "넓은 공간과 몸놀이" : "오늘의 첫 번째 장면";
+    const bKind = choiceB.includes("키즈카페") ? "실내 자극과 편의" : choiceB.includes("놀이터") ? "넓은 공간과 몸놀이" : "오늘의 두 번째 장면";
+    return `A는 <strong>${aKind}</strong>, B는 <strong>${bKind}</strong>에 가까워요. 이 갈림길은 "아이를 더 신나게 해줄 곳"이 아니라 <strong>신나게 놀고도 무사히 끝낼 수 있는 곳</strong>을 고르는 문제입니다. 오늘 추천인 <strong>${escapeHtml(recommended)}</strong>은 ${main.label}의 뜻처럼 보호하고 싶은 마음과 현실적인 편의를 같이 살리는 쪽이에요.`;
+  }
+  if (profile.type === "attendance") {
+    return `이 갈림길은 "가기 싫다"와 "가야 마음이 편하다" 사이에 있어요. 선택의 기준은 기분이 아니라 오늘 지나고 난 뒤의 부담입니다. <strong>${escapeHtml(recommended)}</strong>은 지금의 피로보다 이후의 찝찝함을 줄이는 방향입니다.`;
+  }
+  return `이 갈림길에서 A는 <strong>${escapeHtml(choiceA)}</strong>, B는 <strong>${escapeHtml(choiceB)}</strong>의 장면을 만듭니다. 오늘은 ${main.label}의 의미처럼 ${main.meaning}이 중요해서, <strong>${escapeHtml(recommended)}</strong> 쪽이 내 마음을 덜 흐리게 만드는 길로 보입니다.`;
+}
+
+function finalRecommendationText(profile, recommended, adviceLine) {
+  if (profile.type === "childcare") {
+    return `<strong>${escapeHtml(recommended)}</strong>을 추천해요. 대신 오래 머무는 계획 말고, 아이가 지치기 전에 나올 수 있는 짧은 코스로 잡는 게 좋아요. 키즈카페를 간다면 큰 아이들이 뛰는 구역은 피하고, 놀이터를 간다면 미끄럼틀과 그네 주변에서만 더 가까이 봐주세요. 오늘의 핵심은 많이 노는 것보다 <strong>기분 좋게 마무리하는 것</strong>입니다.`;
+  }
+  return `<strong>${escapeHtml(recommended)}</strong>을 추천해요. 단, 이 선택을 크게 밀어붙이기보다 오늘 가능한 작은 단위로 실행하는 게 좋습니다. ${escapeHtml(adviceLine)}`;
 }
 
 function bulletList(items) {
@@ -804,6 +871,10 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     const shortReasons = reasonBullets(metrics, mood, wordInsights, recommended, profile);
     const cautions = cautionBullets(metrics, mood, profile);
     const adviceLine = oneLineAdvice(seed, metrics, mood, profile);
+    const realityText = realityReading(profile, question, choiceA, choiceB, recommended, mood);
+    const fortuneText = fortuneReading(sign, mood, wordInsights, seed, profile);
+    const crossroadsText = crossroadsReading(profile, choiceA, choiceB, recommended, wordInsights);
+    const finalText = finalRecommendationText(profile, recommended, adviceLine);
 
     archive.unshift({
       date: new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric" }).format(new Date()),
@@ -847,50 +918,43 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       <p><strong>${escapeHtml(recommended)}</strong></p>
     </div>
     <div class="report-section">
-      <h4>추천 이유</h4>
-      ${bulletList(shortReasons)}
+      <h4>1. 현실적 이유</h4>
+      <p>${realityText}</p>
     </div>
     <div class="report-section">
-      <h4>주의할 점</h4>
-      ${bulletList(cautions)}
+      <h4>2. 별자리/운세 흐름</h4>
+      <p>${fortuneText}</p>
     </div>
     <div class="report-section">
-      <h4>한 줄 조언</h4>
+      <h4>3. 갈림길 해석</h4>
+      <p>${crossroadsText}</p>
+    </div>
+    <div class="report-section final-recommendation">
+      <h4>4. 최종 추천</h4>
+      <p>${finalText}</p>
+    </div>
+    <div class="report-section">
+      <h4>5. 한 줄 조언</h4>
       <blockquote class="advice-quote">${escapeHtml(adviceLine)}</blockquote>
     </div>
-    <div class="share-actions">
-      <button class="secondary-button" id="downloadChoiceButton" type="button">이미지 저장</button>
-      <button class="ghost-button" id="choiceShareButton" type="button">결과 공유</button>
-    </div>
     <div class="report-section detail-report">
-      <h4>자세한 리포트</h4>
-      <p>${opener}</p>
+      <h4>분석 지표</h4>
       ${metricMarkup(metrics)}
       <p>${typeDescription}</p>
-      <p><strong>${sign[1]} ${escapeHtml(signName)}</strong>의 오늘 키워드는 ${sign[2]}입니다. ${sign[3]}이라서, ${pick(tones, seed)}</p>
-      <p>${moodReading(mood)}</p>
     </div>
     <div class="report-section">
       <h4>단어의 숨은 뜻</h4>
       ${choiceWordReading(wordInsights, sign, recommended)}
-    </div>
-    <div class="path-cards">
-      <div class="path-card">
-        <span>A</span>
-        <strong>${escapeHtml(choiceA)}</strong>
-        <p>${aStory}</p>
-      </div>
-      <div class="path-card">
-        <span>B</span>
-        <strong>${escapeHtml(choiceB)}</strong>
-        <p>${bStory}</p>
-      </div>
     </div>
     <div class="report-section">
       <h4>오늘 사용할 문장</h4>
       <p>${script}</p>
       <p><strong>작은 미션:</strong> ${mission}</p>
       <p>${checkin}</p>
+    </div>
+    <div class="share-actions">
+      <button class="secondary-button" id="downloadChoiceButton" type="button">이미지 저장</button>
+      <button class="ghost-button" id="choiceShareButton" type="button">결과 공유</button>
     </div>
     <button class="ghost-button full-width" id="choiceInviteButton" type="button">친구에게 앱 보내기</button>
   `;

@@ -728,6 +728,8 @@ const optionFeatureBank = [
   { keys: ["라면"], category: "food", features: ["뜨거운 국물", "짭짤한 면발", "빠르게 채워지는 허기", "야식 같은 즉각적인 만족감"], caution: "붓기나 속 쓰림이 걱정되면 조심하는 게 좋아요.", vibe: "즉시 만족" },
   { keys: ["돈까스"], category: "food", features: ["바삭한 튀김", "든든한 양", "소스의 달큰함", "실패 확률이 낮은 메뉴"], caution: "느끼한 음식이 부담되면 끝까지 먹기 무거울 수 있어요.", vibe: "든든함" },
   { keys: ["국밥"], category: "food", features: ["뜨끈한 국물", "든든한 포만감", "속을 채워주는 느낌", "혼밥에도 편한 안정감"], caution: "가볍게 먹고 싶은 날엔 무겁게 느껴질 수 있어요.", vibe: "회복감" },
+  { keys: ["순대국", "순댓국"], category: "food", features: ["익숙한 국밥 느낌", "뜨끈한 국물", "혼밥에도 편한 분위기", "부담 없이 든든한 한 그릇"], caution: "강한 해장감이나 푸짐한 한 상을 원하면 조금 얌전하게 느껴질 수 있어요.", vibe: "편안한 든든함" },
+  { keys: ["감자탕"], category: "food", features: ["푸짐한 뼈고기", "묵직한 국물", "사람들과 먹기 좋은 양", "해장 느낌이 강한 에너지"], caution: "가볍게 먹고 싶거나 혼자 조용히 먹고 싶으면 살짝 과할 수 있어요.", vibe: "푸짐한 에너지" },
   { keys: ["치킨"], category: "food", features: ["바삭한 튀김", "짭짤한 양념", "기분 전환 느낌", "나눠 먹기 좋은 재미"], caution: "가볍게 끝내고 싶은 날엔 과해질 수 있어요.", vibe: "기분 전환" },
   { keys: ["피자"], category: "food", features: ["치즈의 고소함", "토핑 고르는 재미", "든든한 한 판", "같이 먹기 좋은 분위기"], caution: "속이 더부룩하거나 혼자 간단히 먹고 싶으면 부담될 수 있어요.", vibe: "풍성함" },
   { keys: ["술", "소주", "맥주", "와인", "막걸리"], category: "drink", features: ["기분이 확 풀리는 느낌", "사람들과 말이 조금 더 쉬워지는 분위기", "내일 아침 컨디션을 담보로 잡는 점", "한 잔이 두 잔으로 변신하기 쉬운 점"], caution: "내일 일정이 있거나 이미 피곤하면 내일의 내가 강하게 항의할 수 있어요.", vibe: "오늘의 유혹" },
@@ -746,8 +748,8 @@ const optionFeatureBank = [
 function inferCategory(question, choiceA, choiceB, profile) {
   const text = `${question} ${choiceA} ${choiceB}`.toLowerCase();
   if (profile.type !== "general") return profile.type;
+  if (includesAny(text, ["찌개", "라면", "밥", "국밥", "순대국", "순댓국", "감자탕", "치킨", "피자", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "메뉴", "먹을"])) return "food";
   if (includesAny(text, ["술", "소주", "맥주", "와인", "막걸리", "마실까", "한잔", "한 잔"])) return "drink";
-  if (includesAny(text, ["찌개", "라면", "밥", "국밥", "치킨", "피자", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "메뉴", "먹을"])) return "food";
   if (includesAny(text, ["카페", "공원", "영화", "마트", "백화점", "여행", "놀러", "어디"])) return "place";
   if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제"])) return "shopping";
   return "daily";
@@ -863,7 +865,66 @@ function contextualizeOption(option, category, question) {
   };
 }
 
-function scoreOption(analysis, category, question, mood, seed) {
+const zodiacProfiles = {
+  "황소자리": { traits: ["익숙함", "편안함", "만족감", "안정감"], likes: ["comfort", "satisfaction", "warmth", "practical"] },
+  "양자리": { traits: ["도전", "에너지", "즉흥성", "활동성"], likes: ["energy", "bold", "action", "newness"] },
+  "쌍둥이자리": { traits: ["호기심", "변화", "다양성", "재미"], likes: ["variety", "fun", "newness", "social"] },
+  "게자리": { traits: ["안정", "가족", "편안함", "따뜻함"], likes: ["comfort", "warmth", "family", "safe"] },
+  "사자자리": { traits: ["자신감", "화려함", "존재감", "리더십"], likes: ["bold", "social", "presence", "satisfaction"] },
+  "처녀자리": { traits: ["실용성", "꼼꼼함", "효율성", "정리"], likes: ["practical", "clean", "safe", "simple"] },
+  "천칭자리": { traits: ["균형", "조화", "분위기", "관계"], likes: ["balance", "social", "mood", "comfort"] },
+  "전갈자리": { traits: ["강렬함", "몰입", "집중력", "깊이"], likes: ["deep", "bold", "rich", "focus"] },
+  "사수자리": { traits: ["자유", "모험", "도전", "여행"], likes: ["adventure", "newness", "energy", "freedom"] },
+  "염소자리": { traits: ["현실성", "책임감", "성과", "계획"], likes: ["practical", "safe", "responsibility", "result"] },
+  "물병자리": { traits: ["독창성", "신선함", "개성", "변화"], likes: ["unique", "newness", "variety", "freedom"] },
+  "물고기자리": { traits: ["감성", "상상력", "공감", "여유"], likes: ["mood", "comfort", "soft", "relax"] }
+};
+
+function optionTags(analysis, question) {
+  const text = `${analysis.name} ${analysis.subjectName || ""} ${analysis.features.join(" ")} ${analysis.vibe}`.toLowerCase();
+  const tags = new Set();
+  const addIf = (tag, words) => {
+    if (includesAny(text, words)) tags.add(tag);
+  };
+  addIf("comfort", ["익숙", "편안", "속", "혼밥", "부담 없이", "안정", "쉬", "회복", "국밥", "순대국", "순댓국"]);
+  addIf("satisfaction", ["만족", "든든", "포만", "푸짐", "한 그릇", "밥이랑", "양"]);
+  addIf("warmth", ["뜨끈", "따뜻", "국물", "해장", "가족"]);
+  addIf("energy", ["에너지", "활동", "뛰", "해장", "묵직", "감자탕", "바삭", "매콤", "기분 전환"]);
+  addIf("bold", ["강한", "강렬", "묵직", "매콤", "푸짐", "고기", "감자탕", "공격"]);
+  addIf("action", ["간다", "먹", "마신", "매수", "출근", "움직", "바로"]);
+  addIf("newness", ["새로운", "신선", "처음", "변화", "놀러", "여행"]);
+  addIf("variety", ["다양", "토핑", "장난감", "시설", "재미"]);
+  addIf("fun", ["재미", "웃음", "놀이", "기분"]);
+  addIf("social", ["사람", "함께", "나눠", "관계", "분위기", "대화"]);
+  addIf("practical", ["실용", "부담", "가격", "비용", "효율", "계획", "내일", "책임"]);
+  addIf("safe", ["안전", "피할", "관망", "쉬", "컨디션", "부담"]);
+  addIf("balance", ["균형", "조화", "덜", "무리"]);
+  addIf("mood", ["분위기", "감성", "여유", "카페"]);
+  addIf("deep", ["깊", "몰입", "집중", "진한"]);
+  addIf("rich", ["진한", "묵직", "푸짐", "고기"]);
+  addIf("family", ["아이", "가족", "보호자", "집"]);
+  addIf("unique", ["독창", "개성", "다른"]);
+  addIf("freedom", ["자유", "넓", "공원", "놀이터", "여행"]);
+  addIf("soft", ["담백", "부드", "여유"]);
+  addIf("relax", ["쉬", "휴식", "편안", "여유"]);
+  return tags;
+}
+
+function zodiacBoost(sign, analysis, question) {
+  const profile = zodiacProfiles[sign[0]] || zodiacProfiles["황소자리"];
+  const text = `${analysis.name} ${analysis.subjectName || ""} ${analysis.features.join(" ")} ${analysis.vibe}`.toLowerCase();
+  const tags = optionTags(analysis, question);
+  const matches = profile.likes.filter((tag) => tags.has(tag));
+  let boost = Math.min(14, matches.length * 4);
+  if (profile.likes.includes("comfort") && includesAny(text, ["순대국", "순댓국", "익숙", "편안", "혼밥"])) boost += 10;
+  if (profile.likes.includes("energy") && includesAny(text, ["감자탕", "푸짐", "에너지", "묵직", "해장"])) boost += 10;
+  if (profile.likes.includes("variety") && includesAny(text, ["다양", "토핑", "장난감", "시설"])) boost += 6;
+  if (profile.likes.includes("practical") && includesAny(text, ["관망", "책임", "효율", "계획", "부담"])) boost += 6;
+  boost = Math.min(22, boost);
+  return { boost, traits: profile.traits, matchedTags: matches };
+}
+
+function scoreOption(analysis, category, question, mood, seed, sign) {
   const text = `${analysis.name} ${analysis.subjectName || ""} ${question}`.toLowerCase();
   let score = 50 + (hashText(`${analysis.name}-${seed}`) % 9) - 4;
   if (category === "food") {
@@ -880,6 +941,11 @@ function scoreOption(analysis, category, question, mood, seed) {
   }
   if (category === "attendance" && includesAny(text, ["출근", "근무"])) score += 12;
   if (category === "money" && includesAny(text, ["관망", "기다"])) score += 10;
+  if (includesAny(question, ["어제 술", "술 많이", "숙취", "해장"])) {
+    if (includesAny(text, ["감자탕", "해장", "묵직", "국물"])) score += 18;
+    if (includesAny(text, ["순대국", "국밥", "뜨끈"])) score += 4;
+  }
+  score += zodiacBoost(sign, analysis, question).boost;
   return Math.max(35, Math.min(75, score));
 }
 
@@ -887,8 +953,8 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const category = inferCategory(question, choiceA, choiceB, profile);
   const a = contextualizeOption(choiceA, category, question);
   const b = contextualizeOption(choiceB, category, question);
-  let aScore = scoreOption(a, category, question, mood, seed);
-  let bScore = scoreOption(b, category, question, mood, seed + 11);
+  let aScore = scoreOption(a, category, question, mood, seed, sign);
+  let bScore = scoreOption(b, category, question, mood, seed + 11, sign);
   if (profile.forced === "A") aScore = Math.max(aScore, bScore + 12);
   if (profile.forced === "B") bScore = Math.max(bScore, aScore + 12);
   const recommendA = aScore >= bScore;
@@ -904,11 +970,21 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const hasQuestionContext = subjectName !== winner.name || loserSubjectName !== loser.name;
   const winnerActionText = scenarioActionText(subjectName, winner.name, category, winner.intent);
   const fortuneSubject = hasQuestionContext ? subjectName : winner.name;
+  const winnerZodiac = zodiacBoost(sign, winner, question);
+  const loserZodiac = zodiacBoost(sign, loser, question);
+  const zodiacTraitText = winnerZodiac.traits.slice(0, 2).join(", ");
+  const situationOverruledStars = loserZodiac.boost > winnerZodiac.boost && includesAny(question, ["어제 술", "술 많이", "숙취", "해장", "아프", "피곤", "비", "춥", "미세먼지"]);
   const funnyFortunes = {
     food: [
-      `${sign[1]} ${escapeHtml(sign[0])}가 오늘은 <strong>${escapeHtml(fortuneSubject)}</strong> 냄새에 먼저 고개를 돌렸네요.`,
-      `별들이 식탁 앞에서 회의했는데, 오늘은 <strong>${escapeHtml(winner.name)}</strong> 쪽 접시에 손을 들었습니다. 진지한 회의는 아니고, 거의 야식 투표였어요.`,
-      `${sign[1]} ${escapeHtml(sign[0])}가 오늘은 냄새 맡고 판단했습니다. 결과는 <strong>${escapeHtml(winner.name)}</strong>, 별도 배고프면 솔직해지네요.`
+      situationOverruledStars
+        ? `${sign[1]} ${escapeHtml(sign[0])}는 원래 <strong>${escapeHtml(loser.name)}</strong> 쪽에 살짝 정이 가는 별자리예요. 그런데 오늘 상황이 끼어들면서 <strong>${escapeHtml(winner.name)}</strong> 카드가 판을 뒤집었습니다.`
+        : `${sign[1]} ${escapeHtml(sign[0])}는 원래 <strong>${escapeHtml(zodiacTraitText)}</strong> 쪽에 점수를 더 주는 편이에요. 그래서 오늘은 <strong>${escapeHtml(winner.name)}</strong> 카드에 별점이 조금 더 붙었습니다.`,
+      situationOverruledStars
+        ? `별자리는 <strong>${escapeHtml(loser.name)}</strong>에게 눈길을 줬지만, 현실 상황이 손을 번쩍 들었어요. 오늘은 <strong>${escapeHtml(winner.name)}</strong> 쪽이 별의 참견을 이긴 케이스입니다.`
+        : `${sign[1]} ${escapeHtml(sign[0])}가 식탁 앞에서 성향표를 꺼냈습니다. <strong>${escapeHtml(winner.name)}</strong> 쪽이 ${escapeHtml(sign[0])} 취향에 더 가까워서 별들이 그 접시에 손을 들었어요.`,
+      situationOverruledStars
+        ? `${escapeHtml(sign[0])} 취향만 보면 <strong>${escapeHtml(loser.name)}</strong>도 만만치 않았습니다. 하지만 오늘의 몸 상태가 <strong>${escapeHtml(winner.name)}</strong> 쪽으로 의자를 끌고 갔어요.`
+        : `오늘 별은 그냥 냄새만 맡은 게 아니라, ${escapeHtml(sign[0])}의 <strong>${escapeHtml(zodiacTraitText)}</strong> 취향까지 계산했습니다. 그래서 <strong>${escapeHtml(winner.name)}</strong> 쪽이 살짝 앞섰어요.`
     ],
     drink: [
       `오늘 술은 형을 부르고 있는데, 내일 아침의 형은 아직 허락 도장을 안 찍었습니다. 별들은 <strong>${escapeHtml(winner.name)}</strong> 쪽에 컵받침을 깔았어요.`,

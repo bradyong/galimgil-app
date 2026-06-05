@@ -526,26 +526,32 @@ function resultHeadline(profile, recommendA) {
 }
 
 function realityReading(profile, question, choiceA, choiceB, recommended, mood) {
+  const safeRecommended = escapeHtml(recommended);
   if (profile.type === "childcare") {
     const text = `${choiceA} ${choiceB} ${question}`.toLowerCase();
     if (text.includes("키즈카페") && text.includes("놀이터")) {
-      return `이 고민은 단순히 어디가 더 재밌냐보다 <strong>36개월 아이가 덜 다치고 덜 과열되는 곳</strong>이 어디냐에 가까워요. 키즈카페는 실내라 편하고 장난감이 많지만, 큰 형아들이 뛰어다니면 부딪힐 위험이 있고 소리와 자극이 많아서 아이가 금방 흥분하거나 지칠 수 있어요. 놀이터는 날씨와 보호자 체력 변수가 있지만, 공간이 열려 있어 아이 속도를 맞추기 쉽고 위험한 순간에 바로 빼기 좋습니다. 그래서 오늘은 <strong>${escapeHtml(recommended)}</strong> 쪽이 더 현실적인 선택으로 보여요.`;
+      const childReads = [
+        `형이 현실적으로 보면, 이건 "어디가 더 재밌냐"보다 <strong>36개월 아이가 안 다치고 기분 좋게 끝낼 수 있냐</strong>가 핵심이에요. 키즈카페는 실내라 편하고 장난감도 많지만, 큰 형아들이 뛰어다니면 작은 아이는 부딪히기 쉽고 소리 자극도 커요. 놀이터는 날씨랑 보호자 체력 변수가 있지만, 공간이 열려 있어서 아이 속도에 맞춰 빼기 좋습니다. 그래서 오늘은 <strong>${safeRecommended}</strong> 쪽이 더 현실적으로 보여요.`,
+        `이 질문은 은근 육아 난이도 높은 갈림길이에요. 키즈카페는 부모 입장에선 편한데, 36개월 아이한테는 형아들 동선, 미끄럼틀 주변 충돌, 시끄러운 소리까지 한 번에 들어올 수 있어요. 반대로 놀이터는 계속 봐줘야 하지만 아이가 답답해지기 전에 방향을 바꾸기 쉽죠. 오늘은 <strong>${safeRecommended}</strong>으로 가는 게 아이 컨디션을 덜 흔들 가능성이 커요.`,
+        `솔직히 키즈카페는 "편한데 변수 많은 실내", 놀이터는 "귀찮은데 통제하기 쉬운 야외"에 가까워요. 36개월이면 아직 큰 아이들 속도에 맞추기 어렵고, 부딪히면 바로 울거나 컨디션이 꺾일 수 있거든요. 그래서 오늘 선택 기준은 재미 최대치가 아니라 사고 없이 웃고 돌아오기예요. 그 기준이면 <strong>${safeRecommended}</strong> 쪽이 더 낫습니다.`
+      ];
+      return pick(childReads, hashText(`${question}-${choiceA}-${choiceB}-${recommended}`));
     }
-    return `이 고민의 핵심은 장소 자체보다 <strong>아이 컨디션, 안전, 보호자 체력</strong>이에요. 36개월 전후의 아이는 재미보다 환경 변화에 더 크게 반응할 수 있어서, 오늘은 오래 버티는 장소보다 짧고 안정적으로 다녀올 수 있는 선택이 유리합니다. 그래서 <strong>${escapeHtml(recommended)}</strong> 쪽은 아이가 지쳤을 때 빠르게 정리하기 쉽고, 보호자도 변수를 덜 감당하는 방향이에요.`;
+    return `형이 보기엔 이건 장소 이름보다 <strong>아이 컨디션, 안전, 보호자 체력</strong> 싸움이에요. 36개월 전후 아이는 "재밌다"가 순식간에 "힘들다"로 바뀔 수 있어서 오래 버티는 코스보다 빨리 정리 가능한 코스가 이깁니다. 그래서 오늘은 <strong>${safeRecommended}</strong> 쪽이 아이도 보호자도 덜 지치는 선택이에요.`;
   }
   if (profile.type === "attendance") {
-    return `이 선택은 기분보다 <strong>내일의 부담과 책임</strong>이 더 크게 걸려 있어요. 몸이 정말 아픈 상황이 아니라면 오늘 빠지는 선택은 잠깐 편할 수 있지만, 이후 설명과 업무 부담이 다시 돌아올 가능성이 큽니다. 그래서 <strong>${escapeHtml(recommended)}</strong> 쪽이 현실적으로 더 안전합니다.`;
+    return `솔직히 출근 고민은 운세보다 현실이 먼저 때립니다. 지금은 "가기 싫다"보다 <strong>안 갔을 때 내일 따라오는 부담</strong>이 더 커요. 진짜 아픈 게 아니라면 오늘 빠지는 순간은 편한데, 설명하고 메우는 일은 내일 다시 옵니다. 그래서 <strong>${safeRecommended}</strong> 쪽이 현실적으로 덜 피곤한 선택이에요.`;
   }
   if (profile.type === "career") {
-    return `지금 감정이 세게 올라와도 퇴사와 이직은 생활비, 다음 일정, 회복 시간을 같이 봐야 하는 결정이에요. 오늘은 결론을 확정하기보다 조건을 정리하는 쪽이 후회를 줄입니다. <strong>${escapeHtml(recommended)}</strong> 쪽은 감정의 파도보다 현실의 바닥을 먼저 확인하는 선택입니다.`;
+    return `퇴사나 이직은 마음만 보면 당장 시원한데, 통장과 다음 일정이 바로 따라붙는 선택이에요. 형이 보기엔 오늘은 "나 진짜 못 버티겠다"보다 <strong>그만둔 뒤 버틸 판이 있냐</strong>를 먼저 봐야 해요. 그래서 <strong>${safeRecommended}</strong> 쪽이 감정은 덜 시원해도 후폭풍을 줄이는 선택입니다.`;
   }
   if (profile.type === "money") {
-    return `돈이 걸린 선택에서는 설렘보다 손실 한도와 기준이 먼저예요. 오늘은 기회를 잡는 감각보다 무리하지 않는 선을 지키는 쪽이 더 중요합니다. <strong>${escapeHtml(recommended)}</strong> 쪽이 리스크를 작게 관리하는 방향입니다.`;
+    return `돈 들어가는 선택은 재밌는 냄새가 날수록 더 조심해야 해요. "지금 아니면 늦나?"라는 마음이 들 때가 제일 위험하거든요. 오늘은 수익 상상보다 <strong>틀렸을 때 얼마나 다치냐</strong>를 먼저 보는 게 맞고, 그 기준이면 <strong>${safeRecommended}</strong> 쪽이 리스크를 덜 키웁니다.`;
   }
   if (profile.type === "relationship") {
-    return `관계 문제는 맞고 틀림보다 말투와 타이밍이 결과를 많이 바꿔요. 오늘은 마음을 크게 증명하기보다 부담을 줄여 확인하는 방식이 좋습니다. <strong>${escapeHtml(recommended)}</strong> 쪽은 감정을 숨기지 않으면서도 상황을 덜 무겁게 만드는 선택입니다.`;
+    return `관계 고민은 정답보다 말투가 판을 바꿔요. 마음이 크다고 크게 던지면 상대는 답보다 부담을 먼저 받을 수 있거든요. 오늘은 감정을 숨기는 게 아니라 <strong>받을 수 있는 크기로 건네는 것</strong>이 중요하고, 그쪽에 가까운 선택이 <strong>${safeRecommended}</strong>이에요.`;
   }
-  return `지금 고민은 <strong>${escapeHtml(question)}</strong>라는 질문 안에서 마음의 끌림과 현실의 부담이 같이 움직이고 있어요. 오늘은 완벽한 답보다 실행 후 후회가 적은 쪽을 고르는 게 중요합니다. 그래서 <strong>${escapeHtml(recommended)}</strong> 쪽이 조금 더 안정적인 선택으로 보입니다.`;
+  return `형이 보기엔 <strong>${escapeHtml(question)}</strong> 이 고민은 마음은 한쪽으로 끌리는데, 현실이 "잠깐만" 하고 붙잡는 모양이에요. 오늘은 멋진 선택보다 하고 나서 덜 찝찝한 선택이 이깁니다. 그래서 <strong>${safeRecommended}</strong> 쪽이 조금 더 안정적으로 보여요.`;
 }
 
 function fortuneReading(sign, mood, wordInsights, seed, profile, question, choiceA, choiceB, recommended) {
@@ -647,28 +653,28 @@ function fortuneReading(sign, mood, wordInsights, seed, profile, question, choic
   const signTone = pick(elementTone[sign[2]] || elementTone["땅"], seed + sign[0].length);
   if (profile.type === "childcare") {
     const childFlows = [
-      `${sign[1]} ${escapeHtml(sign[0])}의 오늘 흐름은 <strong>${lens.childcare}</strong>에 가까워요. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 놓고 보면, 별자리는 재미의 크기보다 아이가 과열되기 전에 멈출 수 있는지를 봅니다. 그래서 <strong>${safeQuestion}</strong>에는 <strong>${safeRecommended}</strong> 쪽 흐름이 더 자연스럽습니다.`,
-      `오늘 ${sign[1]} ${escapeHtml(sign[0])} 운은 <strong>${lens.focus}</strong>을 먼저 봅니다. ${lens.warning} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중에서는 아이가 신나도 보호자가 바로 조절할 수 있는 <strong>${safeRecommended}</strong>이 별자리 흐름과 더 맞아요.`,
-      `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운은 <strong>${safeQuestion}</strong>에서 "${lens.focus}"을 켭니다. <strong>${escapeHtml(main.label)}</strong> 키워드까지 겹치면, 운세적으로도 많이 노는 곳보다 <strong>다치지 않고 기분 좋게 돌아올 수 있는 곳</strong>, 즉 <strong>${safeRecommended}</strong>이 좋아요.`
+      `오늘 별자리 카드 펼쳐보면 ${sign[1]} ${escapeHtml(sign[0])} 쪽에 <strong>${lens.childcare}</strong> 카드가 떠요. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 "와 신난다!"보다 "아이고 무사히 잘 놀았다"로 끝나는 쪽이 운을 받아요. 그래서 별 흐름은 <strong>${safeRecommended}</strong> 쪽으로 손을 들어줍니다.`,
+      `${sign[1]} ${escapeHtml(sign[0])} 운세로 보면 오늘은 아이 텐션을 100까지 올리는 날이 아니라, 70쯤에서 예쁘게 끊는 날이에요. ${lens.warning} <strong>${safeQuestion}</strong>에서는 보호자가 바로 조절할 수 있는 <strong>${safeRecommended}</strong>이 더 복 있는 선택처럼 보여요.`,
+      `${sign[1]} ${escapeHtml(sign[0])}의 ${sign[2]} 기운이 오늘은 "신나게, 근데 무사히"라고 말해요. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 아이가 흥분해도 빨리 수습 가능한 쪽, 그러니까 <strong>${safeRecommended}</strong>에 별빛이 조금 더 붙습니다.`
     ];
     return pick(childFlows, seed + mood);
   }
   if (profile.type === "attendance") {
-    return `${sign[1]} ${escapeHtml(sign[0])}는 오늘 <strong>${lens.focus}</strong>을 통해 <strong>${safeQuestion}</strong>을 봅니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중에서는 ${lens.warning} 그래서 별자리 흐름도 <strong>${safeRecommended}</strong>처럼 하루의 최소 기준을 지키는 쪽을 더 밀어줍니다.`;
+    return `오늘 ${sign[1]} ${escapeHtml(sign[0])} 운세는 살짝 잔소리 모드예요. "완벽하게 해"가 아니라 <strong>최소한 판은 망치지 말자</strong> 쪽입니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 사이에서 별 흐름은 <strong>${safeRecommended}</strong>처럼 하루를 덜 꼬이게 만드는 선택을 밀어줘요.`;
   }
   if (profile.type === "money") {
-    return `${sign[1]} ${escapeHtml(sign[0])}의 운은 오늘 <strong>${lens.focus}</strong>을 강조합니다. <strong>${safeQuestion}</strong>처럼 돈이 걸린 선택에서는 ${lens.warning} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 기준이 덜 흔들리는 <strong>${safeRecommended}</strong>이 더 맞아요.`;
+    return `${sign[1]} ${escapeHtml(sign[0])} 별 흐름은 오늘 지갑에 브레이크등을 켜요. <strong>${safeQuestion}</strong>에서는 "대박?"보다 "틀리면 얼마나 아파?"가 먼저입니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 기준이 덜 흔들리는 <strong>${safeRecommended}</strong> 쪽이 운세적으로도 더 편합니다.`;
   }
   if (profile.type === "career") {
-    return `${sign[1]} ${escapeHtml(sign[0])}는 오늘 커리어 문제에서 <strong>${lens.focus}</strong>을 봅니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 사이에서는 ${lens.warning} 그래서 별자리 흐름은 당장의 감정보다 내일도 납득할 수 있는 <strong>${safeRecommended}</strong> 쪽을 더 밀어줍니다.`;
+    return `${sign[1]} ${escapeHtml(sign[0])} 운세는 오늘 커리어에서 "한 방에 뒤집자"보다 "다음 발판부터 확인하자" 쪽이에요. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 사이에서는 당장 속 시원한 것보다 내일도 고개 끄덕일 수 있는 <strong>${safeRecommended}</strong>에 별빛이 더 붙습니다.`;
   }
   if (profile.type === "relationship") {
-    return `${sign[1]} ${escapeHtml(sign[0])}의 별자리 흐름은 관계 안에서 <strong>${lens.focus}</strong>을 켭니다. <strong>${safeQuestion}</strong>에서는 ${lens.warning} 그래서 <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 상대가 받아들이기 쉬운 <strong>${safeRecommended}</strong> 쪽이 오늘의 별 흐름과 더 잘 맞아요.`;
+    return `${sign[1]} ${escapeHtml(sign[0])}의 오늘 연애/관계 운은 말풍선 크기 조절이 핵심이에요. 마음은 크게 떠도, 상대가 받을 수 있게 보내야 해요. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 오늘 별 흐름은 <strong>${safeRecommended}</strong>처럼 덜 부담스럽고 더 선명한 쪽에 가까워요.`;
   }
   const generalFlows = [
-    `${sign[1]} ${escapeHtml(sign[0])}의 오늘 운은 <strong>${lens.focus}</strong>으로 <strong>${safeQuestion}</strong>을 읽습니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong>를 비교하면, ${lens.warning} 그래서 <strong>${safeRecommended}</strong> 쪽으로 흐름이 모입니다.`,
-    `${sign[1]} ${escapeHtml(sign[0])}는 오늘 <strong>${escapeHtml(main.label)}</strong> 키워드를 통해 선택을 봅니다. <strong>${safeQuestion}</strong>에서는 ${signTone} 마음이 편하게 닫히는 <strong>${safeRecommended}</strong>이 더 오래 갑니다.`,
-    `오늘의 ${sign[1]} ${escapeHtml(sign[0])} 운은 결과보다 리듬을 봅니다. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 ${lens.focus}을 살릴 수 있는 선택은 <strong>${safeRecommended}</strong> 쪽이에요.`
+    `${sign[1]} ${escapeHtml(sign[0])} 운세를 오늘 버전으로 번역하면 "멋진 선택보다 뒤끝 없는 선택"이에요. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 ${lens.focus}을 살릴 수 있는 쪽은 <strong>${safeRecommended}</strong>입니다.`,
+    `오늘 별자리 흐름은 <strong>${safeQuestion}</strong>을 크게 만들지 말라고 해요. ${signTone} 그래서 마음이 편하게 닫히는 <strong>${safeRecommended}</strong>이 더 오래 갑니다.`,
+    `${sign[1]} ${escapeHtml(sign[0])} 카드가 말하길, 오늘은 결과보다 리듬이에요. <strong>${safeA}</strong>와 <strong>${safeB}</strong> 중 지금 감당 가능한 <strong>${safeRecommended}</strong>이 운을 살리는 쪽입니다.`
   ];
   return pick(generalFlows, seed + main.label.length);
 }

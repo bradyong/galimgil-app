@@ -725,6 +725,8 @@ function finalRecommendationText(profile, recommended, adviceLine) {
 const optionFeatureBank = [
   { keys: ["김치찌개"], category: "food", features: ["김치의 새콤함", "매콤한 국물", "돼지고기나 참치가 들어갔을 때 올라오는 묵직한 맛", "밥이랑 잘 맞는 만족감"], caution: "속이 예민하거나 자극적인 국물이 부담되면 피하는 게 좋아요.", vibe: "확실한 맛" },
   { keys: ["된장찌개"], category: "food", features: ["구수한 된장 향", "담백한 국물", "속이 편한 느낌", "익숙하고 편안한 한 끼"], caution: "강한 맛으로 스트레스를 풀고 싶은 날엔 조금 심심하게 느껴질 수 있어요.", vibe: "편한 맛" },
+  { keys: ["짬뽕"], category: "food", features: ["얼큰한 국물", "해장되는 느낌", "땀나는 매운맛", "스트레스가 풀리는 자극"], caution: "속이 예민하거나 매운맛이 부담되는 날엔 먹고 나서 후회할 수 있어요.", vibe: "얼큰한 폭발력" },
+  { keys: ["짜장면", "자장면"], category: "food", features: ["달달한 춘장 소스", "실패 확률이 낮은 중국집 기본값", "어릴 때 먹던 추억", "면 한 그릇으로 편하게 끝나는 느낌"], caution: "얼큰한 국물이나 해장감을 원하면 조금 답답하게 느껴질 수 있어요.", vibe: "편한 기본값" },
   { keys: ["라면"], category: "food", features: ["뜨거운 국물", "짭짤한 면발", "빠르게 채워지는 허기", "야식 같은 즉각적인 만족감"], caution: "붓기나 속 쓰림이 걱정되면 조심하는 게 좋아요.", vibe: "즉시 만족" },
   { keys: ["돈까스"], category: "food", features: ["바삭한 튀김", "든든한 양", "소스의 달큰함", "실패 확률이 낮은 메뉴"], caution: "느끼한 음식이 부담되면 끝까지 먹기 무거울 수 있어요.", vibe: "든든함" },
   { keys: ["국밥"], category: "food", features: ["뜨끈한 국물", "든든한 포만감", "속을 채워주는 느낌", "혼밥에도 편한 안정감"], caution: "가볍게 먹고 싶은 날엔 무겁게 느껴질 수 있어요.", vibe: "회복감" },
@@ -742,6 +744,8 @@ const optionFeatureBank = [
   { keys: ["점심"], category: "daily", features: ["지금 바로 배고픔을 해결하는 점", "오후를 덜 예민하게 보내는 점", "오래 끌지 않아도 되는 점", "하루 리듬을 빨리 잡는 점"], caution: "저녁 약속이나 더 맛있는 계획이 있으면 조금 아쉬울 수 있어요.", vibe: "지금 챙김" },
   { keys: ["저녁"], category: "daily", features: ["하루 끝에 천천히 먹는 재미", "기대감을 남겨두는 점", "일정에 따라 밀릴 수 있는 점", "배고픔을 오래 데리고 다녀야 하는 점"], caution: "지금 배고프면 저녁까지 성격이 살짝 날카로워질 수 있어요.", vibe: "나중의 재미" },
   { keys: ["매수", "투자"], category: "money", features: ["기회를 잡는 느낌", "수익 기대감", "가격 변동 리스크", "틀렸을 때 손실 가능성"], caution: "손실 한도 없이 들어가면 감정이 흔들릴 수 있어요.", vibe: "공격적 선택" },
+  { keys: ["매도", "판다", "팔기", "팔래"], category: "money", features: ["결론을 내리는 느낌", "수익이나 손실을 확정하는 버튼", "다시 차트를 볼 수밖에 없는 찝찝함", "현금화해서 마음을 정리하는 장점"], caution: "팔고 나서 오르면 차트를 더 자주 보게 될 수 있어요.", vibe: "결론 버튼" },
+  { keys: ["안판다", "안 판다", "보유", "홀딩", "가지고"], category: "money", features: ["괜히 팔았다가 후회할 가능성을 줄이는 점", "포지션을 유지하는 선택", "현금화 유혹을 참는 인내", "떨어질 때 마음이 흔들릴 수 있는 점"], caution: "그냥 버티는 게 아니라 다시 볼 가격이나 시간을 정해두는 게 좋아요.", vibe: "잠깐 버티기" },
   { keys: ["관망", "기다"], category: "money", features: ["손실을 피할 시간", "가격을 더 볼 여유", "기회를 놓칠 수 있는 아쉬움", "감정 매매를 줄이는 장점"], caution: "기다림에도 기준 가격이 있어야 해요.", vibe: "리스크 관리" },
   { keys: ["고백", "연락", "사과"], category: "relationship", features: ["마음을 직접 전함", "오해를 줄일 수 있음", "상대 반응을 확인할 수 있음", "말투가 세면 부담을 줄 수 있음"], caution: "긴 문장보다 짧고 정확한 말이 좋아요.", vibe: "직접 확인" },
   { keys: ["보류", "안 한다", "안한다"], category: "general", features: ["당장 부딪히지 않음", "생각할 시간이 생김", "너무 길어지면 답답함이 남음", "결정 피로가 줄어듦"], caution: "언제 다시 볼지 정하지 않으면 흐지부지될 수 있어요.", vibe: "보류" }
@@ -757,9 +761,23 @@ function inferCategory(question, choiceA, choiceB, profile) {
   return "daily";
 }
 
+function findFeatureEntry(text) {
+  const normalized = String(text).toLowerCase();
+  let best = null;
+  optionFeatureBank.forEach((item) => {
+    item.keys.forEach((key) => {
+      if (normalized.includes(key.toLowerCase()) && (!best || key.length > best.key.length)) {
+        best = { item, key };
+      }
+    });
+  });
+  return best;
+}
+
 function analyzeOption(option, category) {
   const text = option.toLowerCase();
-  const found = optionFeatureBank.find((item) => item.keys.some((key) => text.includes(key)));
+  const match = findFeatureEntry(text);
+  const found = match && match.item;
   if (found) {
     return {
       name: option,
@@ -783,16 +801,17 @@ function analyzeOption(option, category) {
 
 function optionIntent(option) {
   const text = String(option).replace(/\s/g, "").toLowerCase();
-  if (includesAny(text, ["만다", "안간", "안한다", "안마신", "안마셔", "마시지마", "말자", "보류", "쉬", "쉰", "기다", "관망", "패스"])) return "skip";
-  if (includesAny(text, ["간다", "가기", "간", "한다", "먹", "마신", "마셔", "산다", "살래", "매수", "연락", "고백", "출근"])) return "go";
+  if (includesAny(text, ["만다", "안간", "안한다", "안판다", "안마신", "안마셔", "마시지마", "말자", "보류", "쉬", "쉰", "기다", "관망", "패스", "보유", "홀딩"])) return "skip";
+  if (includesAny(text, ["간다", "가기", "간", "한다", "먹", "마신", "마셔", "산다", "살래", "매수", "매도", "판다", "연락", "고백", "출근"])) return "go";
   return "specific";
 }
 
 function findScenario(question, category) {
   const text = String(question).toLowerCase();
-  const found = optionFeatureBank.find((item) => item.keys.some((key) => text.includes(key)));
+  const match = findFeatureEntry(text);
+  const found = match && match.item;
   if (!found) return null;
-  const key = found.keys.find((itemKey) => text.includes(itemKey)) || found.keys[0];
+  const key = match.key || found.keys[0];
   return {
     name: key,
     category: found.category || category,
@@ -852,6 +871,9 @@ function contextualizeOption(option, category, question) {
   const scenario = findScenario(question, category);
   const intent = optionIntent(option);
   const base = analyzeOption(option, category);
+  if (category === "money" && base.category === "money") {
+    return { ...base, subjectName: base.name, intent };
+  }
   if (!scenario || intent === "specific") {
     return { ...base, subjectName: base.name, intent };
   }
@@ -882,6 +904,69 @@ const zodiacProfiles = {
   "물고기자리": { traits: ["감성", "상상력", "공감", "여유"], likes: ["mood", "comfort", "soft", "relax"] }
 };
 
+const zodiacVoices = {
+  "황소자리": {
+    money: (winner) => `황소자리는 오늘 큰 한 방보다 내 지갑이 잠을 잘 수 있는지를 먼저 봅니다. 그래서 ${escapeHtml(winner.name)} 쪽처럼 마음이 덜 출렁이는 선택에 점수가 붙었어요.`,
+    food: (winner, loser) => `황소자리는 오늘 새 모험보다 실패 적은 한 입을 좋아합니다. ${escapeHtml(loser.name)}도 끌리지만, ${escapeHtml(winner.name)} 쪽이 "그래 이 맛이지"가 더 빨리 나올 것 같아요.`,
+    daily: (winner) => `황소자리는 오늘 늘 가던 길의 편안함을 무시하지 못합니다. 그래서 ${escapeHtml(winner.name)} 쪽이 끝나고 몸과 마음이 덜 투덜거릴 선택으로 보입니다.`
+  },
+  "양자리": {
+    money: (winner) => `양자리는 오늘 생각보다 몸이 먼저 움직이는 날입니다. 오래 재다가 기회를 놓치는 그림보다 ${escapeHtml(winner.name)} 쪽처럼 결론을 내는 장면에 힘이 붙었어요.`,
+    food: (winner) => `양자리는 메뉴판 앞에서 오래 상담받는 타입이 아닙니다. 오늘은 ${escapeHtml(winner.name)}처럼 한 번에 기분을 확 올리는 쪽이 더 양자리답습니다.`,
+    daily: (winner) => `양자리는 오늘 의자에 앉아 있어도 이미 마음은 버튼 근처까지 가 있습니다. 그래서 ${escapeHtml(winner.name)} 쪽이 생각보다 행동에 가까워요.`
+  },
+  "쌍둥이자리": {
+    money: (winner) => `쌍둥이자리는 오늘 한 가지 생각에 묶이기보다 선택지를 열어두고 싶어 합니다. 그래서 ${escapeHtml(winner.name)} 쪽이 다음 대화를 만들 여지를 더 남겨요.`,
+    food: (winner) => `쌍둥이자리는 오늘 입맛도 수다스럽습니다. ${escapeHtml(winner.name)} 쪽이 더 재밌고, 먹으면서 할 말도 하나 더 생길 것 같아요.`,
+    daily: (winner) => `쌍둥이자리는 오늘 답보다 리듬을 봅니다. ${escapeHtml(winner.name)} 쪽이 하루를 덜 답답하게 굴릴 수 있어요.`
+  },
+  "게자리": {
+    money: (winner) => `게자리는 오늘 공격보다 내 마음의 안전지대를 먼저 확인합니다. 그래서 ${escapeHtml(winner.name)} 쪽이 불안한 밤을 조금 덜 만들 것 같아요.`,
+    food: (winner) => `게자리는 오늘 화려한 맛보다 속이 편하게 닫히는 식사를 좋아합니다. ${escapeHtml(winner.name)} 쪽이 집밥처럼 마음을 덜 흔들어요.`,
+    daily: (winner) => `게자리는 오늘 내 사람, 내 컨디션, 내 안심을 먼저 봅니다. ${escapeHtml(winner.name)} 쪽이 마음이 덜 날카로워지는 선택이에요.`
+  },
+  "사자자리": {
+    money: (winner) => `사자자리는 오늘 애매하게 끌려가기보다 "내가 정했다"는 느낌을 원합니다. 그래서 ${escapeHtml(winner.name)} 쪽이 더 당당한 결론처럼 보여요.`,
+    food: (winner) => `사자자리는 오늘 존재감 있는 선택에 끌립니다. ${escapeHtml(winner.name)} 쪽이 먹고 나서 "나 오늘 이거 골랐다" 싶은 맛이 있어요.`,
+    daily: (winner) => `사자자리는 오늘 작게 숨기보다 선명하게 고르는 쪽입니다. ${escapeHtml(winner.name)} 쪽이 내 선택이라는 맛이 더 납니다.`
+  },
+  "처녀자리": {
+    money: (winner) => `처녀자리는 오늘 감보다 체크리스트를 먼저 꺼냅니다. 손실, 타이밍, 뒤처리를 따져보면 ${escapeHtml(winner.name)} 쪽이 더 깔끔하게 정리돼요.`,
+    food: (winner) => `처녀자리는 오늘 맛보다 실패 확률과 뒷맛까지 봅니다. ${escapeHtml(winner.name)} 쪽이 먹고 난 뒤에도 덜 거슬릴 선택이에요.`,
+    daily: (winner) => `처녀자리는 오늘 찝찝한 빈칸을 싫어합니다. ${escapeHtml(winner.name)} 쪽이 하루 정리가 더 잘 되는 답으로 보입니다.`
+  },
+  "천칭자리": {
+    money: (winner) => `천칭자리는 오늘 수익 욕심과 마음의 균형을 같이 봅니다. 너무 한쪽으로 쏠리지 않는 ${escapeHtml(winner.name)} 쪽이 더 예쁘게 균형을 잡아요.`,
+    food: (winner) => `천칭자리는 오늘 맛만큼 분위기도 봅니다. ${escapeHtml(winner.name)} 쪽이 입맛과 기분 사이의 균형이 더 좋아요.`,
+    daily: (winner) => `천칭자리는 오늘 무리한 결론보다 보기 좋은 균형을 고릅니다. ${escapeHtml(winner.name)} 쪽이 하루 모양이 덜 삐뚤어져요.`
+  },
+  "전갈자리": {
+    money: (winner) => `전갈자리는 차트를 5분 보다가 "그래서 결론이 뭔데?"라고 묻는 날입니다. 어중간하게 흔들리기보다 ${escapeHtml(winner.name)} 쪽처럼 깊게 보고 딱 자르는 선택에 힘이 붙었어요.`,
+    food: (winner) => `전갈자리는 오늘 슴슴한 맛보다 확실히 꽂히는 맛을 원합니다. ${escapeHtml(winner.name)} 쪽이 한 입에 결론이 나는 느낌이에요.`,
+    daily: (winner) => `전갈자리는 오늘 겉핥기보다 핵심을 찌릅니다. 오래 애매하게 두기보다 ${escapeHtml(winner.name)} 쪽으로 선을 긋는 게 더 전갈자리답습니다.`
+  },
+  "사수자리": {
+    money: (winner) => `사수자리는 오늘 묶여 있는 느낌을 싫어합니다. 그래서 ${escapeHtml(winner.name)} 쪽이 돈보다 내 선택의 자유를 더 살려주는 방향으로 보여요.`,
+    food: (winner) => `사수자리는 오늘 먹던 것만 먹기엔 살짝 심심합니다. ${escapeHtml(winner.name)} 쪽이 작은 모험처럼 느껴져요.`,
+    daily: (winner) => `사수자리는 오늘 시야를 넓히는 쪽에 반응합니다. ${escapeHtml(winner.name)} 쪽이 하루를 조금 덜 갇히게 만들어요.`
+  },
+  "염소자리": {
+    money: (winner) => `염소자리는 오늘 "벌 수 있나?"보다 "계획이 무너지나?"를 먼저 봅니다. 그래서 ${escapeHtml(winner.name)} 쪽이 현실적으로 더 납득됩니다.`,
+    food: (winner) => `염소자리는 오늘 메뉴도 효율을 봅니다. ${escapeHtml(winner.name)} 쪽이 시간, 비용, 만족을 놓고 봤을 때 덜 흔들리는 선택이에요.`,
+    daily: (winner) => `염소자리는 오늘 감정보다 다음 단계가 보이는 선택을 좋아합니다. ${escapeHtml(winner.name)} 쪽이 뒤처리가 더 현실적이에요.`
+  },
+  "물병자리": {
+    money: (winner) => `물병자리는 오늘 남들이 다 보는 방향에서 살짝 비켜서 봅니다. 그래서 ${escapeHtml(winner.name)} 쪽이 뻔한 반응보다 내 방식에 가까워요.`,
+    food: (winner) => `물병자리는 오늘 기본값을 그대로 누르기엔 손가락이 근질거립니다. ${escapeHtml(winner.name)} 쪽이 조금 더 신선하게 느껴져요.`,
+    daily: (winner) => `물병자리는 오늘 "왜 꼭 그래야 해?"라고 묻는 날입니다. ${escapeHtml(winner.name)} 쪽이 내 방식대로 판을 바꾸는 선택이에요.`
+  },
+  "물고기자리": {
+    money: (winner) => `물고기자리는 오늘 차트보다 표정을 먼저 봅니다. 수익보다 "내가 이걸 하고 편할까?"가 더 크게 보여서 ${escapeHtml(winner.name)} 쪽이 마음에 덜 물결칩니다.`,
+    food: (winner) => `물고기자리는 오늘 맛보다 기분의 온도를 봅니다. ${escapeHtml(winner.name)} 쪽이 먹고 난 뒤 마음까지 덜 뾰족해질 것 같아요.`,
+    daily: (winner) => `물고기자리는 오늘 논리보다 마음의 파동을 먼저 듣습니다. ${escapeHtml(winner.name)} 쪽이 끝나고 나서 더 부드럽게 남을 선택이에요.`
+  }
+};
+
 function optionTags(analysis, question) {
   const text = `${analysis.name} ${analysis.subjectName || ""} ${analysis.features.join(" ")} ${analysis.vibe}`.toLowerCase();
   const tags = new Set();
@@ -891,15 +976,15 @@ function optionTags(analysis, question) {
   addIf("comfort", ["익숙", "편안", "속", "혼밥", "부담 없이", "안정", "쉬", "회복", "국밥", "순대국", "순댓국"]);
   addIf("satisfaction", ["만족", "든든", "포만", "푸짐", "한 그릇", "밥이랑", "양"]);
   addIf("warmth", ["뜨끈", "따뜻", "국물", "해장", "가족"]);
-  addIf("energy", ["에너지", "활동", "뛰", "해장", "묵직", "감자탕", "바삭", "매콤", "기분 전환"]);
-  addIf("bold", ["강한", "강렬", "묵직", "매콤", "푸짐", "고기", "감자탕", "공격"]);
-  addIf("action", ["간다", "먹", "마신", "매수", "출근", "움직", "바로"]);
+  addIf("energy", ["에너지", "활동", "뛰", "해장", "묵직", "감자탕", "바삭", "매콤", "얼큰", "짬뽕", "기분 전환"]);
+  addIf("bold", ["강한", "강렬", "묵직", "매콤", "푸짐", "고기", "감자탕", "공격", "매도", "판다", "결론"]);
+  addIf("action", ["간다", "먹", "마신", "매수", "매도", "판다", "출근", "움직", "바로"]);
   addIf("newness", ["새로운", "신선", "처음", "변화", "놀러", "여행"]);
   addIf("variety", ["다양", "토핑", "장난감", "시설", "재미"]);
   addIf("fun", ["재미", "웃음", "놀이", "기분"]);
   addIf("social", ["사람", "함께", "나눠", "관계", "분위기", "대화"]);
   addIf("practical", ["실용", "부담", "가격", "비용", "효율", "계획", "내일", "책임"]);
-  addIf("safe", ["안전", "피할", "관망", "쉬", "컨디션", "부담"]);
+  addIf("safe", ["안전", "피할", "관망", "안판다", "보유", "홀딩", "쉬", "컨디션", "부담"]);
   addIf("balance", ["균형", "조화", "덜", "무리"]);
   addIf("mood", ["분위기", "감성", "여유", "카페"]);
   addIf("deep", ["깊", "몰입", "집중", "진한"]);
@@ -920,8 +1005,14 @@ function zodiacBoost(sign, analysis, question) {
   let boost = Math.min(14, matches.length * 4);
   if (profile.likes.includes("comfort") && includesAny(text, ["순대국", "순댓국", "익숙", "편안", "혼밥"])) boost += 10;
   if (profile.likes.includes("energy") && includesAny(text, ["감자탕", "푸짐", "에너지", "묵직", "해장"])) boost += 10;
+  if (profile.likes.includes("energy") && includesAny(text, ["짬뽕", "얼큰", "매운", "땀나는"])) boost += 8;
+  if (profile.likes.includes("comfort") && includesAny(text, ["짜장", "실패 확률", "기본값", "달달"])) boost += 8;
   if (profile.likes.includes("variety") && includesAny(text, ["다양", "토핑", "장난감", "시설"])) boost += 6;
   if (profile.likes.includes("practical") && includesAny(text, ["관망", "책임", "효율", "계획", "부담"])) boost += 6;
+  if (profile.likes.includes("action") && includesAny(text, ["매도", "판다", "결론", "확정"])) boost += 12;
+  if (profile.likes.includes("bold") && includesAny(text, ["매도", "판다", "결론", "확정"])) boost += 10;
+  if (profile.likes.includes("safe") && includesAny(text, ["안판다", "보유", "홀딩", "관망", "기다"])) boost += 10;
+  if (profile.likes.includes("comfort") && includesAny(text, ["안판다", "보유", "홀딩", "관망"])) boost += 8;
   boost = Math.min(22, boost);
   return { boost, traits: profile.traits, matchedTags: matches };
 }
@@ -943,44 +1034,114 @@ function cardHas(cards, words) {
   return includesAny(text, words);
 }
 
-function cardMeaningIntro(cards, category, winner, loser, hasQuestionContext, subjectName) {
+function zodiacVoiceLine(sign, category, winner, loser) {
+  const voice = zodiacVoices[sign[0]] || zodiacVoices["황소자리"];
+  const key = voice[category] ? category : "daily";
+  return voice[key](winner, loser);
+}
+
+function optionFeatureSentence(analysis) {
+  const features = analysis.features.filter(Boolean).slice(0, 2).map(escapeHtml);
+  if (features.length >= 2) return `${escapeHtml(analysis.name)}에는 ${features[0]}, ${features[1]}이 확실히 있어요.`;
+  if (features.length === 1) return `${escapeHtml(analysis.name)}에는 ${features[0]}이 눈에 띕니다.`;
+  return `${escapeHtml(analysis.name)}만의 장점이 오늘 선택에 들어왔어요.`;
+}
+
+function zodiacAside(sign, category, winner) {
+  const name = sign[0];
+  const winnerName = escapeHtml(winner.name);
+  const lines = {
+    "황소자리": [
+      `황소자리는 오늘 새 모험보다 늘 가던 길을 좋아합니다. ${winnerName} 쪽에서 발걸음이 덜 삐걱대네요.`,
+      `황소자리가 오늘은 편한 의자에 앉아서 ${winnerName} 쪽을 오래 봤습니다. 마음이 편하면 별도 오래 머뭅니다.`
+    ],
+    "양자리": [
+      `양자리는 오늘 생각보다 몸이 먼저 움직입니다. 고민판 보기도 전에 ${winnerName} 쪽으로 한 발 나갔어요.`,
+      `양자리는 오늘 엘리베이터보다 계단을 고를 수도 있는 텐션입니다. ${winnerName} 쪽에 행동 버튼이 더 크게 떠요.`
+    ],
+    "쌍둥이자리": [
+      `쌍둥이자리는 오늘 선택을 하나의 답보다 이야기거리로 봅니다. ${winnerName} 쪽이 말할 거리를 더 남겨요.`,
+      `쌍둥이자리가 머릿속 단톡방을 열었는데, ${winnerName} 쪽 의견이 더 시끄럽습니다.`
+    ],
+    "게자리": [
+      `게자리는 오늘 내 마음이 다치지 않는 쪽을 먼저 봅니다. ${winnerName} 쪽이 마음 이불을 덜 걷어차요.`,
+      `게자리는 오늘 바깥 소리보다 안쪽 안심을 더 크게 듣습니다. ${winnerName} 쪽이 덜 차갑게 남아요.`
+    ],
+    "사자자리": [
+      `사자자리는 오늘 애매한 표정보다 선명한 선택을 좋아합니다. ${winnerName} 쪽이 더 당당하게 서 있어요.`,
+      `사자자리가 고민판 위에 조명을 켰습니다. 오늘 스포트라이트는 ${winnerName} 쪽으로 기웁니다.`
+    ],
+    "처녀자리": [
+      `처녀자리는 오늘 마음보다 체크리스트를 먼저 봅니다. ${winnerName} 쪽이 뒤처리까지 더 깔끔해 보여요.`,
+      `처녀자리가 빨간펜을 들었는데 ${winnerName} 쪽에 수정 표시가 적습니다. 이건 꽤 큰 장점이에요.`
+    ],
+    "천칭자리": [
+      `천칭자리는 오늘 예쁜 균형을 찾습니다. ${winnerName} 쪽이 욕심과 부담 사이에서 덜 기울어요.`,
+      `천칭자리가 저울을 올렸는데 ${winnerName} 쪽이 덜 흔들립니다. 오늘은 그게 예쁩니다.`
+    ],
+    "전갈자리": [
+      `전갈자리가 차트를 5분 보다가 "그래서 결론이 뭔데?"라고 했습니다. ${winnerName} 쪽이 더 깊게 꽂혀요.`,
+      `전갈자리는 오늘 애매한 여운을 싫어합니다. ${winnerName} 쪽이 마음속 선을 더 진하게 그어요.`
+    ],
+    "사수자리": [
+      `사수자리는 오늘 묶이는 선택보다 숨통 트이는 쪽을 봅니다. ${winnerName} 쪽이 조금 더 넓어 보여요.`,
+      `사수자리가 지도 없이도 벌써 밖을 봅니다. ${winnerName} 쪽이 오늘의 작은 모험입니다.`
+    ],
+    "염소자리": [
+      `염소자리는 오늘 감정보다 계산기를 먼저 켭니다. ${winnerName} 쪽이 계획표에 덜 무리하게 들어갑니다.`,
+      `염소자리가 "그래서 내일도 괜찮아?"를 물었습니다. ${winnerName} 쪽이 그 질문에 더 잘 버팁니다.`
+    ],
+    "물병자리": [
+      `물병자리는 오늘 남들이 고르는 답을 그대로 따라가고 싶지 않습니다. ${winnerName} 쪽이 조금 더 내 방식 같아요.`,
+      `물병자리가 고민판을 옆으로 돌려봤습니다. 그러자 ${winnerName} 쪽이 갑자기 더 재밌어졌어요.`
+    ],
+    "물고기자리": [
+      `물고기자리가 오늘 차트보다 표정을 먼저 봤네요. ${winnerName} 쪽이 마음에 물결을 덜 만듭니다.`,
+      `물고기자리는 오늘 숫자보다 잠들기 전 기분을 봅니다. ${winnerName} 쪽이 밤에 덜 출렁일 것 같아요.`
+    ]
+  };
+  return pick(lines[name] || lines["황소자리"], winner.name.length + category.length);
+}
+
+function cardMeaningIntro(sign, cards, category, winner, loser, hasQuestionContext, subjectName) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
   const subject = escapeHtml(subjectName || winner.name);
   const winnerSubject = withParticle(winner.name, "은", "는");
   const winnerFeatures = featurePairText(winner.features[0], winner.features[1]);
+  const voiceLine = zodiacVoiceLine(sign, category, winner, loser);
 
   if (category === "food") {
     if (cardHas(cards, ["편안함", "안정감", "익숙함", "따뜻함", "여유"])) {
-      return `오늘은 새로운 메뉴 모험보다 익숙하고 부담 적은 쪽이 더 편하게 느껴지는 날이에요. ${winnerSubject} ${winnerFeatures} 있는 선택이라, ${loserName}보다 실패 확률이 낮아 보입니다.`;
+      return `${voiceLine} ${winnerSubject} ${winnerFeatures} 있는 선택이라, ${loserName}보다 실패 확률이 낮아 보입니다.`;
     }
     if (cardHas(cards, ["도전", "에너지", "활동성", "즉흥성", "강렬함"])) {
-      return `오늘은 얌전하게 지나가는 맛보다 한 입 먹었을 때 기분이 확 올라오는 쪽에 별이 반응했어요. ${winnerSubject} ${winnerFeatures} 올라오는 편이라, ${loserName}보다 오늘 표정이 더 빨리 살아날 것 같습니다.`;
+      return `${voiceLine} ${winnerSubject} ${winnerFeatures} 올라오는 편이라, ${loserName}보다 오늘 표정이 더 빨리 살아날 것 같습니다.`;
     }
     if (cardHas(cards, ["관계", "분위기", "화려함", "존재감"])) {
-      return `오늘은 그냥 배만 채우는 것보다 먹는 순간 분위기가 생기는 쪽이 더 끌리는 날이에요. ${winnerSubject} ${winnerFeatures} 있는 메뉴라, ${loserName}보다 이야기거리 만들기 좋습니다.`;
+      return `${voiceLine} ${winnerSubject} ${winnerFeatures} 있는 메뉴라, ${loserName}보다 이야기거리 만들기 좋습니다.`;
     }
-    return `오늘은 메뉴판 앞에서 오래 버티기보다 바로 끌리는 쪽을 잡는 날이에요. ${winnerSubject} ${winnerFeatures} 있는 선택이라 ${loserName}보다 마음이 덜 흔들립니다.`;
+    return `${voiceLine} ${winnerSubject} ${winnerFeatures} 있는 선택이라 ${loserName}보다 마음이 덜 흔들립니다.`;
   }
 
   if (category === "money") {
     if (cardHas(cards, ["책임감", "현실성", "계획", "성과", "실용성", "안정감"])) {
-      return `오늘은 "혹시 오를까?"보다 "내 돈이 흔들려도 괜찮을까?"가 먼저 떠오르는 날이에요. 그래서 성급하게 움직이는 쪽보다 ${winnerName} 쪽이 덜 찜찜하게 느껴집니다.`;
+      return voiceLine;
     }
     if (cardHas(cards, ["도전", "즉흥성", "변화", "독창성"])) {
-      return `오늘은 너무 재기만 하면 기회가 지나갈 수 있다는 느낌도 있어요. 그래도 ${winnerName} 쪽이 무작정 돌진이 아니라, 지금 상황에서 한 번 찔러볼 만한 쪽으로 보입니다.`;
+      return voiceLine;
     }
-    return `오늘은 지갑이 놀라지 않는 선에서 결정하고 싶은 날이에요. ${winnerName} 쪽이 숫자 앞에서 표정 관리가 조금 더 됩니다.`;
+    return voiceLine || `오늘은 지갑이 놀라지 않는 선에서 결정하고 싶은 날이에요. ${winnerName} 쪽이 숫자 앞에서 표정 관리가 조금 더 됩니다.`;
   }
 
   if (category === "childcare") {
     if (cardHas(cards, ["편안함", "안정감", "가족", "따뜻함", "여유"])) {
-      return `오늘은 아이가 신나게 노는 것도 좋지만, 돌아오는 길 컨디션까지 같이 챙기고 싶은 날이에요. ${subject} 고민이라면 ${winnerName} 쪽이 부모 체력까지 덜 잡아먹어 보입니다.`;
+      return `${voiceLine} ${subject} 고민이라면 ${winnerName} 쪽이 부모 체력까지 덜 잡아먹어 보입니다.`;
     }
     if (cardHas(cards, ["도전", "에너지", "활동성", "모험", "재미"])) {
-      return `오늘은 집에서 에너지를 눌러두기보다 밖으로 조금 풀어주는 쪽에 별이 웃고 있어요. ${subject} 고민이라면 ${winnerName} 쪽이 아이 표정을 더 빨리 밝힐 수 있습니다.`;
+      return `${voiceLine} ${subject} 고민이라면 ${winnerName} 쪽이 아이 표정을 더 빨리 밝힐 수 있습니다.`;
     }
-    return `오늘은 아이도 보호자도 덜 꼬이는 쪽이 이기는 날이에요. ${winnerName} 쪽이 준비물과 체력 계산까지 넣었을 때 조금 더 무난합니다.`;
+    return `${voiceLine} ${winnerName} 쪽이 준비물과 체력 계산까지 넣었을 때 조금 더 무난합니다.`;
   }
 
   if (category === "drink") {
@@ -1012,68 +1173,86 @@ function cardMeaningIntro(cards, category, winner, loser, hasQuestionContext, su
   }
 
   if (cardHas(cards, ["책임감", "현실성", "계획", "실용성"])) {
-    return `오늘은 하고 싶은 마음보다 뒤처리까지 먼저 떠오르는 날이에요. 그래서 ${winnerName} 쪽이 끝나고 나서 덜 찜찜해 보입니다.`;
+    return voiceLine || `오늘은 하고 싶은 마음보다 뒤처리까지 먼저 떠오르는 날이에요. 그래서 ${winnerName} 쪽이 끝나고 나서 덜 찜찜해 보입니다.`;
   }
   if (cardHas(cards, ["도전", "변화", "즉흥성", "호기심", "재미"])) {
-    return `오늘은 너무 안전하게만 가면 하루가 심심하게 지나갈 수 있어요. ${winnerName} 쪽이 작게라도 기분 전환을 만들어줄 가능성이 큽니다.`;
+    return voiceLine || `오늘은 너무 안전하게만 가면 하루가 심심하게 지나갈 수 있어요. ${winnerName} 쪽이 작게라도 기분 전환을 만들어줄 가능성이 큽니다.`;
   }
-  return `오늘은 마음이 오래 끌리는 쪽보다 끝나고 덜 후회할 쪽을 고르는 날이에요. ${winnerName} 쪽이 그 느낌에 더 가깝습니다.`;
+  return voiceLine || `오늘은 마음이 오래 끌리는 쪽보다 끝나고 덜 후회할 쪽을 고르는 날이에요. ${winnerName} 쪽이 그 느낌에 더 가깝습니다.`;
 }
 
 function starInterferenceLines(category, sign, cards, winner, loser, hasQuestionContext, subjectName, situationOverruledStars) {
   const signLabel = `${sign[1]} ${escapeHtml(sign[0])}`;
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
+  const winnerSaid = escapeHtml(withParticle(winner.name, "이라고", "라고"));
   const subject = escapeHtml(subjectName || winner.name);
   const cardText = escapeHtml(narrativeCardPreview(cards));
+  const aside = zodiacAside(sign, category, winner);
 
   if (category === "food") {
     return [
       situationOverruledStars
         ? `${signLabel}가 ${loserName} 냄새에 잠깐 흔들렸는데, 오늘 몸 상태가 ${winnerName} 쪽 의자를 빼줬습니다. 별도 결국 배 속 평화를 무시하진 못하네요.`
-        : `${signLabel}가 메뉴판 앞에서 오래 버티지 못했습니다. 오늘 별은 대모험보다 한 숟갈 먹고 "아 좋다"가 빨리 나오는 쪽을 좋아하네요.`,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. 이름은 위에 적혀 있지만, 실제로는 ${winnerName}처럼 지금 표정이 빨리 좋아지는 쪽에 힘이 실렸어요.`
+        : aside,
+      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
     ];
   }
   if (category === "money") {
     return [
-      `${signLabel}가 차트보다 지갑 표정을 먼저 봤습니다. 빨간 숫자 상상하다가 잔고 표정 보고 ${winnerName} 쪽으로 고개를 끄덕였어요.`,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. 별이 숫자는 못 맞혀도, 지금 덜 찜찜한 쪽은 ${winnerName}이라고 속삭이네요.`
+      aside,
+      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
     ];
   }
   if (category === "childcare") {
     return [
-      `${signLabel}가 아이 웃음소리와 보호자 체력을 같이 저울에 올렸습니다. 별도 알더라고요, 육아 외출은 즐거움 반 체력 계산 반입니다.`,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. 별이 말하길, 오늘은 ${subject}에서 ${winnerName} 쪽이 덜 삐걱댈 것 같답니다.`
+      aside,
+      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
     ];
   }
   if (category === "drink") {
     return [
-      `${signLabel}가 술잔을 들었다가 내일 알람 시간을 보고 다시 내려놨습니다. 별은 신났는데 간이 단호하게 반대표를 던졌네요.`,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. 별은 신났지만 간은 회의실에 들어갔습니다.`
+      aside,
+      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
     ];
   }
   if (category === "attendance") {
     return [
-      `${signLabel}가 이불의 변론을 끝까지 들었지만, 내일의 내가 방청석에서 고개를 저었습니다. 오늘 별은 귀찮음보다 뒤끝 계산에 더 예민하네요.`,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. 귀찮음은 강하지만 뒤끝 계산이 더 크게 들어왔어요.`
+      aside,
+      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
     ];
   }
   if (category === "relationship") {
     return [
-      `${signLabel}가 말풍선 하나를 들고 한참 고민했습니다. 별이 오늘은 혼자 상상으로 시즌2 찍지 말자고 합니다.`,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. 별이 오늘은 혼자 상상편집본 만들지 말자고 하네요.`
+      aside,
+      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
     ];
   }
   return [
-    `${signLabel}가 고민판을 보다가 ${winnerName} 칸에 별가루를 조금 더 뿌렸습니다. 정답은 몰라도 오늘 덜 찝찝한 냄새는 맡았나 봅니다.`,
-    `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. 이름보다 중요한 건, 오늘 이 선택이 끝나고 덜 찝찝해 보인다는 겁니다.`
+    aside,
+    `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
   ];
 }
 
 function futureComment(category, winner, question, seed) {
   const name = escapeHtml(winner.name);
   const subject = escapeHtml(winner.subjectName || winner.name);
+  const raw = `${winner.name} ${winner.subjectName || ""} ${question}`.replace(/\s/g, "").toLowerCase();
+  const winnerRaw = `${winner.name} ${winner.subjectName || ""}`.replace(/\s/g, "").toLowerCase();
+  if (category === "money" && includesAny(winnerRaw, ["안판다", "보유", "홀딩", "관망", "기다"])) {
+    return pick([
+      `괜히 팔았다가 후회하는 미래는 일단 피했습니다.`,
+      `오늘은 현금만 포지션이 아닙니다. 버티는 것도 포지션입니다.`,
+      `적어도 잠은 조금 더 편하게 잘 것 같습니다. 차트만 안 보면요.`
+    ], seed + raw.length);
+  }
+  if (category === "money" && includesAny(winnerRaw, ["매도", "판다", "팔기", "팔래"])) {
+    return pick([
+      `결국 버튼은 눌렀네요. 이제 결과는 시장이 정합니다.`,
+      `5분 뒤 다시 차트 보는 중입니다. 사람 마음 참 빠르죠.`,
+      `팔고 나니 손은 가벼운데 눈은 차트에 붙어 있습니다.`
+    ], seed + raw.length);
+  }
   const comments = {
     food: [
       `${name} 선택, 미래의 내가 국물까지 인정했습니다.`,
@@ -1171,7 +1350,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     starInterferenceLines(category, sign, cardLabels, winner, loser, hasQuestionContext, subjectName, situationOverruledStars),
     seed + sign[0].length + winner.name.length
   );
-  const cardDrivenReason = cardMeaningIntro(cardLabels, category, winner, loser, hasQuestionContext, subjectName);
+  const cardDrivenReason = cardMeaningIntro(sign, cardLabels, category, winner, loser, hasQuestionContext, subjectName);
   const defaultWhy = [
     cardDrivenReason,
     `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 눈에 띄는 선택이라 오늘 분위기랑 잘 붙어요.`,

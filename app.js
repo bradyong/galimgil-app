@@ -890,18 +890,18 @@ function contextualizeOption(option, category, question) {
 }
 
 const zodiacProfiles = {
-  "황소자리": { traits: ["익숙함", "편안함", "만족감", "안정감"], likes: ["comfort", "satisfaction", "warmth", "practical"] },
-  "양자리": { traits: ["도전", "에너지", "즉흥성", "활동성"], likes: ["energy", "bold", "action", "newness"] },
-  "쌍둥이자리": { traits: ["호기심", "변화", "다양성", "재미"], likes: ["variety", "fun", "newness", "social"] },
-  "게자리": { traits: ["안정", "가족", "편안함", "따뜻함"], likes: ["comfort", "warmth", "family", "safe"] },
-  "사자자리": { traits: ["자신감", "화려함", "존재감", "리더십"], likes: ["bold", "social", "presence", "satisfaction"] },
-  "처녀자리": { traits: ["실용성", "꼼꼼함", "효율성", "정리"], likes: ["practical", "clean", "safe", "simple"] },
-  "천칭자리": { traits: ["균형", "조화", "분위기", "관계"], likes: ["balance", "social", "mood", "comfort"] },
-  "전갈자리": { traits: ["강렬함", "몰입", "집중력", "깊이"], likes: ["deep", "bold", "rich", "focus"] },
-  "사수자리": { traits: ["자유", "모험", "도전", "여행"], likes: ["adventure", "newness", "energy", "freedom"] },
-  "염소자리": { traits: ["현실성", "책임감", "성과", "계획"], likes: ["practical", "safe", "responsibility", "result"] },
-  "물병자리": { traits: ["독창성", "신선함", "개성", "변화"], likes: ["unique", "newness", "variety", "freedom"] },
-  "물고기자리": { traits: ["감성", "상상력", "공감", "여유"], likes: ["mood", "comfort", "soft", "relax"] }
+  "양자리": { traits: ["도전", "즉흥성", "활동성", "에너지", "열정", "행동력", "돌진", "개척", "승부욕", "속도", "용기", "추진력", "자신감", "모험", "직진"], likes: ["energy", "bold", "action", "newness"] },
+  "황소자리": { traits: ["익숙함", "편안함", "안정감", "만족감", "실속", "꾸준함", "여유", "느긋함", "안심", "소확행", "포근함", "안정성", "휴식", "현실감", "든든함"], likes: ["comfort", "satisfaction", "warmth", "practical"] },
+  "쌍둥이자리": { traits: ["호기심", "대화", "유머", "변화", "소통", "정보", "가벼움", "재치", "유연함", "관심", "탐색", "수다", "아이디어", "순발력", "재미"], likes: ["variety", "fun", "newness", "social"] },
+  "게자리": { traits: ["가족", "따뜻함", "보호", "배려", "공감", "안정", "추억", "편안함", "친근함", "정", "보살핌", "집밥감성", "애정", "감성", "안식처"], likes: ["comfort", "warmth", "family", "safe"] },
+  "사자자리": { traits: ["자신감", "존재감", "주목", "리더십", "자존심", "화려함", "표현력", "열정", "자부심", "용기", "인기", "매력", "당당함", "카리스마", "에너지"], likes: ["bold", "social", "presence", "satisfaction"] },
+  "처녀자리": { traits: ["계획성", "꼼꼼함", "분석", "정리", "효율", "정확함", "현실성", "신중함", "계산", "체크", "준비성", "깔끔함", "실용성", "점검", "완성도"], likes: ["practical", "clean", "safe", "simple"] },
+  "천칭자리": { traits: ["균형", "조화", "매너", "관계", "아름다움", "배려", "우아함", "공정함", "분위기", "외교력", "선택", "조율", "평화", "센스", "품격"], likes: ["balance", "social", "mood", "comfort"] },
+  "전갈자리": { traits: ["깊이", "몰입", "집중", "강렬함", "직감", "통찰", "결단", "비밀", "집요함", "카리스마", "진심", "탐구", "매력", "본능", "승부"], likes: ["deep", "bold", "rich", "focus"] },
+  "사수자리": { traits: ["자유", "여행", "낙관", "모험", "확장", "도전", "성장", "개방성", "호기심", "가능성", "탐험", "웃음", "시도", "경험", "열정"], likes: ["adventure", "newness", "energy", "freedom"] },
+  "염소자리": { traits: ["책임감", "성과", "목표", "인내", "현실성", "성공", "노력", "계획", "성취", "집중", "끈기", "성장", "관리", "신뢰", "꾸준함"], likes: ["practical", "safe", "responsibility", "result"] },
+  "물병자리": { traits: ["독창성", "자유로움", "개성", "혁신", "창의성", "발상", "변화", "실험", "독립성", "호기심", "아이디어", "미래", "특별함", "신선함", "반전"], likes: ["unique", "newness", "variety", "freedom"] },
+  "물고기자리": { traits: ["감성", "공감", "상상력", "직관", "낭만", "위로", "따뜻함", "몽상", "배려", "감정", "예술성", "이해", "포용", "여운", "순수함"], likes: ["mood", "comfort", "soft", "relax"] }
 };
 
 const zodiacVoices = {
@@ -1020,8 +1020,9 @@ function zodiacBoost(sign, analysis, question) {
 function zodiacCards(sign, seed) {
   const profile = zodiacProfiles[sign[0]] || zodiacProfiles["황소자리"];
   const pool = profile.traits;
-  const first = pick(pool, seed + sign[0].length);
-  const second = pick(pool.filter((item) => item !== first), seed + first.length + 17);
+  const daySeed = hashText(`${todayKey()}-${sign[0]}`);
+  const first = pick(pool, daySeed + seed + sign[0].length);
+  const second = pick(pool.filter((item) => item !== first), daySeed + seed + first.length + 17);
   return [first, second];
 }
 
@@ -1032,6 +1033,46 @@ function narrativeCardPreview(cards) {
 function cardHas(cards, words) {
   const text = cards.join(" ");
   return includesAny(text, words);
+}
+
+function cardTags(cards) {
+  const text = cards.join(" ");
+  const tags = new Set();
+  const groups = [
+    ["comfort", ["익숙함", "편안함", "안정감", "안심", "포근함", "안정성", "휴식", "친근함", "안식처"]],
+    ["satisfaction", ["만족감", "실속", "소확행", "든든함", "성취", "성과"]],
+    ["warmth", ["따뜻함", "정", "애정", "위로", "집밥감성", "보살핌"]],
+    ["energy", ["에너지", "열정", "활동성", "추진력", "속도", "돌진", "직진"]],
+    ["bold", ["도전", "용기", "승부욕", "자신감", "강렬함", "결단", "승부", "당당함"]],
+    ["action", ["행동력", "추진력", "직진", "속도", "개척", "시도"]],
+    ["newness", ["모험", "변화", "신선함", "실험", "반전", "혁신", "탐험"]],
+    ["variety", ["호기심", "탐색", "아이디어", "발상", "가능성", "경험"]],
+    ["fun", ["유머", "재치", "수다", "재미", "웃음"]],
+    ["social", ["대화", "소통", "관계", "매너", "외교력", "인기"]],
+    ["practical", ["현실성", "현실감", "계획", "계획성", "효율", "실용성", "관리", "체크", "계산"]],
+    ["safe", ["신중함", "준비성", "점검", "책임감", "신뢰", "보호", "배려"]],
+    ["balance", ["균형", "조화", "공정함", "조율", "평화", "센스"]],
+    ["mood", ["감성", "낭만", "분위기", "여운", "예술성", "몽상"]],
+    ["deep", ["깊이", "몰입", "집중", "통찰", "탐구", "진심", "직감", "본능"]],
+    ["unique", ["독창성", "개성", "창의성", "특별함", "독립성"]],
+    ["freedom", ["자유", "자유로움", "여행", "확장", "개방성"]],
+    ["soft", ["공감", "이해", "포용", "순수함", "여유"]],
+    ["relax", ["느긋함", "여유", "휴식", "안식처"]]
+  ];
+  groups.forEach(([tag, words]) => {
+    if (includesAny(text, words)) tags.add(tag);
+  });
+  return tags;
+}
+
+function cardOptionBoost(cards, analysis) {
+  const option = optionTags(analysis, "");
+  const today = cardTags(cards);
+  let boost = 0;
+  today.forEach((tag) => {
+    if (option.has(tag)) boost += 5;
+  });
+  return Math.min(16, boost);
 }
 
 function zodiacVoiceLine(sign, category, winner, loser) {
@@ -1045,6 +1086,35 @@ function optionFeatureSentence(analysis) {
   if (features.length >= 2) return `${escapeHtml(analysis.name)}에는 ${features[0]}, ${features[1]}이 확실히 있어요.`;
   if (features.length === 1) return `${escapeHtml(analysis.name)}에는 ${features[0]}이 눈에 띕니다.`;
   return `${escapeHtml(analysis.name)}만의 장점이 오늘 선택에 들어왔어요.`;
+}
+
+function cardReasonLine(cards, winner, loser, category) {
+  const cardText = escapeHtml(narrativeCardPreview(cards));
+  const cardBecause = escapeHtml(withParticle(narrativeCardPreview(cards), "이라서", "라서"));
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  if (cardHas(cards, ["안정감", "안심", "편안함", "익숙함", "휴식", "여유", "느긋함", "포근함"])) {
+    return `오늘 카드가 <strong>${cardText}</strong>${cardBecause.replace(cardText, "")}, 새로움보다 마음이 덜 흔들리는 ${winnerName} 쪽에 점수가 붙었습니다.`;
+  }
+  if (cardHas(cards, ["도전", "행동력", "속도", "돌진", "직진", "추진력", "활동성", "에너지"])) {
+    return `오늘 카드가 <strong>${cardText}</strong>${cardBecause.replace(cardText, "")}, 오래 재는 ${loserName}보다 바로 움직이는 ${winnerName} 쪽이 더 세게 들어왔습니다.`;
+  }
+  if (cardHas(cards, ["결단", "몰입", "집중", "강렬함", "승부", "통찰", "본능"])) {
+    return `오늘 카드가 <strong>${cardText}</strong>${cardBecause.replace(cardText, "")}, 애매하게 끌기보다 ${winnerName}처럼 결론이 선명한 쪽이 앞섰습니다.`;
+  }
+  if (cardHas(cards, ["계획", "현실성", "체크", "계산", "책임감", "관리", "신뢰", "점검"])) {
+    return `오늘 카드가 <strong>${cardText}</strong>${cardBecause.replace(cardText, "")}, 기분보다 뒤처리와 기준이 분명한 ${winnerName} 쪽이 더 납득됩니다.`;
+  }
+  if (cardHas(cards, ["감성", "공감", "위로", "여운", "포용", "이해", "낭만"])) {
+    return `오늘 카드가 <strong>${cardText}</strong>${cardBecause.replace(cardText, "")}, 숫자나 효율보다 끝나고 마음이 덜 출렁이는 ${winnerName} 쪽이 더 편해 보입니다.`;
+  }
+  if (cardHas(cards, ["호기심", "재미", "유머", "재치", "아이디어", "탐색", "변화"])) {
+    return `오늘 카드가 <strong>${cardText}</strong>${cardBecause.replace(cardText, "")}, 무난함보다 이야기거리와 기분 전환이 있는 ${winnerName} 쪽이 더 살아납니다.`;
+  }
+  if (cardHas(cards, ["균형", "조화", "관계", "배려", "매너", "분위기", "센스"])) {
+    return `오늘 카드가 <strong>${cardText}</strong>${cardBecause.replace(cardText, "")}, 욕심과 부담 사이를 덜 삐뚤게 잡는 ${winnerName} 쪽이 더 예쁩니다.`;
+  }
+  return `오늘 카드가 <strong>${cardText}</strong>${cardBecause.replace(cardText, "")}, 지금 고민판에서는 ${winnerName} 쪽이 ${loserName}보다 조금 더 자연스럽게 붙었습니다.`;
 }
 
 function zodiacAside(sign, category, winner) {
@@ -1257,7 +1327,10 @@ function futureComment(category, winner, question, seed) {
     food: [
       `${name} 선택, 미래의 내가 국물까지 인정했습니다.`,
       `오늘 선택은 젓가락보다 숟가락이 먼저 박수칩니다.`,
-      `${subject} 쪽으로 간 나, 적어도 메뉴판 앞에서 더 헤매진 않았습니다.`
+      `${subject} 쪽으로 간 나, 적어도 메뉴판 앞에서 더 헤매진 않았습니다.`,
+      `국물 한 숟갈 먹고 "아, 이거였네" 했습니다.`,
+      `단무지 두 번 리필하는 미래가 보입니다.`,
+      `한 입 먹고 고개 끄덕였습니다. 말은 필요 없었습니다.`
     ],
     drink: [
       winner.intent === "skip" ? `내일 아침의 내가 방금 엄지척 눌렀습니다.` : `내일 아침의 내가 이미 물 한 컵을 예약했습니다.`,
@@ -1292,7 +1365,7 @@ function futureComment(category, winner, question, seed) {
   return pick(comments[category] || comments.daily, seed + name.length + question.length);
 }
 
-function scoreOption(analysis, category, question, mood, seed, sign) {
+function scoreOption(analysis, category, question, mood, seed, sign, cards = []) {
   const text = `${analysis.name} ${analysis.subjectName || ""} ${question}`.toLowerCase();
   let score = 50 + (hashText(`${analysis.name}-${seed}`) % 9) - 4;
   if (category === "food") {
@@ -1314,6 +1387,7 @@ function scoreOption(analysis, category, question, mood, seed, sign) {
     if (includesAny(text, ["순대국", "국밥", "뜨끈"])) score += 4;
   }
   score += zodiacBoost(sign, analysis, question).boost;
+  score += cardOptionBoost(cards, analysis);
   return Math.max(35, Math.min(75, score));
 }
 
@@ -1321,8 +1395,12 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const category = inferCategory(question, choiceA, choiceB, profile);
   const a = contextualizeOption(choiceA, category, question);
   const b = contextualizeOption(choiceB, category, question);
-  let aScore = scoreOption(a, category, question, mood, seed, sign);
-  let bScore = scoreOption(b, category, question, mood, seed + 11, sign);
+  const cardLabels = zodiacCards(sign, seed);
+  const cardText = narrativeCardPreview(cardLabels);
+  const primaryCard = cardLabels[0];
+  const secondaryCard = cardLabels[1];
+  let aScore = scoreOption(a, category, question, mood, seed, sign, cardLabels);
+  let bScore = scoreOption(b, category, question, mood, seed + 11, sign, cardLabels);
   if (profile.forced === "A") aScore = Math.max(aScore, bScore + 12);
   if (profile.forced === "B") bScore = Math.max(bScore, aScore + 12);
   const recommendA = aScore >= bScore;
@@ -1341,24 +1419,23 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const winnerZodiac = zodiacBoost(sign, winner, question);
   const loserZodiac = zodiacBoost(sign, loser, question);
   const zodiacTraitText = winnerZodiac.traits.slice(0, 2).join(", ");
-  const cardLabels = zodiacCards(sign, seed);
-  const cardText = narrativeCardPreview(cardLabels);
-  const primaryCard = cardLabels[0];
-  const secondaryCard = cardLabels[1];
   const situationOverruledStars = loserZodiac.boost > winnerZodiac.boost && includesAny(question, ["어제 술", "술 많이", "숙취", "해장", "아프", "피곤", "비", "춥", "미세먼지"]);
   const fortune = pick(
     starInterferenceLines(category, sign, cardLabels, winner, loser, hasQuestionContext, subjectName, situationOverruledStars),
     seed + sign[0].length + winner.name.length
   );
   const cardDrivenReason = cardMeaningIntro(sign, cardLabels, category, winner, loser, hasQuestionContext, subjectName);
+  const cardReason = cardReasonLine(cardLabels, winner, loser, category);
   const defaultWhy = [
     cardDrivenReason,
-    `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 눈에 띄는 선택이라 오늘 분위기랑 잘 붙어요.`,
+    cardReason,
+    optionFeatureSentence(winner),
     `${escapeHtml(loser.name)}도 나쁘진 않은데, 지금은 ${escapeHtml(winner.name)} 쪽이 끝나고 덜 찝찝해 보입니다.`
   ].join(" ");
   const whyByCategory = {
     food: [
       cardDrivenReason,
+      cardReason,
       hasQuestionContext
         ? `<strong>${escapeHtml(subjectName)}</strong> 고민이라면 ${escapeHtml(winner.name)} 쪽의 ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 오늘 바로 체감될 가능성이 큽니다.`
         : `${escapeHtml(loser.name)}도 ${escapeHtml(loser.features[0])} 쪽 매력이 있지만, 오늘은 ${escapeHtml(winner.name)}이 더 빠르게 마음을 정리해주는 메뉴예요.`,
@@ -1366,6 +1443,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     ].join(" "),
     drink: [
       cardDrivenReason,
+      cardReason,
       winner.intent === "skip"
         ? `${featurePairText(winner.features[0], winner.features[1])} 오늘은 꽤 큰 장점이에요. 한 잔의 재미보다 내일 아침 멀쩡함이 더 달콤할 수 있습니다.`
         : `${featurePairText(winner.features[0], winner.features[1])} 오늘의 유혹 포인트입니다. 다만 신난 김에 물 한 컵은 꼭 옆에 둬야 합니다.`,
@@ -1375,6 +1453,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     ].join(" "),
     childcare: [
       cardDrivenReason,
+      cardReason,
       hasQuestionContext
         ? `<strong>${escapeHtml(subjectName)}</strong> 고민이라면 ${escapeHtml(winner.name)} 쪽의 ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 오늘 더 크게 느껴질 수 있어요.`
         : `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 있는 선택이에요.`,
@@ -1387,17 +1466,19 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     ].join(" "),
     attendance: [
       cardDrivenReason,
-      `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 바로 따라오는 선택이에요.`,
+      cardReason,
+      optionFeatureSentence(winner),
       `지금 귀찮음은 크지만, 내일 아침의 내가 고개를 끄덕일 쪽은 ${escapeHtml(winner.name)}에 더 가깝습니다.`
     ].join(" "),
     money: [
       cardDrivenReason,
-      `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 있는 선택이에요.`,
-      `오늘은 수익 상상보다 손실 났을 때 표정을 먼저 떠올려보는 게 낫습니다. 그 기준이면 ${escapeHtml(winner.name)} 쪽이 덜 흔들립니다.`
+      cardReason,
+      optionFeatureSentence(winner)
     ].join(" "),
     relationship: [
       cardDrivenReason,
-      `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 있는 선택이에요.`,
+      cardReason,
+      optionFeatureSentence(winner),
       `혼자 생각만 오래 굴리면 말 한마디가 점점 커집니다. 오늘은 ${escapeHtml(winner.name)} 쪽이 마음속 편집본을 줄여줄 수 있어요.`
     ].join(" ")
   };

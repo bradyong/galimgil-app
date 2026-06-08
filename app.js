@@ -739,6 +739,8 @@ const optionFeatureBank = [
   { keys: ["카페"], category: "place", features: ["앉아서 쉬기 좋음", "대화하기 편함", "커피나 디저트로 기분 전환 가능", "오래 있으면 비용이 쌓임"], caution: "아이가 있거나 사람이 많으면 생각보다 정신없을 수 있어요.", vibe: "잠깐의 여유" },
   { keys: ["출근"], category: "attendance", features: ["오늘 할 일을 미루지 않는 점", "내일 부담이 줄어드는 점", "책임을 지켰다는 마음이 남는 점", "몸이 피곤하면 하루가 길게 느껴질 수 있는 점"], caution: "진짜 아프면 무리하지 말고 먼저 연락하는 게 맞아요.", vibe: "최소 책임" },
   { keys: ["결근", "안한다", "쉰다", "쉬기"], category: "attendance", features: ["몸을 쉬게 할 수 있는 점", "당장 피로가 줄어드는 점", "대신 설명과 뒷일이 생길 수 있는 점", "무단이면 부담이 커지는 점"], caution: "쉬더라도 연락과 이유 정리는 꼭 필요해요.", vibe: "회복" },
+  { keys: ["점심"], category: "daily", features: ["지금 바로 배고픔을 해결하는 점", "오후를 덜 예민하게 보내는 점", "오래 끌지 않아도 되는 점", "하루 리듬을 빨리 잡는 점"], caution: "저녁 약속이나 더 맛있는 계획이 있으면 조금 아쉬울 수 있어요.", vibe: "지금 챙김" },
+  { keys: ["저녁"], category: "daily", features: ["하루 끝에 천천히 먹는 재미", "기대감을 남겨두는 점", "일정에 따라 밀릴 수 있는 점", "배고픔을 오래 데리고 다녀야 하는 점"], caution: "지금 배고프면 저녁까지 성격이 살짝 날카로워질 수 있어요.", vibe: "나중의 재미" },
   { keys: ["매수", "투자"], category: "money", features: ["기회를 잡는 느낌", "수익 기대감", "가격 변동 리스크", "틀렸을 때 손실 가능성"], caution: "손실 한도 없이 들어가면 감정이 흔들릴 수 있어요.", vibe: "공격적 선택" },
   { keys: ["관망", "기다"], category: "money", features: ["손실을 피할 시간", "가격을 더 볼 여유", "기회를 놓칠 수 있는 아쉬움", "감정 매매를 줄이는 장점"], caution: "기다림에도 기준 가격이 있어야 해요.", vibe: "리스크 관리" },
   { keys: ["고백", "연락", "사과"], category: "relationship", features: ["마음을 직접 전함", "오해를 줄일 수 있음", "상대 반응을 확인할 수 있음", "말투가 세면 부담을 줄 수 있음"], caution: "긴 문장보다 짧고 정확한 말이 좋아요.", vibe: "직접 확인" },
@@ -932,6 +934,10 @@ function zodiacCards(sign, seed) {
   return [first, second];
 }
 
+function narrativeCardPreview(cards) {
+  return cards.length > 1 ? `${cards[0]} + ${cards[1]}` : cards[0];
+}
+
 function futureComment(category, winner, question, seed) {
   const name = escapeHtml(winner.name);
   const subject = escapeHtml(winner.subjectName || winner.name);
@@ -1070,24 +1076,24 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   };
   const fortune = pick(funnyFortunes[category] || funnyFortunes.daily, seed + sign[0].length + winner.name.length);
   const defaultWhy = [
-    `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 확실한 선택이에요.`,
+    `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 눈에 띄는 선택이에요.`,
     `이 선택은 지금 고민 앞에서 "나 시키면 바로 티 난다?" 하고 손을 들고 있는 쪽에 가까워요.`,
     `그래서 형이 보기엔 오늘의 주인공은 ${escapeHtml(winner.name)} 쪽입니다. 반대쪽은 살짝 대기실에 앉혀두죠.`
   ].join(" ");
   const whyByCategory = {
     food: [
       hasQuestionContext
-        ? `${escapeHtml(question)}라면 핵심은 <strong>${escapeHtml(subjectName)}</strong> 자체예요. ${escapeHtml(subjectName)}에는 ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}, ${escapeHtml(winner.features[2])}이 같이 있어요.`
-        : `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}, ${escapeHtml(winner.features[2])}이 같이 올라오는 메뉴예요.`,
+        ? `${escapeHtml(question)}라면 핵심은 <strong>${escapeHtml(subjectName)}</strong> 자체예요. ${escapeHtml(subjectName)}에는 ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 같이 있어요.`
+        : `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 같이 올라오는 메뉴예요.`,
       hasQuestionContext
         ? `그래서 <strong>${escapeHtml(winner.name)}</strong>는 단순히 "${escapeHtml(winner.name)}"가 아니라, 오늘 ${escapeHtml(subjectName)}의 맛을 실제로 가져가는 선택으로 보여요.`
         : `지금 고민이 메뉴 선택이라면, ${escapeHtml(winner.name)} 쪽이 입에 들어갔을 때 "그래 이거지" 하고 바로 티가 나는 편이에요.`,
-      `솔직히 나라면 오늘은 ${winnerObject} 고를 것 같아요. 내일의 나도 크게 항의하진 않을 듯합니다.`
+      `오늘 카드도 ${escapeHtml(narrativeCardPreview(cardLabels))} 쪽이라 ${escapeHtml(winner.name)}에 살짝 더 붙었습니다.`
     ].join(" "),
     drink: [
       winner.intent === "skip"
-        ? `술은 지금 형을 부르고 있지만, 내일 아침의 형은 아직 허락하지 않았습니다. ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 오늘은 꽤 큰 장점이에요.`
-        : `술은 지금 형을 부르고 있고, 분위기도 살짝 손짓하고 있어요. ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 오늘의 유혹 포인트입니다.`,
+        ? `술은 지금 형을 부르고 있지만, 내일 아침의 형은 아직 허락하지 않았습니다. ${featurePairText(winner.features[0], winner.features[1])} 오늘은 꽤 큰 장점이에요.`
+        : `술은 지금 형을 부르고 있고, 분위기도 살짝 손짓하고 있어요. ${featurePairText(winner.features[0], winner.features[1])} 오늘의 유혹 포인트입니다.`,
       winner.intent === "skip"
         ? `솔직히 나라면 오늘은 ${escapeHtml(winner.name)} 쪽에 표를 던질 것 같아요. 간도 직장인이라 휴무가 필요합니다.`
         : `다만 한 잔이 두 잔으로 변신하는 마법은 조심해야 해요. 내일의 나한테 사과문 쓰기 싫으면 선을 정해두고 가야 합니다.`
@@ -1101,20 +1107,20 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
         : hasQuestionContext
           ? `다만 오늘 아이 컨디션이 애매하거나 사람이 많은 시간이면, ${escapeHtml(subjectName)}은 살짝 다음 편 예고로 미뤄도 됩니다.`
           : `${escapeHtml(loser.name)}도 ${escapeHtml(loser.features[0])}은 좋지만, ${escapeHtml(loser.features[2])} 같은 변수를 생각하면 보호자가 계속 신경을 써야 할 수 있어요.`,
-      `형이 보기엔 오늘은 ${hasQuestionContext ? winnerActionText : escapeHtml(winner.name)} 쪽이 웃음은 챙기고 어른 체력은 덜 털리는 카드예요.`
+      `오늘 카드도 ${escapeHtml(narrativeCardPreview(cardLabels))} 쪽이라 ${hasQuestionContext ? winnerActionText : escapeHtml(winner.name)}에 살짝 더 붙었습니다.`
     ].join(" "),
     attendance: [
-      `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 바로 따라오는 선택이에요.`,
+      `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 바로 따라오는 선택이에요.`,
       `${escapeHtml(loser.name)}도 ${escapeHtml(loser.features[0])}이라는 장점이 있지만, 오늘 질문에서는 내일의 부담까지 같이 봐야 해요.`,
       `솔직히 몸이 정말 아픈 게 아니라면 형이 보기엔 ${escapeHtml(winner.name)} 쪽이에요. 내일 아침의 내가 박수까지는 아니어도 고개는 끄덕일 겁니다.`
     ].join(" "),
     money: [
-      `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 있는 선택이에요.`,
+      `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 있는 선택이에요.`,
       `${escapeHtml(loser.name)}도 끌리지만, 돈이 걸린 선택은 기분보다 손실을 버틸 수 있는지가 먼저예요.`,
       `그래서 형이 보기엔 오늘은 ${escapeHtml(winner.name)} 쪽이에요. 지갑도 사람이라 놀라면 삐집니다.`
     ].join(" "),
     relationship: [
-      `${winnerSubject} ${escapeHtml(winner.features[0])}, ${escapeHtml(winner.features[1])}이 있는 선택이에요.`,
+      `${winnerSubject} ${featurePairText(winner.features[0], winner.features[1])} 있는 선택이에요.`,
       `${escapeHtml(loser.name)}도 나쁘진 않지만, 관계 고민은 타이밍과 말투가 반을 먹고 들어가요.`,
       `보통 이런 경우엔 ${escapeHtml(winner.name)} 쪽이에요. 마음도 너무 오래 묵히면 냉장고 안쪽 반찬처럼 됩니다.`
     ].join(" ")
@@ -1454,6 +1460,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       `A: ${choiceA}`,
       `B: ${choiceB}`,
       `별자리 카드: ${narrative.zodiacCards.join(" + ")}`,
+      `왜?: ${narrative.why.replace(/<[^>]+>/g, "")}`,
       `결과: ${recommended} 승`,
       `미래의 나: ${narrative.futureComment.replace(/<[^>]+>/g, "")}`,
       `확률: ${recommended} ${narrative.winnerScore}% / ${narrative.loser.name} ${narrative.loserScore}%`,
@@ -1480,6 +1487,10 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     <div class="report-section">
       <h4>🌟 별의 참견</h4>
       <p>${narrative.fortune}</p>
+    </div>
+    <div class="report-section">
+      <h4>💡 왜 이 결과가 나왔냐면</h4>
+      <p>${narrative.why}</p>
     </div>
     <div class="report-section final-recommendation">
       <h4>🏁 갈림길 결과</h4>

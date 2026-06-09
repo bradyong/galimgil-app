@@ -1126,68 +1126,67 @@ function zodiacWhyNarrative(sign, cards, category, winner, loser) {
   const loserName = escapeHtml(loser.name);
   const winnerFeatureA = escapeHtml(winner.features[0] || winner.vibe || "오늘의 장점");
   const winnerFeatureB = escapeHtml(winner.features[1] || winner.caution || "선택 후 느낌");
-  const loserFeature = escapeHtml(loser.features[0] || loser.vibe || "다른 장점");
 
   const templates = {
     "황소자리": () => [
-      `오늘은 빠른 변화보다 마음이 편하게 닫히는 쪽이 먼저입니다.`,
-      `<strong>${cardText}</strong> 카드가 뜬 날이라, ${winnerName}처럼 익숙하고 덜 흔들리는 선택이 더 황소자리답습니다.`,
-      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있고, ${loserName}의 ${loserFeature}보다 오늘은 안정적으로 만족하는 쪽이 낫습니다.`
+      `황소자리는 오늘 새 모험보다 늘 가던 길을 더 오래 쳐다봅니다.`,
+      `<strong>${cardText}</strong> 카드가 뜬 날이라 별이 소파에 앉아서 "굳이 복잡하게 가야 해?"라고 말하는 쪽입니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 황소자리의 편한 리듬에 더 잘 붙습니다.`
     ],
     "양자리": () => [
-      `양자리는 오늘 오래 재면 오히려 에너지가 새는 날입니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 생각보다 몸이 먼저 ${winnerName} 쪽으로 기울었습니다.`,
-      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 바로 반응을 주는 편이라, ${loserName}처럼 더 따져보는 선택보다 지금은 추진력이 살아납니다.`
+      `양자리는 이미 신발을 신었습니다. 머리보다 몸이 먼저 반응하는 날입니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 "일단 움직이고 보자" 쪽으로 손을 들었습니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 양자리의 즉흥 속도와 맞습니다.`
     ],
     "쌍둥이자리": () => [
-      `쌍둥이자리는 오늘 답 하나보다 다음 이야기가 생기는 쪽을 봅니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 가볍게 움직이고 말할 거리를 남깁니다.`,
-      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있어서, ${loserName}의 ${loserFeature}보다 오늘 머릿속 단톡방이 덜 지루합니다.`
+      `쌍둥이자리는 오늘 머릿속에 작은 단톡방을 열었습니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 조용한 답보다 말할 거리 생기는 쪽을 더 재밌어합니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 오늘 쌍둥이자리의 호기심을 덜 심심하게 만듭니다.`
     ],
     "게자리": () => [
-      `게자리는 오늘 결과보다 사람 마음과 컨디션을 먼저 봅니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 감정적으로 덜 차갑고, 끝나고 마음이 덜 다칠 선택처럼 보입니다.`,
-      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 지금 상황을 조금 더 따뜻하게 만들고, ${loserName}의 ${loserFeature}은 오늘 살짝 부담으로 남을 수 있습니다.`
+      `게자리는 오늘 결과보다 사람 마음, 표정, 돌아온 뒤의 기분을 먼저 봅니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 "이 선택 하고 나서 마음이 차갑게 남지 않을까?"를 묻고 있습니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 게자리의 감정 온도를 덜 차갑게 만듭니다.`
     ],
     "사자자리": () => [
-      `사자자리는 오늘 애매하게 끌려가는 선택을 싫어합니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 선명하고, 선택한 나를 더 당당하게 보여줍니다.`,
-      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있어서 ${loserName}보다 "내가 골랐다"는 느낌이 강합니다.`
+      `사자자리는 오늘 애매하게 끌려가는 표정을 싫어합니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 조명을 켜고 "선명하게 고른 쪽이 낫다"고 말합니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 사자자리의 당당함을 더 살립니다.`
     ],
     "처녀자리": () => [
-      `처녀자리는 오늘 감보다 체크리스트가 먼저 켜집니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 정리되고, 뒤처리까지 계산하기 쉽습니다.`,
-      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 눈에 들어오고, ${loserName}의 ${loserFeature}은 오늘 기준에서는 변수로 보입니다.`
+      `처녀자리는 오늘 마음보다 체크리스트가 먼저 켜지는 별자리입니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 "이거 끝나고 정리 쉬워?"부터 확인합니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 처녀자리의 점검 기준에 더 잘 맞습니다.`
     ],
     "천칭자리": () => [
-      `천칭자리는 오늘 한쪽으로 과하게 쏠리는 선택을 피하려고 합니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 욕심과 부담 사이의 균형을 더 예쁘게 잡습니다.`,
-      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있고, ${loserName}의 ${loserFeature}보다 오늘 분위기를 덜 깨는 쪽입니다.`
+      `천칭자리는 오늘 선택지를 저울 위에 올려놓고 분위기까지 같이 봅니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 "너무 한쪽으로 쏠리진 말자"는 쪽으로 균형을 잡습니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 천칭자리의 균형감에 덜 삐뚤게 붙습니다.`
     ],
     "전갈자리": () => [
-      `전갈자리는 오늘 겉핥기보다 끝까지 파고들어 결론을 내고 싶어 합니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 깊게 꽂히고, 애매하게 남기는 ${loserName}보다 마음속 선이 진합니다.`,
-      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 결론을 확정하는 맛을 주고, ${loserName}의 ${loserFeature}은 오늘 집중을 흐릴 수 있습니다.`
+      `전갈자리는 오늘 겉핥기 설명을 싫어합니다. 계속 파고들다가 결국 결론을 원합니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 "애매하게 두지 말고 마음속 선을 그어"라고 말합니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 전갈자리의 몰입과 결단에 더 깊게 꽂힙니다.`
     ],
     "사수자리": () => [
-      `사수자리는 오늘 답답하게 묶이는 선택보다 숨통이 트이는 쪽을 봅니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 넓고, 하루를 작게라도 확장시키는 느낌이 있습니다.`,
-      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있어 ${loserName}보다 경험값이 하나 더 생기는 선택입니다.`
+      `사수자리는 오늘 답답하게 묶이는 선택을 보면 바로 창문을 엽니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 "작게라도 경험값 하나 만들자"는 쪽으로 갑니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 사수자리의 확장 욕구에 더 맞습니다.`
     ],
     "염소자리": () => [
-      `염소자리는 오늘 감정보다 계획표에 들어갈 수 있는지를 먼저 봅니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 현실적이고, 내일도 설명 가능한 선택처럼 보입니다.`,
-      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 기준을 만들어주고, ${loserName}의 ${loserFeature}은 지금은 조금 덜 관리됩니다.`
+      `염소자리는 오늘 감정표보다 계획표를 먼저 펼칩니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 "내일도 설명 가능한 선택이냐"를 따지고 있습니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 염소자리의 현실 기준에 더 잘 들어갑니다.`
     ],
     "물병자리": () => [
-      `물병자리는 오늘 남들이 고르는 기본값을 그대로 따르고 싶지 않습니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 내 방식 같고, 생각을 옆으로 돌렸을 때 더 재밌게 보입니다.`,
-      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있어 ${loserName}보다 신선한 반전이 있습니다.`
+      `물병자리는 오늘 남들이 고르는 기본값을 그대로 누르고 싶지 않습니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 고민판을 옆으로 돌려보고 있습니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 물병자리의 독특한 방식과 더 잘 맞습니다.`
     ],
     "물고기자리": () => [
-      `물고기자리는 오늘 숫자나 효율보다 끝나고 남을 감정을 먼저 듣습니다.`,
-      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 마음에 물결을 덜 만들고, ${loserName}보다 밤에 덜 출렁일 것 같습니다.`,
-      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 감정적으로 더 부드럽게 남습니다.`
+      `물고기자리는 오늘 숫자보다 잠들기 전 마음의 파동을 먼저 듣습니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 별이 "이거 하고 나서 마음이 덜 출렁일까?"를 묻습니다.`,
+      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 물고기자리의 감정선을 더 부드럽게 지나갑니다.`
     ]
   };
 
@@ -1386,60 +1385,141 @@ function futureComment(category, winner, question, seed) {
   const subject = escapeHtml(winner.subjectName || winner.name);
   const raw = `${winner.name} ${winner.subjectName || ""} ${question}`.replace(/\s/g, "").toLowerCase();
   const winnerRaw = `${winner.name} ${winner.subjectName || ""}`.replace(/\s/g, "").toLowerCase();
-  if (category === "money" && includesAny(winnerRaw, ["안판다", "보유", "홀딩", "관망", "기다"])) {
-    return pick([
+  const variationSeed = Math.floor(Date.now() / 1000);
+  const endings = [
+    `미래의 내가 조용히 고개를 끄덕였습니다.`,
+    `적어도 오늘 밤 변명거리는 하나 줄었습니다.`,
+    `5분 뒤에도 이 선택을 다시 떠올릴 가능성은 있습니다.`,
+    `내일의 내가 이 장면을 보고 표정 관리를 시도합니다.`,
+    `생각보다 후폭풍이 귀엽게 지나갈 수도 있습니다.`,
+    `오늘의 나는 납득했고, 미래의 나는 검토 중입니다.`,
+    `결과는 모르지만 드라마 한 편은 줄였습니다.`,
+    `괜히 오래 끌었으면 더 피곤했을 장면입니다.`,
+    `이 선택이 완벽하진 않아도 오늘의 리듬에는 맞습니다.`,
+    `미래의 내가 "그래, 그 정도면 됐다"라고 할 확률이 있습니다.`,
+    `잠들기 전 머릿속 회의 시간이 조금 짧아집니다.`,
+    `내일 다시 보면 웃길 수도 있지만, 오늘은 꽤 진지했습니다.`,
+    `선택장애 회의실이 드디어 불을 껐습니다.`,
+    `마음속 새로고침 버튼을 한 번 누른 느낌입니다.`,
+    `오늘의 선택 기록에 밑줄 하나 생겼습니다.`,
+    `미래의 내가 캡처해서 다시 볼지도 모릅니다.`,
+    `괜히 미뤘으면 더 복잡해졌을 수 있습니다.`,
+    `결론이 났다는 사실만으로도 반은 이겼습니다.`,
+    `오늘의 나와 내일의 내가 일단 휴전했습니다.`,
+    `선택 버튼 누른 손가락이 책임감을 느끼는 중입니다.`
+  ];
+  const startsByCategory = {
+    food: [
+      `${name} 한 입 먹고 "아, 이거였네" 했습니다.`,
+      `국물 한 숟갈에 미래의 내가 조용히 납득했습니다.`,
+      `단무지 두 번 리필하는 미래가 보입니다.`,
+      `${subject} 쪽으로 간 나, 메뉴판 앞 방황은 끝냈습니다.`,
+      `젓가락보다 숟가락이 먼저 박수쳤습니다.`,
+      `한 입 먹고 고개를 끄덕였습니다. 말은 필요 없었습니다.`,
+      `배고픈 나와 고민 많은 내가 동시에 조용해졌습니다.`,
+      `오늘의 메뉴 회의는 ${name}에서 폐회했습니다.`,
+      `입맛이 먼저 결재 올리고 미래의 내가 승인했습니다.`,
+      `먹고 나서 "괜히 고민했네"가 나올 수 있습니다.`
+    ],
+    money: includesAny(winnerRaw, ["안판다", "보유", "홀딩", "관망", "기다"]) ? [
       `괜히 팔았다가 후회하는 미래는 일단 피했습니다.`,
       `오늘은 현금만 포지션이 아닙니다. 버티는 것도 포지션입니다.`,
-      `적어도 잠은 조금 더 편하게 잘 것 같습니다. 차트만 안 보면요.`
-    ], seed + raw.length);
-  }
-  if (category === "money" && includesAny(winnerRaw, ["매도", "판다", "팔기", "팔래"])) {
-    return pick([
+      `적어도 잠은 조금 더 편하게 잘 것 같습니다. 차트만 안 보면요.`,
+      `손은 가만히 있었고, 멘탈은 조금 덜 흔들렸습니다.`,
+      `시장보다 내 평정심을 먼저 지킨 선택입니다.`,
+      `매도 버튼 앞에서 한숨 돌린 미래가 보입니다.`,
+      `오늘은 안 움직인 것도 하나의 움직임입니다.`,
+      `괜히 팔고 다시 들어갈 타이밍 찾는 드라마는 피했습니다.`,
+      `포지션은 남았고, 충동은 조금 줄었습니다.`,
+      `내일 차트를 봐도 적어도 "왜 그랬지"는 덜할 수 있습니다.`
+    ] : includesAny(winnerRaw, ["매도", "판다", "팔기", "팔래"]) ? [
       `결국 버튼은 눌렀네요. 이제 결과는 시장이 정합니다.`,
       `5분 뒤 다시 차트 보는 중입니다. 사람 마음 참 빠르죠.`,
-      `팔고 나니 손은 가벼운데 눈은 차트에 붙어 있습니다.`
-    ], seed + raw.length);
-  }
-  const comments = {
-    food: [
-      `${name} 선택, 미래의 내가 국물까지 인정했습니다.`,
-      `오늘 선택은 젓가락보다 숟가락이 먼저 박수칩니다.`,
-      `${subject} 쪽으로 간 나, 적어도 메뉴판 앞에서 더 헤매진 않았습니다.`,
-      `국물 한 숟갈 먹고 "아, 이거였네" 했습니다.`,
-      `단무지 두 번 리필하는 미래가 보입니다.`,
-      `한 입 먹고 고개 끄덕였습니다. 말은 필요 없었습니다.`
-    ],
-    drink: [
-      winner.intent === "skip" ? `내일 아침의 내가 방금 엄지척 눌렀습니다.` : `내일 아침의 내가 이미 물 한 컵을 예약했습니다.`,
-      winner.intent === "skip" ? `간이 조용히 연차를 즐기는 중입니다.` : `오늘의 나는 신났고, 내일의 나는 회의 중입니다.`
+      `팔고 나니 손은 가벼운데 눈은 차트에 붙어 있습니다.`,
+      `현금화한 미래의 내가 일단 숨을 골랐습니다.`,
+      `이제 차트는 구경이고, 마음은 정산 중입니다.`,
+      `결론을 냈다는 사실만으로도 머리가 조금 조용해졌습니다.`,
+      `팔고 나서 오르면 속 쓰릴 수 있지만, 오늘 고민은 끝났습니다.`,
+      `시장에게 공을 넘겼습니다. 이제 심판은 내 계좌가 아닙니다.`,
+      `버튼은 눌렀고, 마음은 방금 퇴근했습니다.`,
+      `결과는 몰라도 결정 피로는 줄었습니다.`
+    ] : [
+      `지갑이 방금 심호흡했습니다.`,
+      `미래의 내가 잔고를 보고 표정 관리를 시도합니다.`,
+      `돈 앞에서 감정이 잠깐 정좌했습니다.`,
+      `차트보다 내 멘탈이 먼저 출석했습니다.`,
+      `숫자는 차갑고, 내 손가락은 뜨거웠습니다.`,
+      `미래의 내가 손실과 기회를 동시에 계산하는 중입니다.`,
+      `지갑 회의가 아직 끝나진 않았지만 의장은 정해졌습니다.`,
+      `오늘의 선택은 계좌보다 마음의 소음부터 줄였습니다.`,
+      `돈 이야기는 늘 진지한데, 오늘은 조금 덜 흔들렸습니다.`,
+      `미래의 내가 계산기를 들고 다시 등장할 예정입니다.`
     ],
     childcare: [
-      `아이보다 부모가 먼저 뻗을 가능성 있음. 그래도 사진은 잘 나올 확률 높음.`,
-      `미래의 내가 말합니다. 물티슈 챙긴 사람은 결국 승자다.`,
-      `${subject} 선택, 웃음은 챙기고 체력은 살짝 반납하는 코스입니다.`
-    ],
-    attendance: [
-      `가기 싫었지만 미래의 내가 감사해할 확률이 꽤 높습니다.`,
-      `내일의 내가 오늘의 나에게 커피 한 잔 사주고 싶어합니다.`
-    ],
-    money: [
-      `지갑이 방금 심호흡했습니다.`,
-      `미래의 내가 잔고를 보고 표정 관리를 시도합니다.`
+      `아이보다 부모가 먼저 뻗을 가능성은 남아 있습니다.`,
+      `물티슈 챙긴 사람은 결국 승자입니다.`,
+      `${subject} 선택, 웃음은 챙기고 체력은 살짝 반납하는 코스입니다.`,
+      `사진은 남고, 보호자 체력은 협상에 들어갑니다.`,
+      `미래의 내가 "간식 챙겼으면 더 완벽했다"라고 말합니다.`,
+      `아이 웃음소리에 오늘의 피로가 잠깐 밀렸습니다.`,
+      `귀가 후 양말 상태가 모든 걸 말해줄 예정입니다.`,
+      `보호자 허리는 회의 중이지만 추억은 승인됐습니다.`,
+      `돌아오는 길에 말수가 줄어도 사진은 남습니다.`,
+      `오늘의 육아 기록에 작은 별표가 붙었습니다.`
     ],
     relationship: [
-      `미래의 내가 말합니다. 말풍선 하나로 하루가 바뀔 수도 있다.`,
-      `오늘의 한마디가 내일의 해석회를 줄여줄지도 모릅니다.`
+      `말풍선 하나로 하루가 바뀔 수도 있습니다.`,
+      `오늘의 한마디가 내일의 해석회를 줄여줄지도 모릅니다.`,
+      `미래의 내가 "그래도 말하길 잘했다" 쪽으로 기웁니다.`,
+      `상상으로 시즌2 찍는 일은 조금 줄었습니다.`,
+      `읽씹보다 무서운 건 혼자 추측하는 밤입니다.`,
+      `마음속 대본이 조금 짧아졌습니다.`,
+      `상대 반응은 몰라도 내 마음은 덜 묵었습니다.`,
+      `오늘의 말풍선은 생각보다 오래 남을 수 있습니다.`,
+      `괜히 빙빙 돌던 문장이 드디어 밖으로 나왔습니다.`,
+      `미래의 내가 이 장면을 다시 해석할 준비를 합니다.`
+    ],
+    attendance: [
+      `가기 싫었지만 미래의 내가 커피 한 잔 사주고 싶어합니다.`,
+      `이불은 졌고, 내일의 내가 박수쳤습니다.`,
+      `오늘의 나태 회의가 조기 종료됐습니다.`,
+      `알람은 미웠지만 결과적으로 출석 도장은 찍혔습니다.`,
+      `내일의 찝찝함을 오늘 조금 결제했습니다.`,
+      `몸은 투덜댔고 책임감은 조용히 이겼습니다.`,
+      `미래의 내가 "그래도 해냈네"라고 중얼거립니다.`,
+      `오늘은 완벽보다 출석에 의미가 있습니다.`,
+      `귀찮음은 컸지만 뒤끝은 조금 줄었습니다.`,
+      `내일의 내가 오늘의 나를 덜 혼낼 예정입니다.`
     ],
     place: [
       `돌아오는 길의 내가 덜 투덜거리면 성공입니다.`,
-      `분위기는 이겼고, 체력은 협상 중입니다.`
+      `분위기는 이겼고, 체력은 협상 중입니다.`,
+      `나간 김에 기분 전환 하나는 챙겼습니다.`,
+      `집에만 있었으면 몰랐을 장면 하나를 얻었습니다.`,
+      `신발은 고생했고 마음은 환기됐습니다.`,
+      `돌아오면 피곤해도 "그래도 나갔다"가 남습니다.`,
+      `오늘의 동선은 내 기분에 작은 구멍을 냈습니다.`,
+      `밖 공기가 고민을 조금 덜 진지하게 만들었습니다.`,
+      `체력은 빠졌지만 장면은 생겼습니다.`,
+      `미래의 내가 사진첩을 열 가능성이 있습니다.`
     ],
     daily: [
       `미래의 내가 "오, 이 정도면 괜찮은데?" 하고 있습니다.`,
-      `오늘의 선택이 내일의 핑곗거리를 하나 줄였습니다.`
+      `오늘의 선택이 내일의 핑곗거리를 하나 줄였습니다.`,
+      `작은 결정 하나가 머릿속 소음을 줄였습니다.`,
+      `미래의 내가 이 선택을 크게 문제 삼진 않을 것 같습니다.`,
+      `고민판이 조금 조용해졌습니다.`,
+      `오늘의 나와 내일의 나 사이에 임시 합의가 생겼습니다.`,
+      `대단한 답은 아니어도 오늘 굴러가게는 만들었습니다.`,
+      `미래의 내가 "그래, 그 정도면 됐다"라고 할 수 있습니다.`,
+      `선택지가 더 커지기 전에 잡아둔 게 다행입니다.`,
+      `오늘의 갈림길은 이 정도에서 닫아도 됩니다.`
     ]
   };
-  return pick(comments[category] || comments.daily, seed + name.length + question.length);
+  const starts = startsByCategory[category] || startsByCategory.daily;
+  const pool = [];
+  starts.forEach((start) => endings.forEach((ending) => pool.push(`${start} ${ending}`)));
+  return pick(pool, seed + raw.length + name.length + question.length + variationSeed);
 }
 
 function scoreOption(analysis, category, question, mood, seed, sign, cards = []) {

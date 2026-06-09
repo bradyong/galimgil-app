@@ -743,6 +743,8 @@ const optionFeatureBank = [
   { keys: ["결근", "안한다", "쉰다", "쉬기"], category: "attendance", features: ["몸을 쉬게 할 수 있는 점", "당장 피로가 줄어드는 점", "대신 설명과 뒷일이 생길 수 있는 점", "무단이면 부담이 커지는 점"], caution: "쉬더라도 연락과 이유 정리는 꼭 필요해요.", vibe: "회복" },
   { keys: ["점심"], category: "daily", features: ["지금 바로 배고픔을 해결하는 점", "오후를 덜 예민하게 보내는 점", "오래 끌지 않아도 되는 점", "하루 리듬을 빨리 잡는 점"], caution: "저녁 약속이나 더 맛있는 계획이 있으면 조금 아쉬울 수 있어요.", vibe: "지금 챙김" },
   { keys: ["저녁"], category: "daily", features: ["하루 끝에 천천히 먹는 재미", "기대감을 남겨두는 점", "일정에 따라 밀릴 수 있는 점", "배고픔을 오래 데리고 다녀야 하는 점"], caution: "지금 배고프면 저녁까지 성격이 살짝 날카로워질 수 있어요.", vibe: "나중의 재미" },
+  { keys: ["차를 탄다", "차 탄다", "자동차", "차"], category: "daily", features: ["빠르게 이동할 수 있는 점", "몸이 덜 피곤한 점", "비나 더위 같은 날씨 영향을 덜 받는 점", "주차나 비용이 생길 수 있는 점"], caution: "가까운 거리라면 오히려 준비와 주차가 더 번거로울 수 있어요.", vibe: "편한 이동" },
+  { keys: ["걸어간다", "걷는다", "걷기", "걸어"], category: "daily", features: ["몸을 움직이며 기분 전환이 되는 점", "돈이 들지 않는 점", "생각을 정리할 시간이 생기는 점", "날씨와 체력 영향을 크게 받는 점"], caution: "시간이 촉박하거나 너무 덥고 추우면 도착 전에 지칠 수 있어요.", vibe: "가벼운 움직임" },
   { keys: ["매수", "투자"], category: "money", features: ["기회를 잡는 느낌", "수익 기대감", "가격 변동 리스크", "틀렸을 때 손실 가능성"], caution: "손실 한도 없이 들어가면 감정이 흔들릴 수 있어요.", vibe: "공격적 선택" },
   { keys: ["매도", "판다", "팔기", "팔래"], category: "money", features: ["결론을 내리는 느낌", "수익이나 손실을 확정하는 버튼", "다시 차트를 볼 수밖에 없는 찝찝함", "현금화해서 마음을 정리하는 장점"], caution: "팔고 나서 오르면 차트를 더 자주 보게 될 수 있어요.", vibe: "결론 버튼" },
   { keys: ["안판다", "안 판다", "보유", "홀딩", "가지고"], category: "money", features: ["괜히 팔았다가 후회할 가능성을 줄이는 점", "포지션을 유지하는 선택", "현금화 유혹을 참는 인내", "떨어질 때 마음이 흔들릴 수 있는 점"], caution: "그냥 버티는 게 아니라 다시 볼 가격이나 시간을 정해두는 게 좋아요.", vibe: "잠깐 버티기" },
@@ -1117,6 +1119,81 @@ function cardReasonLine(cards, winner, loser, category) {
   return `오늘 카드가 <strong>${cardText}</strong>${cardBecause.replace(cardText, "")}, 지금 고민판에서는 ${winnerName} 쪽이 ${loserName}보다 조금 더 자연스럽게 붙었습니다.`;
 }
 
+function zodiacWhyNarrative(sign, cards, category, winner, loser) {
+  const signName = sign[0];
+  const cardText = escapeHtml(narrativeCardPreview(cards));
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const winnerFeatureA = escapeHtml(winner.features[0] || winner.vibe || "오늘의 장점");
+  const winnerFeatureB = escapeHtml(winner.features[1] || winner.caution || "선택 후 느낌");
+  const loserFeature = escapeHtml(loser.features[0] || loser.vibe || "다른 장점");
+
+  const templates = {
+    "황소자리": () => [
+      `오늘은 빠른 변화보다 마음이 편하게 닫히는 쪽이 먼저입니다.`,
+      `<strong>${cardText}</strong> 카드가 뜬 날이라, ${winnerName}처럼 익숙하고 덜 흔들리는 선택이 더 황소자리답습니다.`,
+      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있고, ${loserName}의 ${loserFeature}보다 오늘은 안정적으로 만족하는 쪽이 낫습니다.`
+    ],
+    "양자리": () => [
+      `양자리는 오늘 오래 재면 오히려 에너지가 새는 날입니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 생각보다 몸이 먼저 ${winnerName} 쪽으로 기울었습니다.`,
+      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 바로 반응을 주는 편이라, ${loserName}처럼 더 따져보는 선택보다 지금은 추진력이 살아납니다.`
+    ],
+    "쌍둥이자리": () => [
+      `쌍둥이자리는 오늘 답 하나보다 다음 이야기가 생기는 쪽을 봅니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 가볍게 움직이고 말할 거리를 남깁니다.`,
+      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있어서, ${loserName}의 ${loserFeature}보다 오늘 머릿속 단톡방이 덜 지루합니다.`
+    ],
+    "게자리": () => [
+      `게자리는 오늘 결과보다 사람 마음과 컨디션을 먼저 봅니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 감정적으로 덜 차갑고, 끝나고 마음이 덜 다칠 선택처럼 보입니다.`,
+      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 지금 상황을 조금 더 따뜻하게 만들고, ${loserName}의 ${loserFeature}은 오늘 살짝 부담으로 남을 수 있습니다.`
+    ],
+    "사자자리": () => [
+      `사자자리는 오늘 애매하게 끌려가는 선택을 싫어합니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 선명하고, 선택한 나를 더 당당하게 보여줍니다.`,
+      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있어서 ${loserName}보다 "내가 골랐다"는 느낌이 강합니다.`
+    ],
+    "처녀자리": () => [
+      `처녀자리는 오늘 감보다 체크리스트가 먼저 켜집니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 정리되고, 뒤처리까지 계산하기 쉽습니다.`,
+      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 눈에 들어오고, ${loserName}의 ${loserFeature}은 오늘 기준에서는 변수로 보입니다.`
+    ],
+    "천칭자리": () => [
+      `천칭자리는 오늘 한쪽으로 과하게 쏠리는 선택을 피하려고 합니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 욕심과 부담 사이의 균형을 더 예쁘게 잡습니다.`,
+      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있고, ${loserName}의 ${loserFeature}보다 오늘 분위기를 덜 깨는 쪽입니다.`
+    ],
+    "전갈자리": () => [
+      `전갈자리는 오늘 겉핥기보다 끝까지 파고들어 결론을 내고 싶어 합니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 깊게 꽂히고, 애매하게 남기는 ${loserName}보다 마음속 선이 진합니다.`,
+      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 결론을 확정하는 맛을 주고, ${loserName}의 ${loserFeature}은 오늘 집중을 흐릴 수 있습니다.`
+    ],
+    "사수자리": () => [
+      `사수자리는 오늘 답답하게 묶이는 선택보다 숨통이 트이는 쪽을 봅니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 넓고, 하루를 작게라도 확장시키는 느낌이 있습니다.`,
+      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있어 ${loserName}보다 경험값이 하나 더 생기는 선택입니다.`
+    ],
+    "염소자리": () => [
+      `염소자리는 오늘 감정보다 계획표에 들어갈 수 있는지를 먼저 봅니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 현실적이고, 내일도 설명 가능한 선택처럼 보입니다.`,
+      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 기준을 만들어주고, ${loserName}의 ${loserFeature}은 지금은 조금 덜 관리됩니다.`
+    ],
+    "물병자리": () => [
+      `물병자리는 오늘 남들이 고르는 기본값을 그대로 따르고 싶지 않습니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 더 내 방식 같고, 생각을 옆으로 돌렸을 때 더 재밌게 보입니다.`,
+      `${winnerName}에는 ${winnerFeatureA}, ${winnerFeatureB}이 있어 ${loserName}보다 신선한 반전이 있습니다.`
+    ],
+    "물고기자리": () => [
+      `물고기자리는 오늘 숫자나 효율보다 끝나고 남을 감정을 먼저 듣습니다.`,
+      `<strong>${cardText}</strong> 카드가 떠서 ${winnerName} 쪽이 마음에 물결을 덜 만들고, ${loserName}보다 밤에 덜 출렁일 것 같습니다.`,
+      `${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 감정적으로 더 부드럽게 남습니다.`
+    ]
+  };
+
+  return (templates[signName] || templates["황소자리"])().join(" ");
+}
+
 function zodiacAside(sign, category, winner) {
   const name = sign[0];
   const winnerName = escapeHtml(winner.name);
@@ -1426,6 +1503,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   );
   const cardDrivenReason = cardMeaningIntro(sign, cardLabels, category, winner, loser, hasQuestionContext, subjectName);
   const cardReason = cardReasonLine(cardLabels, winner, loser, category);
+  const zodiacWhy = zodiacWhyNarrative(sign, cardLabels, category, winner, loser);
   const defaultWhy = [
     cardDrivenReason,
     cardReason,
@@ -1504,7 +1582,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     winnerScore,
     loserScore,
     advice: adviceByCategory[category] || adviceByCategory.daily,
-    why: whyByCategory[category] || defaultWhy,
+    why: zodiacWhy,
     opposite: oppositeText,
     fortune,
     zodiacCards: cardLabels,

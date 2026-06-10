@@ -407,7 +407,8 @@ function dangerousChoiceCheck(question, choiceA = "", choiceB = "") {
   const directKeywords = [
     "죽을까", "자살", "극단적선택", "뛰어내릴까", "목숨", "죽고싶", "죽고싶다",
     "사라지고싶", "사라지고싶다", "해칠까", "자해", "약먹을까", "목맬까",
-    "목매", "죽인다", "죽일까", "해코지", "폭력", "때릴까", "범죄", "훔칠까", "불법"
+    "목매", "죽인다", "죽일까", "해코지", "폭력", "때릴까", "범죄", "훔칠까", "불법",
+    "마약", "약물", "필로폰", "대마", "코카인", "도박", "카지노", "불법토토", "토토할까"
   ];
   const dangerous = directKeywords.some((keyword) => compact.includes(keyword)) ||
     (compact.includes("칼") && includesAny(compact, ["해칠", "찌를", "찌르", "죽일", "자해"])) ||
@@ -451,10 +452,18 @@ function choiceProfile(question, choiceA, choiceB) {
   } else if (includesAny(text, ["매수", "매도", "투자", "코인", "주식", "살까"]) && !giftContext) {
     profile.type = "money";
     profile.forced = includesAny(a, ["관망", "기다", "보류"]) ? "A" : includesAny(b, ["관망", "기다", "보류"]) ? "B" : null;
-  } else if (includesAny(text, ["고백", "연락", "사과", "화해"])) {
+  } else if (includesAny(text, ["고백", "연락", "전화", "통화", "문자", "카톡", "사과", "화해"])) {
     profile.type = "relationship";
+  } else if (includesAny(text, ["샤워", "씻", "목욕", "머리감", "세수", "양치"])) {
+    profile.type = "hygiene";
   } else if (includesAny(text, ["운동", "헬스", "러닝", "뛸까", "뛰", "필라테스", "요가", "산책"])) {
     profile.type = "exercise";
+  } else if (includesAny(text, ["공부", "시험", "숙제", "과제", "강의", "복습", "예습"])) {
+    profile.type = "study";
+  } else if (includesAny(text, ["게임", "롤", "배그", "플스", "스팀", "모바일게임"])) {
+    profile.type = "game";
+  } else if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈"])) {
+    profile.type = "travel";
   } else if (giftContext) {
     profile.type = "gift";
   } else if (includesAny(text, ["아이", "아기", "개월", "키즈카페", "놀이터", "어린이집", "육아"])) {
@@ -788,14 +797,21 @@ const optionFeatureBank = [
   { keys: ["걸어간다", "걷는다", "걷기", "걸어"], category: "daily", features: ["몸을 움직이며 기분 전환이 되는 점", "돈이 들지 않는 점", "생각을 정리할 시간이 생기는 점", "날씨와 체력 영향을 크게 받는 점"], caution: "시간이 촉박하거나 너무 덥고 추우면 도착 전에 지칠 수 있어요.", vibe: "가벼운 움직임" },
   { keys: ["만난다", "만나", "나간다", "외출"], category: "daily", features: ["사람을 만나며 기분이 환기되는 점", "집에 있으면 없을 장면이 생기는 점", "대화와 웃음이 생길 수 있는 점", "체력과 시간이 소모되는 점"], caution: "몸이 많이 피곤하면 약속이 즐거움보다 숙제가 될 수 있어요.", vibe: "밖으로 나가는 장면" },
   { keys: ["잔다", "잠", "잠잔다", "쉰다"], category: "daily", features: ["몸을 바로 회복하는 점", "이불과 베개의 설득력이 강한 점", "내일 컨디션을 챙기는 점", "밖에서 생길 장면은 놓치는 점"], caution: "이미 너무 오래 미뤘던 약속이면 자고 나서 아쉬움이 남을 수 있어요.", vibe: "회복과 휴식" },
+  { keys: ["샤워", "씻", "씻기", "목욕"], category: "hygiene", features: ["몸이 개운하게 리셋되는 점", "땀과 찝찝함을 털어내는 점", "잠들기 전 기분이 가벼워지는 점", "시작 전 귀찮음이 꽤 큰 점"], caution: "너무 늦었거나 몸이 축 처져 있으면 짧게만 씻어도 충분해요.", vibe: "개운함" },
+  { keys: ["머리감", "머리 감", "세수", "양치"], category: "hygiene", features: ["찝찝함이 바로 줄어드는 점", "거울 볼 때 마음이 덜 흐트러지는 점", "밖에 나가거나 잠들기 전 부담이 줄어드는 점", "귀찮음이 문앞에서 버티는 점"], caution: "완벽하게 다 하려다 더 미루지 말고 제일 찝찝한 것 하나만 해도 좋아요.", vibe: "정돈" },
   { keys: ["운동", "헬스", "러닝", "뛴다", "뛰기", "요가", "필라테스"], category: "exercise", features: ["몸을 움직이며 기분이 풀리는 점", "하고 나면 뿌듯함이 남는 점", "시작 전까지 귀찮음이 강한 점", "체력과 시간이 필요한 점"], caution: "몸이 진짜 피곤하거나 아프면 무리하지 않는 게 좋아요.", vibe: "몸의 시동" },
   { keys: ["운동안", "안운동", "안 한다", "안한다", "쉰다"], category: "exercise", features: ["오늘 체력을 아낄 수 있는 점", "소파와 타협하기 쉬운 점", "회복 시간을 확보하는 점", "미루는 습관이 생길 수 있는 점"], caution: "쉬기로 했다면 죄책감 대신 회복 시간을 제대로 쓰는 게 좋아요.", vibe: "운동 보류" },
+  { keys: ["공부", "시험공부", "복습", "예습", "강의", "숙제", "과제"], category: "study", features: ["미래의 부담을 조금 덜어내는 점", "시작하면 생각보다 진도가 잡히는 점", "시험이나 마감 앞에서 마음이 덜 쫓기는 점", "책상 앞까지 가는 과정이 제일 어려운 점"], caution: "처음부터 오래 하려 하지 말고 20분만 잡아도 흐름이 생겨요.", vibe: "진도 한 칸" },
+  { keys: ["게임", "롤", "배그", "플스", "스팀", "모바일게임"], category: "game", features: ["머리를 잠깐 꺼두는 재미", "스트레스가 빠르게 풀리는 점", "시간이 순식간에 사라지는 점", "한 판만 하겠다는 약속이 자주 흔들리는 점"], caution: "내일 일정이 있으면 종료 시간을 먼저 정해두는 게 좋아요.", vibe: "한 판의 유혹" },
+  { keys: ["여행", "놀러", "숙소", "호텔", "비행기", "기차"], category: "travel", features: ["일상에서 빠져나오는 기분 전환", "사진과 추억이 남는 점", "비용과 동선 계산이 필요한 점", "체력이 생각보다 빨리 닳을 수 있는 점"], caution: "설렘만 보지 말고 이동 시간과 예산을 같이 봐야 해요.", vibe: "작은 탈출" },
   { keys: ["산다", "구매", "결제", "예약", "주문"], category: "shopping", features: ["바로 손에 넣는 설렘", "배송 조회하는 재미", "카드값이 따라붙는 현실감", "며칠 뒤 합리화가 필요할 수 있는 점"], caution: "진짜 자주 쓸지, 지금 기분만 그런 건지 한 번만 더 보면 좋아요.", vibe: "결제 직전의 설렘" },
   { keys: ["안 산다", "안산다", "안 사", "사지 않는다", "보류"], category: "shopping", features: ["통장을 지키는 점", "충동 결제를 줄이는 점", "배송 기다림이 사라지는 점", "대신 계속 생각날 수 있는 점"], caution: "계속 생각나면 하루 뒤 다시 봐도 늦지 않아요.", vibe: "통장 방어" },
   { keys: ["매수", "투자"], category: "money", features: ["기회를 잡는 느낌", "수익 기대감", "가격 변동 리스크", "틀렸을 때 손실 가능성"], caution: "손실 한도 없이 들어가면 감정이 흔들릴 수 있어요.", vibe: "공격적 선택" },
   { keys: ["매도", "판다", "팔기", "팔래"], category: "money", features: ["결론을 내리는 느낌", "수익이나 손실을 확정하는 버튼", "다시 차트를 볼 수밖에 없는 찝찝함", "현금화해서 마음을 정리하는 장점"], caution: "팔고 나서 오르면 차트를 더 자주 보게 될 수 있어요.", vibe: "결론 버튼" },
   { keys: ["안판다", "안 판다", "보유", "홀딩", "가지고"], category: "money", features: ["괜히 팔았다가 후회할 가능성을 줄이는 점", "포지션을 유지하는 선택", "현금화 유혹을 참는 인내", "떨어질 때 마음이 흔들릴 수 있는 점"], caution: "그냥 버티는 게 아니라 다시 볼 가격이나 시간을 정해두는 게 좋아요.", vibe: "잠깐 버티기" },
   { keys: ["관망", "기다"], category: "money", features: ["손실을 피할 시간", "가격을 더 볼 여유", "기회를 놓칠 수 있는 아쉬움", "감정 매매를 줄이는 장점"], caution: "기다림에도 기준 가격이 있어야 해요.", vibe: "리스크 관리" },
+  { keys: ["전화", "통화"], category: "relationship", features: ["목소리로 오해를 줄일 수 있는 점", "답을 바로 확인하는 점", "문자보다 감정이 빨리 전달되는 점", "상대가 바쁘면 부담이 될 수 있는 점"], caution: "늦은 시간이거나 상대가 예민한 상황이면 짧게 시작하는 게 좋아요.", vibe: "직접 확인" },
+  { keys: ["문자", "카톡", "연락"], category: "relationship", features: ["부담을 덜 주고 말을 꺼낼 수 있는 점", "상대가 답할 시간을 가질 수 있는 점", "말을 고쳐 쓸 수 있는 점", "기다리는 시간이 길어질 수 있는 점"], caution: "길게 쓰기보다 핵심만 짧게 보내는 게 좋아요.", vibe: "말풍선" },
   { keys: ["고백", "연락", "사과"], category: "relationship", features: ["마음을 직접 전함", "오해를 줄일 수 있음", "상대 반응을 확인할 수 있음", "말투가 세면 부담을 줄 수 있음"], caution: "긴 문장보다 짧고 정확한 말이 좋아요.", vibe: "직접 확인" },
   { keys: ["보류", "안 한다", "안한다"], category: "general", features: ["당장 부딪히지 않음", "생각할 시간이 생김", "너무 길어지면 답답함이 남음", "결정 피로가 줄어듦"], caution: "언제 다시 볼지 정하지 않으면 흐지부지될 수 있어요.", vibe: "보류" }
 ];
@@ -805,8 +821,12 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (profile.type !== "general") return profile.type;
   if (includesAny(text, ["찌개", "라면", "밥", "국밥", "순대국", "순댓국", "감자탕", "치킨", "피자", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "메뉴", "먹을"])) return "food";
   if (includesAny(text, ["술", "소주", "맥주", "와인", "막걸리", "마실까", "한잔", "한 잔"])) return "drink";
+  if (includesAny(text, ["샤워", "씻", "목욕", "머리감", "세수", "양치"])) return "hygiene";
   if (includesAny(text, ["운동", "헬스", "러닝", "뛸까", "뛰", "요가", "필라테스", "산책"])) return "exercise";
+  if (includesAny(text, ["공부", "시험", "숙제", "과제", "강의", "복습", "예습"])) return "study";
+  if (includesAny(text, ["게임", "롤", "배그", "플스", "스팀", "모바일게임"])) return "game";
   if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
+  if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈"])) return "travel";
   if (includesAny(text, ["카페", "공원", "영화", "마트", "백화점", "여행", "놀러", "어디"])) return "place";
   if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제"])) return "shopping";
   return "daily";
@@ -851,6 +871,10 @@ function analyzeOption(option, category) {
     place: { features: [`${option}의 분위기`, "이동 거리", "사람 많은 정도", "끝나고 남는 피로감"], caution: "동선과 머무는 시간을 짧게 잡는 게 좋아요.", vibe: "장소감" },
     shopping: { features: [`${option}을 샀을 때의 만족감`, "가격 부담", "실제로 자주 쓸 가능성", "나중에 후회할 가능성"], caution: "지금 갖고 싶은 마음과 실제 사용 빈도를 따로 봐야 해요.", vibe: "구매 만족" },
     drink: { features: [`${option} 선택 후 바로 풀리는 기분`, "내일 아침 컨디션 변수", "자리 분위기에 휩쓸릴 가능성", "한 잔만 하겠다는 약속의 수상함"], caution: "내일 일정과 지금 피로도를 먼저 봐야 해요.", vibe: "한 잔의 유혹" },
+    hygiene: { features: [`${option} 후 몸이 개운해지는 점`, "찝찝함을 털어내는 점", "잠들기 전 마음이 가벼워지는 점", "시작 전 귀찮음이 큰 점"], caution: "전부 다 하려다 미루지 말고 짧게라도 끝내는 게 좋아요.", vibe: "개운함" },
+    study: { features: [`${option}로 진도를 조금이라도 당기는 점`, "마감이나 시험 부담을 줄이는 점", "시작 전 저항감", "끝나고 마음이 덜 쫓기는 점"], caution: "오래 하겠다고 잡으면 시작이 어려우니 작게 끊는 게 좋아요.", vibe: "진도" },
+    game: { features: [`${option}로 스트레스를 빨리 푸는 점`, "한 판의 재미", "시간이 빨리 사라지는 점", "끝낼 타이밍이 흔들리는 점"], caution: "시작 전에 종료 시간을 정해두면 내일의 내가 덜 째려봐요.", vibe: "한 판" },
+    travel: { features: [`${option}로 일상에서 잠깐 빠져나오는 점`, "사진과 추억이 남는 점", "비용과 동선 부담", "체력 소모"], caution: "설렘과 예산을 같이 놓고 보는 게 좋아요.", vibe: "탈출" },
     daily: { features: [`${option}을 골랐을 때 달라지는 장면`, "하고 난 뒤의 마음", "미뤘을 때 남는 찝찝함", "오늘 감당 가능한 정도"], caution: "한 번에 크게 결정하기보다 작게 해보는 게 좋아요.", vibe: "일상 선택" }
   };
   const fallback = fallbackByCategory[category] || fallbackByCategory.daily;
@@ -987,6 +1011,41 @@ function skipFeaturesForScenario(option, scenario, category) {
       features: [`${scenarioName}까지 이동하는 피로를 줄이는 점`, "사람 많은 공간을 피할 수 있는 점", "집에서 시간을 정리할 수 있는 점", "비용과 체력을 아낄 수 있는 점"],
       caution: `답답함이 오래 쌓였다면 ${scenarioName}에 안 가는 선택이 기분 전환 기회를 놓칠 수 있어요.`,
       vibe: "쉬어가기"
+    },
+    hygiene: {
+      features: [`${scenarioName}를 미뤄서 당장 귀찮음이 줄어드는 점`, "물 틀고 움직이는 과정을 피하는 점", "시간을 조금 아끼는 점", "대신 찝찝함과 수면 전 개운함을 놓치는 점"],
+      caution: `너무 피곤해도 ${scenarioName}는 짧게 끝내면 생각보다 몸이 빨리 가벼워질 수 있어요.`,
+      vibe: "귀찮음 방어"
+    },
+    exercise: {
+      features: [`${scenarioName}를 미뤄서 오늘 체력을 아끼는 점`, "소파와 타협하기 쉬운 점", "회복 시간을 확보하는 점", "대신 뿌듯함은 내일로 넘어가는 점"],
+      caution: `몸이 아픈 게 아니라면 ${scenarioName}를 10분만 해도 기분이 꽤 바뀔 수 있어요.`,
+      vibe: "운동 보류"
+    },
+    relationship: {
+      features: [`${scenarioName}를 미뤄서 당장 부담을 피하는 점`, "상대 반응을 기다리지 않아도 되는 점", "말실수 위험을 줄이는 점", "대신 궁금함이 계속 남는 점"],
+      caution: `계속 신경 쓰이는 일이라면 ${scenarioName}를 너무 미루는 게 더 피곤할 수 있어요.`,
+      vibe: "답장 보류"
+    },
+    study: {
+      features: [`${scenarioName}를 미뤄서 지금 피로를 줄이는 점`, "책상 앞 저항감을 피하는 점", "당장은 마음이 편한 점", "대신 마감이나 시험 부담이 뒤로 쌓이는 점"],
+      caution: `전부 하려 하지 말고 ${scenarioName}를 20분만 잡으면 죄책감이 꽤 줄어요.`,
+      vibe: "진도 보류"
+    },
+    game: {
+      features: [`${scenarioName}를 안 해서 시간을 지키는 점`, "내일 컨디션을 보호하는 점", "한 판이 세 판 되는 사고를 막는 점", "대신 오늘 스트레스 해소감은 줄어드는 점"],
+      caution: `정말 하고 싶다면 ${scenarioName}는 종료 시간을 정하고 시작하는 게 좋아요.`,
+      vibe: "시간 방어"
+    },
+    travel: {
+      features: [`${scenarioName}를 미뤄서 비용과 체력을 아끼는 점`, "동선 계산을 오늘 안 해도 되는 점", "일정을 덜 복잡하게 만드는 점", "대신 기분 전환의 장면은 줄어드는 점"],
+      caution: `답답함이 오래 쌓였다면 ${scenarioName}를 계속 미루는 것도 마음에 먼지가 쌓여요.`,
+      vibe: "예산 방어"
+    },
+    shopping: {
+      features: [`${scenarioName}를 미뤄서 통장을 지키는 점`, "충동 결제를 줄이는 점", "배송 기다림이 사라지는 점", "대신 계속 생각날 수 있는 점"],
+      caution: `하루 뒤에도 ${scenarioName}가 계속 생각나면 그때 다시 봐도 늦지 않아요.`,
+      vibe: "통장 방어"
     },
     daily: {
       features: [`${scenarioName}을 미루며 부담을 줄이는 점`, "오늘 컨디션을 먼저 볼 수 있는 점", "급하게 움직이지 않아도 되는 점", "다른 선택지를 남겨두는 점"],
@@ -1234,10 +1293,11 @@ function zodiacVoiceLine(sign, category, winner, loser) {
 }
 
 function optionFeatureSentence(analysis) {
+  const displayName = analysis.subjectName && analysis.subjectName !== analysis.name ? analysis.subjectName : analysis.name;
   const features = analysis.features.filter(Boolean).slice(0, 2).map(escapeHtml);
-  if (features.length >= 2) return `${escapeHtml(analysis.name)}에는 ${features[0]}, ${features[1]}이 확실히 있어요.`;
-  if (features.length === 1) return `${escapeHtml(analysis.name)}에는 ${features[0]}이 눈에 띕니다.`;
-  return `${escapeHtml(analysis.name)}만의 장점이 오늘 선택에 들어왔어요.`;
+  if (features.length >= 2) return `${escapeHtml(displayName)}에는 ${features[0]}, ${features[1]}이 확실히 있어요.`;
+  if (features.length === 1) return `${escapeHtml(displayName)}에는 ${features[0]}이 눈에 띕니다.`;
+  return `${escapeHtml(displayName)}만의 장점이 오늘 선택에 들어왔어요.`;
 }
 
 function featureSubjectText(featureA, featureB) {
@@ -1555,11 +1615,15 @@ function signOpeningPool(signName, category, winner, loser, question) {
     drink: `술잔과 내일 아침 사이에서 ${winnerName} 쪽이 먼저 눈에 들어옵니다.`,
     relationship: `말풍선 앞에서 ${winnerWithAnd} ${loserName} 사이를 다시 보고 있습니다.`,
     attendance: `이불과 일정표 사이에서 ${winnerName} 쪽 카드가 올라왔습니다.`,
+    hygiene: `찝찝함과 귀찮음 사이에서 ${winnerName} 쪽이 먼저 고개를 듭니다.`,
     exercise: `운동화와 소파 사이에서 ${winnerName} 쪽이 오늘의 후보로 올라왔습니다.`,
+    study: `책상과 이불 사이에서 ${winnerName} 쪽이 오늘의 결론으로 올라왔습니다.`,
+    game: `한 판의 유혹과 내일 컨디션 사이에서 ${winnerName} 쪽을 봅니다.`,
     shopping: `장바구니와 통장 사이에서 ${winnerName} 쪽이 별의 심사를 받습니다.`,
     food: `${winnerWithAnd} ${loserName} 중 오늘 입에 들어오는 장면이 더 선명한 쪽을 봅니다.`,
     money: `차트와 계좌 사이에서 ${winnerName} 쪽이 먼저 움직였습니다.`,
     childcare: `아이 컨디션과 보호자 체력 사이에서 ${winnerName} 쪽을 봅니다.`,
+    travel: `답답한 일상과 지갑 현실 사이에서 ${winnerName} 쪽을 다시 봅니다.`,
     place: `밖으로 나갈지 말지의 공기 속에서 ${winnerName} 쪽이 보입니다.`,
     daily: `${winnerWithAnd} ${loserName} 사이에서 오늘 마음이 먼저 반응한 쪽을 봅니다.`
   };
@@ -2307,6 +2371,54 @@ function futureComment(category, winner, question, seed, sign) {
       `몸은 힘든데 기분은 이상하게 덜 무겁습니다.`,
       `운동화가 "드디어?" 하고 눈을 떴습니다.`
     ],
+    hygiene: [
+      `샤워기 물소리에 귀찮음이 조금 씻겨 내려갔습니다.`,
+      `이불 들어가기 전에 개운함 하나는 챙겼습니다.`,
+      `씻기 전의 나는 투덜댔고, 씻은 뒤의 나는 조용해졌습니다.`,
+      `찝찝함 회의가 욕실 앞에서 종료됐습니다.`,
+      `머리는 몰라도 몸은 방금 고맙다고 했습니다.`,
+      `수건을 집는 순간부터 미래의 내가 살짝 웃었습니다.`,
+      `귀찮음은 컸지만 개운함이 판정승했습니다.`,
+      `오늘의 몸 상태가 새로고침 버튼을 눌렀습니다.`,
+      `물이 닿자마자 "왜 미뤘지"가 나올 수 있습니다.`,
+      `씻고 나면 침대가 더 당당하게 기다립니다.`
+    ],
+    study: [
+      `책상 앞에 앉은 것만으로도 미래의 내가 박수쳤습니다.`,
+      `진도 한 칸이 마음의 빚을 조금 줄였습니다.`,
+      `20분짜리 시작이 생각보다 큰 알리바이가 됐습니다.`,
+      `공부 요정은 안 왔지만 책은 열렸습니다.`,
+      `내일의 내가 오늘의 페이지를 보고 고개를 끄덕입니다.`,
+      `미룰 핑계가 하나 줄고 체크 표시가 하나 늘었습니다.`,
+      `책상은 차갑고 마음은 조금 덜 쫓깁니다.`,
+      `오늘 한 줄이라도 봤으면 완전 패배는 아닙니다.`,
+      `시험/마감이라는 단어가 방금 살짝 작아졌습니다.`,
+      `미래의 내가 "그래도 시작은 했네"라고 합니다.`
+    ],
+    game: [
+      `한 판만 하겠다는 약속이 지금 면접을 보고 있습니다.`,
+      `재미는 왔고 시간은 조용히 도망갈 준비 중입니다.`,
+      `컨트롤러는 웃고 내일 알람은 긴장했습니다.`,
+      `스트레스는 줄었지만 시계는 증거를 남깁니다.`,
+      `오늘의 나와 내일의 나가 플레이타임을 두고 협상합니다.`,
+      `게임은 켜졌고 자제력은 관전 모드입니다.`,
+      `한 판이 정말 한 판이면 이건 거의 승리입니다.`,
+      `재미 담당 부서는 만족했고 수면 담당 부서는 항의 중입니다.`,
+      `미래의 내가 플레이 기록을 보며 침묵할 수 있습니다.`,
+      `종료 버튼을 누를 수 있으면 오늘은 꽤 어른입니다.`
+    ],
+    travel: [
+      `지도 앱이 열리자 일상이 살짝 질투했습니다.`,
+      `사진첩에 들어갈 장면 하나가 대기 중입니다.`,
+      `지갑은 걱정하지만 마음은 이미 창밖을 보고 있습니다.`,
+      `다녀오면 피곤해도 이야깃거리는 남습니다.`,
+      `숙소 검색창 앞에서 현실과 설렘이 악수했습니다.`,
+      `미래의 내가 "그때 가길 잘했다"를 준비할 수도 있습니다.`,
+      `동선은 귀찮지만 바람은 꽤 설득력 있습니다.`,
+      `여행 계획 하나가 답답한 하루에 숨구멍을 냈습니다.`,
+      `돌아오는 길의 피로까지 계산하면 꽤 현실적인 선택입니다.`,
+      `오늘의 탈출 버튼이 살짝 반짝였습니다.`
+    ],
     shopping: [
       `장바구니가 오늘도 혼자 결제 연기를 했습니다.`,
       `카드는 긴장했고 손가락은 침착한 척했습니다.`,
@@ -2396,6 +2508,32 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
   }
   if (category === "attendance" && includesAny(text, ["출근", "근무"])) score += 12;
   if (category === "money" && includesAny(text, ["관망", "기다"])) score += 10;
+  if (category === "hygiene") {
+    if (analysis.intent === "go") score += includesAny(question, ["너무 피곤", "아파", "감기", "늦었", "시간없", "시간 없어"]) ? 4 : 14;
+    if (analysis.intent === "skip" && includesAny(question, ["너무 피곤", "아파", "감기", "늦었", "시간없", "시간 없어"])) score += 8;
+    if (analysis.intent === "skip" && !includesAny(question, ["너무 피곤", "아파", "감기", "늦었", "시간없", "시간 없어"])) score -= 6;
+  }
+  if (category === "exercise") {
+    if (analysis.intent === "go" && !includesAny(question, ["아파", "몸살", "다쳤", "너무 피곤", "무리"])) score += 10;
+    if (analysis.intent === "skip" && includesAny(question, ["아파", "몸살", "다쳤", "너무 피곤", "무리"])) score += 12;
+  }
+  if (category === "study") {
+    if (analysis.intent === "go" && includesAny(question, ["시험", "마감", "숙제", "과제", "내일"])) score += 14;
+    if (analysis.intent === "go") score += 6;
+    if (analysis.intent === "skip" && includesAny(question, ["너무 피곤", "아파", "밤새", "잠"])) score += 5;
+  }
+  if (category === "game") {
+    if (analysis.intent === "go" && includesAny(question, ["스트레스", "쉬고", "기분", "친구"])) score += 8;
+    if (analysis.intent === "skip" && includesAny(question, ["내일", "출근", "시험", "늦", "밤", "시간없", "시간 없어"])) score += 14;
+  }
+  if (category === "travel") {
+    if (analysis.intent === "go" && includesAny(question, ["답답", "휴가", "기분전환", "놀러"])) score += 10;
+    if (analysis.intent === "skip" && includesAny(question, ["돈", "비싸", "피곤", "시간없", "일정"])) score += 12;
+  }
+  if (category === "relationship") {
+    if (analysis.intent === "go" && includesAny(question, ["전화", "통화", "연락", "카톡", "문자"]) && !includesAny(question, ["싸웠", "부담", "늦은"])) score += 8;
+    if (analysis.intent === "skip" && includesAny(question, ["늦은", "밤", "싸웠", "화났", "부담"])) score += 8;
+  }
   if (includesAny(question, ["어제 술", "술 많이", "숙취", "해장"])) {
     if (includesAny(text, ["감자탕", "해장", "묵직", "국물"])) score += 18;
     if (includesAny(text, ["순대국", "국밥", "뜨끈"])) score += 4;
@@ -2485,14 +2623,54 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
       optionFeatureSentence(winner),
       `지금 귀찮음은 크지만, 내일 아침의 내가 고개를 끄덕일 쪽은 ${escapeHtml(winner.name)}에 더 가깝습니다.`
     ].join(" "),
+    hygiene: [
+      `<strong>${escapeHtml(subjectName)}</strong> 고민이면 핵심은 ${escapeHtml(winner.features[0])}과 ${escapeHtml(winner.features[1])}이에요.`,
+      winner.intent === "go"
+        ? `솔직히 시작 전엔 귀찮아도, 끝나고 나면 몸이 바로 "아 이거였네" 쪽으로 갑니다.`
+        : `지금은 움직이는 것 자체가 부담이라 ${escapeHtml(winner.name)} 쪽이 당장 에너지를 아끼는 선택이에요.`,
+      cardDrivenReason,
+      `별자리 카드는 참견만 했고, 결론은 ${escapeHtml(subjectName)} 뒤에 남는 개운함과 귀찮음의 싸움에서 나온 겁니다.`
+    ].join(" "),
+    exercise: [
+      `<strong>${escapeHtml(subjectName)}</strong> 고민이면 운동 자체의 장점과 오늘 체력이 먼저예요.`,
+      winner.intent === "go"
+        ? `${featurePairText(winner.features[0], winner.features[1])} 오늘 끝나고 바로 느껴질 가능성이 큽니다.`
+        : `${featurePairText(winner.features[0], winner.features[1])} 지금 몸에는 더 현실적인 장점입니다.`,
+      cardDrivenReason,
+      `그래서 별자리보다 먼저 몸 상태를 보고, 그 다음 카드 성향을 살짝 얹었습니다.`
+    ].join(" "),
+    study: [
+      `<strong>${escapeHtml(subjectName)}</strong> 고민은 의욕보다 시작 장벽이 더 큽니다.`,
+      winner.intent === "go"
+        ? `${featurePairText(winner.features[0], winner.features[1])} 오늘의 진짜 이득이에요. 20분만 해도 머릿속 빚이 줄어듭니다.`
+        : `${featurePairText(winner.features[0], winner.features[1])} 지금 컨디션에는 더 솔직한 선택입니다.`,
+      cardDrivenReason,
+      `별자리 카드는 옆에서 툭 건드린 정도고, 결론은 마감 부담과 현재 체력 사이에서 나왔어요.`
+    ].join(" "),
+    game: [
+      `<strong>${escapeHtml(subjectName)}</strong> 고민이면 "재밌냐"와 "몇 시에 끝나냐"가 같이 심사위원입니다.`,
+      winner.intent === "go"
+        ? `${featurePairText(winner.features[0], winner.features[1])} 지금 기분에는 꽤 강한 유혹이에요.`
+        : `${featurePairText(winner.features[0], winner.features[1])} 내일의 나한테는 더 고마운 쪽입니다.`,
+      cardDrivenReason,
+      `오늘 별자리는 거기에 성격 한 스푼만 얹었고, 핵심은 한 판이 몇 판으로 늘어날지예요.`
+    ].join(" "),
+    travel: [
+      `<strong>${escapeHtml(subjectName)}</strong> 고민은 설렘만 보면 안 되고 비용, 동선, 체력까지 같이 봐야 해요.`,
+      winner.intent === "go"
+        ? `${featurePairText(winner.features[0], winner.features[1])} 지금 일상에 필요한 쪽으로 보입니다.`
+        : `${featurePairText(winner.features[0], winner.features[1])} 오늘 현실 조건에는 더 납득됩니다.`,
+      cardDrivenReason,
+      `별자리는 옆에서 분위기를 띄웠고, 결론은 떠난 뒤의 기분과 돌아온 뒤의 피로를 같이 보고 냈습니다.`
+    ].join(" "),
     money: [
       cardDrivenReason,
       cardReason,
       optionFeatureSentence(winner)
     ].join(" "),
     relationship: [
+      `<strong>${escapeHtml(subjectName)}</strong> 고민이면 상대 반응보다 먼저 내 말투와 타이밍을 봐야 해요.`,
       cardDrivenReason,
-      cardReason,
       optionFeatureSentence(winner),
       `혼자 생각만 오래 굴리면 말 한마디가 점점 커집니다. 오늘은 ${escapeHtml(winner.name)} 쪽이 마음속 편집본을 줄여줄 수 있어요.`
     ].join(" ")
@@ -2502,6 +2680,11 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     drink: `오늘 술잔보다 내일 아침 얼굴색이 더 큰 발언권을 가집니다.`,
     childcare: `아이의 웃음도 중요하지만, 보호자 체력 게이지도 생명줄입니다.`,
     gift: `선물은 물건보다 뜯는 순간의 표정이 먼저입니다.`,
+    hygiene: `귀찮음은 5분이고 개운함은 생각보다 오래 갑니다.`,
+    exercise: `운동은 시작 전이 제일 세고, 끝나면 대체로 내가 이깁니다.`,
+    study: `오늘 20분은 내일의 나한테 꽤 큰 선물입니다.`,
+    game: `한 판은 괜찮습니다. 세 판부터는 별도 못 말립니다.`,
+    travel: `떠나는 설렘과 돌아오는 체력을 같이 데려가세요.`,
     attendance: `내일의 나한테 욕 덜 먹는 쪽으로 갑시다.`,
     money: `지갑이 비명 지르기 전에 한 번만 더 물어봅시다.`,
     relationship: `말은 짧게, 여운은 길게 가는 쪽이 이깁니다.`,
@@ -2520,7 +2703,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     winnerScore,
     loserScore,
     advice: adviceByCategory[category] || adviceByCategory.daily,
-    why: zodiacWhy,
+    why: whyByCategory[category] || defaultWhy,
     opposite: oppositeText,
     fortune,
     zodiacCards: cardLabels,

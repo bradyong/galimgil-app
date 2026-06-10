@@ -406,6 +406,7 @@ function choiceProfile(question, choiceA, choiceB) {
   const a = choiceA.toLowerCase();
   const b = choiceB.toLowerCase();
   const profile = { type: "general", forced: null };
+  const giftContext = includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"]);
   if (includesAny(text, ["출근", "결근", "지각", "근무", "회사 가", "일하러"])) {
     profile.type = "attendance";
     const healthReason = includesAny(text, ["아프", "열", "몸살", "병원", "독감", "응급", "다쳤", "쓰러", "생리통", "장염"]);
@@ -417,13 +418,15 @@ function choiceProfile(question, choiceA, choiceB) {
   } else if (includesAny(text, ["퇴사", "이직", "그만둘", "관둘"])) {
     profile.type = "career";
     profile.forced = includesAny(a, ["유지", "계속", "보류", "기다"]) ? "A" : includesAny(b, ["유지", "계속", "보류", "기다"]) ? "B" : null;
-  } else if (includesAny(text, ["매수", "매도", "투자", "코인", "주식", "살까"])) {
+  } else if (includesAny(text, ["매수", "매도", "투자", "코인", "주식", "살까"]) && !giftContext) {
     profile.type = "money";
     profile.forced = includesAny(a, ["관망", "기다", "보류"]) ? "A" : includesAny(b, ["관망", "기다", "보류"]) ? "B" : null;
   } else if (includesAny(text, ["고백", "연락", "사과", "화해"])) {
     profile.type = "relationship";
   } else if (includesAny(text, ["운동", "헬스", "러닝", "뛸까", "뛰", "필라테스", "요가", "산책"])) {
     profile.type = "exercise";
+  } else if (giftContext) {
+    profile.type = "gift";
   } else if (includesAny(text, ["아이", "아기", "개월", "키즈카페", "놀이터", "어린이집", "육아"])) {
     profile.type = "childcare";
     const badOutdoor = includesAny(text, ["비", "눈", "춥", "덥", "미세먼지", "황사", "폭염", "한파"]);
@@ -739,6 +742,10 @@ const optionFeatureBank = [
   { keys: ["술", "소주", "맥주", "와인", "막걸리"], category: "drink", features: ["기분이 확 풀리는 느낌", "사람들과 말이 조금 더 쉬워지는 분위기", "내일 아침 컨디션을 담보로 잡는 점", "한 잔이 두 잔으로 변신하기 쉬운 점"], caution: "내일 일정이 있거나 이미 피곤하면 내일의 내가 강하게 항의할 수 있어요.", vibe: "오늘의 유혹" },
   { keys: ["키즈카페"], category: "childcare", features: ["실내라 날씨 영향을 덜 받는 점", "장난감과 시설이 많은 점", "큰 아이들과 동선이 겹치면 부딪힐 수 있는 점", "소리와 자극이 많아 아이가 금방 흥분할 수 있는 점"], caution: "사람이 많으면 보호자가 계속 따라다니며 봐야 해요.", vibe: "실내 자극" },
   { keys: ["놀이터"], category: "childcare", features: ["공간이 넓은 점", "아이가 자기 속도로 뛰어놀 수 있는 점", "돈이 거의 들지 않는 점", "날씨와 미끄럼틀·그네 주변 안전을 봐야 하는 점"], caution: "비, 추위, 미세먼지가 있으면 만족도가 확 떨어질 수 있어요.", vibe: "자유로운 몸놀이" },
+  { keys: ["공룡", "티라노", "티라노사우루스"], category: "gift", features: ["포장을 뜯는 순간 반응이 큰 점", "상상놀이로 이야기를 만들기 좋은 점", "첫날 임팩트가 강한 점", "취향이 맞으면 한동안 이름 붙여가며 놀 수 있는 점"], caution: "공룡에 관심이 없는 아이라면 첫 반응만 크고 금방 식을 수 있어요.", vibe: "우와 하는 선물" },
+  { keys: ["자동차", "장난감 자동차", "미니카", "차"], category: "gift", features: ["바닥에서 계속 굴리며 놀기 좋은 점", "혼자 놀 때도 손이 자주 가는 점", "오래 두고 반복해서 쓰기 쉬운 점", "이미 비슷한 장난감이 많으면 새로움이 덜할 수 있는 점"], caution: "집에 비슷한 차가 많으면 처음 반응은 조금 약할 수 있어요.", vibe: "오래 굴러가는 선물" },
+  { keys: ["레고", "블록"], category: "gift", features: ["만들면서 오래 집중할 수 있는 점", "완성했을 때 뿌듯함이 큰 점", "부모가 같이 놀아주기 좋은 점", "작은 부품 관리가 필요한 점"], caution: "나이나 집중 시간이 맞지 않으면 부모 숙제가 될 수 있어요.", vibe: "만드는 재미" },
+  { keys: ["책", "그림책", "동화책"], category: "gift", features: ["잠들기 전 같이 보기 좋은 점", "오래 두고 반복해서 읽기 쉬운 점", "부모와 대화가 생기는 점", "당장 반응은 장난감보다 조용할 수 있는 점"], caution: "화려한 장난감을 기대한 날이면 첫 리액션은 약할 수 있어요.", vibe: "조용한 선물" },
   { keys: ["공원"], category: "place", features: ["넓은 공간", "걷기 좋은 동선", "답답함이 풀리는 느낌", "날씨 영향을 많이 받음"], caution: "날씨가 나쁘면 금방 피곤해질 수 있어요.", vibe: "환기" },
   { keys: ["카페"], category: "place", features: ["앉아서 쉬기 좋음", "대화하기 편함", "커피나 디저트로 기분 전환 가능", "오래 있으면 비용이 쌓임"], caution: "아이가 있거나 사람이 많으면 생각보다 정신없을 수 있어요.", vibe: "잠깐의 여유" },
   { keys: ["출근"], category: "attendance", features: ["오늘 할 일을 미루지 않는 점", "내일 부담이 줄어드는 점", "책임을 지켰다는 마음이 남는 점", "몸이 피곤하면 하루가 길게 느껴질 수 있는 점"], caution: "진짜 아프면 무리하지 말고 먼저 연락하는 게 맞아요.", vibe: "최소 책임" },
@@ -767,27 +774,34 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["찌개", "라면", "밥", "국밥", "순대국", "순댓국", "감자탕", "치킨", "피자", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "메뉴", "먹을"])) return "food";
   if (includesAny(text, ["술", "소주", "맥주", "와인", "막걸리", "마실까", "한잔", "한 잔"])) return "drink";
   if (includesAny(text, ["운동", "헬스", "러닝", "뛸까", "뛰", "요가", "필라테스", "산책"])) return "exercise";
+  if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
   if (includesAny(text, ["카페", "공원", "영화", "마트", "백화점", "여행", "놀러", "어디"])) return "place";
   if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제"])) return "shopping";
   return "daily";
 }
 
-function findFeatureEntry(text) {
+function findFeatureEntry(text, preferredCategory = null) {
   const normalized = String(text).toLowerCase();
+  const matches = [];
   let best = null;
   optionFeatureBank.forEach((item) => {
     item.keys.forEach((key) => {
-      if (normalized.includes(key.toLowerCase()) && (!best || key.length > best.key.length)) {
-        best = { item, key };
+      if (normalized.includes(key.toLowerCase())) {
+        matches.push({ item, key });
       }
     });
+  });
+  matches.forEach((match) => {
+    const categoryBonus = preferredCategory && match.item.category === preferredCategory ? 1000 : 0;
+    const score = match.key.length + categoryBonus;
+    if (!best || score > best.score) best = { ...match, score };
   });
   return best;
 }
 
 function analyzeOption(option, category) {
   const text = option.toLowerCase();
-  const match = findFeatureEntry(text);
+  const match = findFeatureEntry(text, category);
   const found = match && match.item;
   if (found) {
     return {
@@ -801,6 +815,7 @@ function analyzeOption(option, category) {
   const fallbackByCategory = {
     food: { features: [`${option}만의 익숙한 맛`, "먹고 난 뒤의 포만감", "오늘 입맛에 따라 만족도가 달라짐", "같이 먹는 사람이나 컨디션 영향을 받음"], caution: "속 상태와 자극 정도는 한 번 보고 고르는 게 좋아요.", vibe: "한 끼 만족" },
     childcare: { features: [`${option}에서 생기는 아이 반응`, "보호자가 봐야 하는 안전 변수", "아이 체력 소모", "돌아오는 길 컨디션"], caution: "아이가 지치기 전에 나올 수 있는지가 중요해요.", vibe: "아이 리듬" },
+    gift: { features: [`${option}를 받는 순간의 첫 반응`, "며칠 뒤에도 다시 찾을 가능성", "같이 놀아주기 쉬운 정도", "이미 비슷한 게 있는지"], caution: "첫 리액션과 오래 쓰는 재미를 같이 봐야 해요.", vibe: "선물 반응" },
     place: { features: [`${option}의 분위기`, "이동 거리", "사람 많은 정도", "끝나고 남는 피로감"], caution: "동선과 머무는 시간을 짧게 잡는 게 좋아요.", vibe: "장소감" },
     shopping: { features: [`${option}을 샀을 때의 만족감`, "가격 부담", "실제로 자주 쓸 가능성", "나중에 후회할 가능성"], caution: "지금 갖고 싶은 마음과 실제 사용 빈도를 따로 봐야 해요.", vibe: "구매 만족" },
     drink: { features: [`${option} 선택 후 바로 풀리는 기분`, "내일 아침 컨디션 변수", "자리 분위기에 휩쓸릴 가능성", "한 잔만 하겠다는 약속의 수상함"], caution: "내일 일정과 지금 피로도를 먼저 봐야 해요.", vibe: "한 잔의 유혹" },
@@ -817,9 +832,90 @@ function optionIntent(option) {
   return "specific";
 }
 
+function giftTarget(question) {
+  const text = String(question).toLowerCase();
+  const targets = [
+    { keys: ["아들", "아들한테", "아들 선물"], name: "아들" },
+    { keys: ["딸", "딸한테", "딸 선물"], name: "딸" },
+    { keys: ["아이", "아기", "애기", "어린이"], name: "아이" },
+    { keys: ["조카"], name: "조카" },
+    { keys: ["남편"], name: "남편" },
+    { keys: ["아내", "와이프"], name: "아내" },
+    { keys: ["여자친구", "여친"], name: "여자친구" },
+    { keys: ["남자친구", "남친"], name: "남자친구" },
+    { keys: ["친구"], name: "친구" },
+    { keys: ["부모님", "엄마", "아빠"], name: "부모님" }
+  ];
+  const found = targets.find((target) => includesAny(text, target.keys));
+  return found ? found.name : "받는 사람";
+}
+
+function giftScenario(question) {
+  const text = String(question).toLowerCase();
+  if (!includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return null;
+  const target = giftTarget(question);
+  const occasion = includesAny(text, ["생일"]) ? "생일 선물" :
+    includesAny(text, ["어린이날"]) ? "어린이날 선물" :
+    includesAny(text, ["크리스마스"]) ? "크리스마스 선물" :
+    "선물";
+  return {
+    name: `${target} ${occasion}`,
+    target,
+    category: "gift",
+    features: [`${target}가 받자마자 보일 첫 반응`, "며칠 뒤에도 다시 꺼낼 가능성", "부모가 같이 놀아주기 쉬운지", "집에 이미 비슷한 게 있는지"],
+    caution: "첫날 리액션만 보지 말고 오래 가지고 놀지도 같이 봐야 해요.",
+    vibe: "선물 리액션"
+  };
+}
+
+function contextualGiftFeatures(base, scenario) {
+  const target = scenario.target || "받는 사람";
+  const targetSubject = withParticle(target, "이", "가");
+  const features = base.features || [];
+  return {
+    features: [
+      features[0] ? `${targetSubject} ${features[0]}` : `${targetSubject} 받자마자 반응하기 쉬운 점`,
+      features[1] || "며칠 뒤에도 다시 꺼내 놀 가능성",
+      features[2] || "처음 뜯는 순간의 표정",
+      features[3] || "집에 이미 비슷한 게 있으면 반응이 약해질 수 있는 점"
+    ],
+    caution: base.caution || scenario.caution,
+    vibe: base.vibe || scenario.vibe
+  };
+}
+
+function contextZodiacClosing(category, signName, winner, loser, featureA, featureB) {
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const safeFeatureA = escapeHtml(featureA);
+  const safeFeatureB = escapeHtml(featureB);
+  if (category === "gift") {
+    const target = escapeHtml(winner.targetName || "받는 사람");
+    const targetSubject = withParticle(winner.targetName || "받는 사람", "이", "가");
+    const winnerSubject = withParticle(winner.name, "은", "는");
+    const lines = {
+      "황소자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 황소자리는 첫날 난리보다 한 달 뒤에도 바닥에서 굴러다니는 선물을 봅니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 ${targetSubject} 오래 손댈 가능성에 점수가 붙었습니다.`,
+      "양자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 양자리는 포장 뜯는 순간의 "우와!"를 먼저 봅니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 ${target}의 첫 반응을 더 크게 만들 수 있어요.`,
+      "쌍둥이자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 쌍둥이자리는 선물 하나로 이야깃거리가 얼마나 생기는지를 봅니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 ${targetSubject} 혼자 중얼거리며 놀 그림이 더 잘 나옵니다.`,
+      "게자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 게자리는 선물보다 ${target}의 표정을 먼저 봅니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 받는 순간 마음이 더 따뜻해질 가능성이 있어요.`,
+      "사자자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 사자자리는 선물 뜯는 장면의 리액션을 봅니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 ${targetSubject} 주인공처럼 좋아할 그림이 더 큽니다.`,
+      "처녀자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 처녀자리는 "받고 끝"이 아니라 얼마나 자주 쓰일지까지 계산합니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 선물 효율표에서 조금 앞섭니다.`,
+      "천칭자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 천칭자리는 반응과 실용성 사이의 균형을 봅니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 ${loserName}보다 선물 그림이 덜 어색합니다.`,
+      "전갈자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 전갈자리는 "진짜 꽂힐까?"를 깊게 봅니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 ${targetSubject} 몰입해서 파고들 가능성이 더 있어요.`,
+      "사수자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 사수자리는 선물에서 작은 모험을 찾습니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 ${targetSubject} 새 놀이를 시작하기 좋아 보입니다.`,
+      "염소자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 염소자리는 가격보다 오래 쓰는지를 먼저 봅니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 "사주고 끝"보다 오래 남는 쪽에 가깝습니다.`,
+      "물병자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 물병자리는 뻔한 선물보다 다르게 노는 그림을 좋아합니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 ${targetSubject} 자기 방식으로 가지고 놀 여지가 더 있습니다.`,
+      "물고기자리": `그래서 ${winnerName} 쪽으로 기울었습니다. 물고기자리는 선물 받은 뒤의 표정과 여운을 봅니다. ${winnerSubject} ${safeFeatureA}, ${safeFeatureB} 쪽이라 ${target} 마음에 더 오래 남을 수 있어요.`
+    };
+    return lines[signName] || lines["황소자리"];
+  }
+  return null;
+}
+
 function findScenario(question, category) {
   const text = String(question).toLowerCase();
-  const match = findFeatureEntry(text);
+  if (category === "gift") return giftScenario(question);
+  const match = findFeatureEntry(text, category);
   const found = match && match.item;
   if (!found) return null;
   const key = match.key || found.keys[0];
@@ -884,6 +980,19 @@ function contextualizeOption(option, category, question) {
   const base = analyzeOption(option, category);
   if (category === "money" && base.category === "money") {
     return { ...base, subjectName: base.name, intent };
+  }
+  if (category === "gift" && scenario) {
+    const gift = contextualGiftFeatures(base, scenario);
+    return {
+      ...base,
+      category: "gift",
+      subjectName: scenario.name,
+      targetName: scenario.target,
+      intent,
+      features: gift.features,
+      caution: gift.caution,
+      vibe: gift.vibe
+    };
   }
   if (!scenario || intent === "specific") {
     return { ...base, subjectName: base.name, intent };
@@ -1131,6 +1240,7 @@ function cardReasonLine(cards, winner, loser, category) {
 function situationHook(category, winner, loser, question) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
+  const winnerWithAnd = withParticle(winner.name, "과", "와");
   const q = String(question).toLowerCase();
   if (category === "drink") {
     return `술은 지금 부르고 있지만 내일 아침도 대기 중입니다. ${winnerName}와 ${loserName} 사이에서 간이 회의실 문을 잠갔습니다.`;
@@ -1156,6 +1266,10 @@ function situationHook(category, winner, loser, question) {
   if (category === "childcare") {
     return `아이의 에너지와 보호자의 체력이 서로 다른 말을 하고 있습니다. 웃음과 귀가 후 피곤함이 같이 계산됩니다.`;
   }
+  if (category === "gift") {
+    const targetSubject = withParticle(winner.targetName || loser.targetName || giftTarget(question), "이", "가");
+    return `${targetSubject} 포장을 뜯는 순간을 먼저 상상해봤습니다. ${winnerWithAnd} ${loserName} 사이에서 별은 "첫 반응이냐, 오래 갖고 노느냐"를 놓고 회의 중입니다.`;
+  }
   return `고민은 짧아 보이지만 머릿속에서는 이미 회의가 열렸습니다. 오늘은 ${winnerName}와 ${loserName} 사이에서 별이 먼저 참견합니다.`;
 }
 
@@ -1167,79 +1281,87 @@ function zodiacWhyNarrative(sign, cards, category, winner, loser, question) {
   const winnerFeatureA = escapeHtml(winner.features[0] || winner.vibe || "오늘의 장점");
   const winnerFeatureB = escapeHtml(winner.features[1] || winner.caution || "선택 후 느낌");
   const hook = situationHook(category, winner, loser, question);
+  const contextClosing = contextZodiacClosing(
+    category,
+    signName,
+    winner,
+    loser,
+    winner.features[0] || winner.vibe || "오늘의 장점",
+    winner.features[1] || winner.caution || "선택 후 느낌"
+  );
 
   const templates = {
     "황소자리": () => [
       hook,
       `황소자리는 오늘 새 모험보다 늘 가던 길을 더 오래 쳐다봅니다. 한마디로 "굳이?" 모드입니다.`,
       `<strong>${cardText}</strong> 카드가 뜬 날이라 별이 소파에 앉아서 "편한 게 최고지"라고 말하는 쪽입니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 황소자리의 편한 리듬에 더 잘 붙습니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 황소자리의 편한 리듬에 더 잘 붙습니다.`
     ],
     "양자리": () => [
       hook,
       `양자리는 이미 신발을 신었습니다. 가만히 있으면 답답해 죽는 날입니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 "일단 해보고 생각하자" 쪽으로 손을 들었습니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 양자리의 즉흥 속도와 맞습니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 양자리의 즉흥 속도와 맞습니다.`
     ],
     "쌍둥이자리": () => [
       hook,
       `쌍둥이자리는 오늘 머릿속에 작은 단톡방을 열었습니다. "야 잠깐만, 이것도 궁금한데?" 상태입니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 조용한 답보다 말할 거리 생기는 쪽을 더 재밌어합니다. 솔직히 둘 다 해보고 싶어 합니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 오늘 쌍둥이자리의 호기심을 덜 심심하게 만듭니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 오늘 쌍둥이자리의 호기심을 덜 심심하게 만듭니다.`
     ],
     "게자리": () => [
       hook,
       `게자리는 오늘 결과보다 사람 마음, 표정, 돌아온 뒤의 기분을 먼저 봅니다. "마음은 어때?"가 먼저 나옵니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 "후회 안 하겠어?"라고 묻고 있습니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 게자리의 감정 온도를 덜 차갑게 만듭니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 게자리의 감정 온도를 덜 차갑게 만듭니다.`
     ],
     "사자자리": () => [
       hook,
       `사자자리는 오늘 애매하게 끌려가는 표정을 싫어합니다. "주인공은 너잖아" 모드입니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 조명을 켜고 "눈치 보지 말고 당당하게"라고 말합니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 사자자리의 당당함을 더 살립니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 사자자리의 당당함을 더 살립니다.`
     ],
     "처녀자리": () => [
       hook,
       `처녀자리는 오늘 마음보다 체크리스트가 먼저 켜지는 별자리입니다. 이미 머릿속 엑셀을 열었습니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 "잠깐 계산 좀 해보자"부터 말합니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 처녀자리의 점검 기준에 더 잘 맞습니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 처녀자리의 점검 기준에 더 잘 맞습니다.`
     ],
     "천칭자리": () => [
       hook,
       `천칭자리는 오늘 선택지를 저울 위에 올려놓고 분위기까지 같이 봅니다. "둘 다 괜찮은데?"가 오래 갑니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 "균형이 중요하지"라고 말합니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 천칭자리의 균형감에 덜 삐뚤게 붙습니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 천칭자리의 균형감에 덜 삐뚤게 붙습니다.`
     ],
     "전갈자리": () => [
       hook,
       `전갈자리는 오늘 겉핥기 설명을 싫어합니다. "그래서 본질이 뭔데?"를 묻는 날입니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 "대충은 싫다, 끝까지 간다"라고 말합니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 전갈자리의 몰입과 결단에 더 깊게 꽂힙니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 전갈자리의 몰입과 결단에 더 깊게 꽂힙니다.`
     ],
     "사수자리": () => [
       hook,
       `사수자리는 오늘 답답하게 묶이는 선택을 보면 바로 창문을 엽니다. "가보자, 재밌잖아" 쪽입니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 "인생 뭐 있어, 경험값 하나 만들자"는 쪽으로 갑니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 사수자리의 확장 욕구에 더 맞습니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 사수자리의 확장 욕구에 더 맞습니다.`
     ],
     "염소자리": () => [
       hook,
       `염소자리는 오늘 감정표보다 계획표를 먼저 펼칩니다. "나중에 도움 되냐?"가 핵심입니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 "결국 결과다. 해야 할 건 해야지"라고 말합니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 염소자리의 현실 기준에 더 잘 들어갑니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 염소자리의 현실 기준에 더 잘 들어갑니다.`
     ],
     "물병자리": () => [
       hook,
       `물병자리는 오늘 남들이 고르는 기본값을 그대로 누르고 싶지 않습니다. "왜 꼭 그래야 하지?"가 먼저 나옵니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 "잠깐, 다르게 생각해보자"며 고민판을 옆으로 돌립니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 물병자리의 독특한 방식과 더 잘 맞습니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 물병자리의 독특한 방식과 더 잘 맞습니다.`
     ],
     "물고기자리": () => [
       hook,
       `물고기자리는 오늘 숫자보다 잠들기 전 마음의 파동을 먼저 듣습니다. "오늘 기분은?"이 기준입니다.`,
       `<strong>${cardText}</strong> 카드가 떠서 별이 "마음이 끌리는 쪽, 잠들기 전에 덜 출렁이는 쪽"을 묻습니다.`,
-      `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 물고기자리의 감정선을 더 부드럽게 지나갑니다.`
+      contextClosing || `그래서 ${winnerName} 쪽으로 기울었습니다. ${winnerName}의 ${winnerFeatureA}, ${winnerFeatureB}이 물고기자리의 감정선을 더 부드럽게 지나갑니다.`
     ]
   };
 
@@ -1341,6 +1463,17 @@ function cardMeaningIntro(sign, cards, category, winner, loser, hasQuestionConte
       return `${voiceLine} ${subject} 고민이라면 ${winnerName} 쪽이 아이 표정을 더 빨리 밝힐 수 있습니다.`;
     }
     return `${voiceLine} ${winnerName} 쪽이 준비물과 체력 계산까지 넣었을 때 조금 더 무난합니다.`;
+  }
+
+  if (category === "gift") {
+    const target = escapeHtml(winner.targetName || giftTarget(subjectName || ""));
+    if (cardHas(cards, ["도전", "에너지", "활동성", "재미", "호기심", "상상력"])) {
+      return `${voiceLine} ${subject} 고민이라면 ${winnerName} 쪽이 ${target}의 눈이 먼저 반짝일 가능성이 큽니다. ${winnerFeatures}이 선물 뜯는 순간의 리액션을 더 크게 만들 수 있어요.`;
+    }
+    if (cardHas(cards, ["편안함", "안정감", "실속", "꾸준함", "현실성", "만족감"])) {
+      return `${voiceLine} ${subject} 고민이라면 ${winnerName} 쪽이 첫날만 반짝하고 끝나기보다 며칠 뒤에도 손이 갈 가능성이 커 보입니다. ${winnerFeatures}이 오래 쓰는 선물 쪽에 더 붙습니다.`;
+    }
+    return `${voiceLine} ${subject} 고민이라면 ${winnerName} 쪽이 받는 순간의 표정과 나중에 다시 꺼내 놀 확률 사이에서 더 괜찮아 보입니다.`;
   }
 
   if (category === "drink") {
@@ -1521,6 +1654,18 @@ function futureComment(category, winner, question, seed, sign) {
       `돌아오는 길에 말수가 줄어도 사진은 남습니다.`,
       `오늘의 육아 기록에 작은 별표가 붙었습니다.`
     ],
+    gift: [
+      `포장지를 뜯는 순간의 표정을 상상하면 답이 조금 보입니다.`,
+      `첫 리액션은 크게, 오래 놀 확률은 조용히 계산했습니다.`,
+      `받는 사람보다 주는 사람이 더 설렌 장면일 수도 있습니다.`,
+      `며칠 뒤 바닥에 아직 굴러다니면 성공한 선물입니다.`,
+      `"우와" 한마디가 나오면 일단 절반은 이긴 겁니다.`,
+      `집에 와서 또 찾으면 그때 진짜 합격입니다.`,
+      `포장지는 버려져도 기억은 조금 남을 수 있습니다.`,
+      `선물 고르는 사람의 진심도 같이 포장됐습니다.`,
+      `받는 순간의 눈빛이 오늘의 심사위원입니다.`,
+      `장난감보다 그걸 보고 웃는 얼굴이 진짜 결과입니다.`
+    ],
     relationship: [
       `말풍선 하나로 하루가 바뀔 수도 있습니다.`,
       `오늘의 한마디가 내일의 해석회를 줄여줄지도 모릅니다.`,
@@ -1637,6 +1782,13 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
     if (analysis.intent === "go" && !includesAny(question, ["아프", "감기", "열", "주말", "사람 많", "피곤"])) score += 10;
     if (analysis.intent === "skip" && includesAny(question, ["아프", "감기", "열", "주말", "사람 많", "피곤"])) score += 14;
   }
+  if (category === "gift") {
+    if (includesAny(text, ["공룡", "티라노", "우와", "상상놀이", "첫날", "반응"]) && cardHas(cards, ["도전", "에너지", "활동성", "재미", "호기심", "상상력", "모험"])) score += 12;
+    if (includesAny(text, ["자동차", "미니카", "굴리", "오래", "반복", "실속"]) && cardHas(cards, ["편안함", "안정감", "실속", "꾸준함", "현실성", "만족감"])) score += 12;
+    if (includesAny(text, ["레고", "블록", "만들", "집중"]) && cardHas(cards, ["계획성", "꼼꼼함", "창의성", "완성도", "집중"])) score += 10;
+    if (includesAny(text, ["책", "그림책", "동화", "읽"]) && cardHas(cards, ["감성", "따뜻함", "가족", "여유", "공감"])) score += 10;
+    if (includesAny(question, ["아들", "아이", "아기", "조카"]) && includesAny(text, ["공룡", "자동차", "미니카", "레고", "블록"])) score += 5;
+  }
   if (category === "attendance" && includesAny(text, ["출근", "근무"])) score += 12;
   if (category === "money" && includesAny(text, ["관망", "기다"])) score += 10;
   if (includesAny(question, ["어제 술", "술 많이", "숙취", "해장"])) {
@@ -1744,6 +1896,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     food: `오늘의 메뉴는 위장이 아니라 표정이 고르게 두세요.`,
     drink: `오늘 술잔보다 내일 아침 얼굴색이 더 큰 발언권을 가집니다.`,
     childcare: `아이의 웃음도 중요하지만, 보호자 체력 게이지도 생명줄입니다.`,
+    gift: `선물은 물건보다 뜯는 순간의 표정이 먼저입니다.`,
     attendance: `내일의 나한테 욕 덜 먹는 쪽으로 갑시다.`,
     money: `지갑이 비명 지르기 전에 한 번만 더 물어봅시다.`,
     relationship: `말은 짧게, 여운은 길게 가는 쪽이 이깁니다.`,

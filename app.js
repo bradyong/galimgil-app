@@ -792,6 +792,9 @@ const optionFeatureBank = [
   { keys: ["짬뽕"], category: "food", features: ["얼큰한 국물", "해장되는 느낌", "땀나는 매운맛", "스트레스가 풀리는 자극"], caution: "속이 예민하거나 매운맛이 부담되는 날엔 먹고 나서 후회할 수 있어요.", vibe: "얼큰한 폭발력" },
   { keys: ["짜장면", "자장면"], category: "food", features: ["달달한 춘장 소스", "실패 확률이 낮은 중국집 기본값", "어릴 때 먹던 추억", "면 한 그릇으로 편하게 끝나는 느낌"], caution: "얼큰한 국물이나 해장감을 원하면 조금 답답하게 느껴질 수 있어요.", vibe: "편한 기본값" },
   { keys: ["라면"], category: "food", features: ["뜨거운 국물", "짭짤한 면발", "빠르게 채워지는 허기", "야식 같은 즉각적인 만족감"], caution: "붓기나 속 쓰림이 걱정되면 조심하는 게 좋아요.", vibe: "즉시 만족" },
+  { keys: ["김밥"], category: "food", features: ["깔끔하게 집어먹기 좋은 점", "속이 과하게 무겁지 않은 점", "이동 중에도 먹기 편한 점", "국물 없이 먹으면 살짝 심심할 수 있는 점"], caution: "뜨끈한 국물이나 자극적인 맛을 원하면 아쉬울 수 있어요.", vibe: "깔끔한 한 끼" },
+  { keys: ["집밥"], category: "food", features: ["편하게 끝나는 한 끼", "자극이 덜한 느낌", "밖에 나가지 않아도 되는 점", "특별한 맛의 재미는 약할 수 있는 점"], caution: "확실히 기분 내고 싶은 날엔 조금 심심할 수 있어요.", vibe: "편한 마무리" },
+  { keys: ["소고기"], category: "food", features: ["확실히 기분 내는 맛", "구워 먹는 재미", "특별한 식사 느낌", "비용과 준비가 커질 수 있는 점"], caution: "가볍게 끝내고 싶은 날엔 밖에서 한 판 벌이는 느낌이 부담될 수 있어요.", vibe: "확실한 한 판" },
   { keys: ["돈까스"], category: "food", features: ["바삭한 튀김", "든든한 양", "소스의 달큰함", "실패 확률이 낮은 메뉴"], caution: "느끼한 음식이 부담되면 끝까지 먹기 무거울 수 있어요.", vibe: "든든함" },
   { keys: ["국밥"], category: "food", features: ["뜨끈한 국물", "든든한 포만감", "속을 채워주는 느낌", "혼밥에도 편한 안정감"], caution: "가볍게 먹고 싶은 날엔 무겁게 느껴질 수 있어요.", vibe: "회복감" },
   { keys: ["순대국", "순댓국"], category: "food", features: ["익숙한 국밥 느낌", "뜨끈한 국물", "혼밥에도 편한 분위기", "부담 없이 든든한 한 그릇"], caution: "강한 해장감이나 푸짐한 한 상을 원하면 조금 얌전하게 느껴질 수 있어요.", vibe: "편안한 든든함" },
@@ -1350,106 +1353,88 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   const loserFirst = escapeHtml(loser.features[0] || "반대 선택의 장점");
   const loserFirstTopic = withParticle(loser.features[0] || "반대 선택의 장점", "은", "는");
   const pair = featurePairText(winner.features[0] || "바로 체감되는 장점", winner.features[1] || "끝나고 남는 느낌");
-  const cardLabel = narrativeCardPreview(cards);
-  const star = `별자리 카드는 <strong>${escapeHtml(cardLabel)}</strong>${hasBatchim(cardLabel) ? "이라서" : "라서"} 마지막에 살짝만 가산점을 줬어요.`;
   const opening = realityOpeningLine(category, winner, loser, question);
   const lines = {
     food: [
       opening,
       `${winnerName} 쪽은 ${pair} 바로 느껴지는 선택이에요.`,
-      `반대로 ${loserName}도 ${loserFirstTopic} 있지만, 오늘 질문에서는 ${winnerName} 쪽 그림이 더 선명합니다.`,
-      star
+      `반대로 ${loserName}도 ${loserFirstTopic} 있지만, 오늘 질문에서는 ${winnerName} 쪽 그림이 더 선명합니다.`
     ],
     beverage: [
       opening,
       `${winnerName} 쪽은 ${pair} 바로 체감되는 선택이에요.`,
-      `반대로 ${loserName}도 ${loserFirstTopic} 있지만, 오늘 질문에서는 온도와 마신 뒤 느낌을 먼저 봤습니다.`,
-      star
+      `반대로 ${loserName}도 ${loserFirstTopic} 있지만, 오늘 질문에서는 온도와 마신 뒤 느낌을 먼저 봤습니다.`
     ],
     gift: [
       opening,
       `${winnerName} 쪽은 ${pair} 살아 있어서 받는 순간의 표정이 더 잘 그려집니다.`,
-      `${loserName}도 좋은 선택이지만, 오늘은 ${subject} 쪽이 첫날 반응과 이후 활용 사이 균형이 낫습니다.`,
-      star
+      `${loserName}도 좋은 선택이지만, 오늘은 ${subject} 쪽이 첫날 반응과 이후 활용 사이 균형이 낫습니다.`
     ],
     relationship: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 혼자 상상만 키우는 시간을 줄일 수 있습니다.`,
-      `${loserSubject}도 말실수 위험을 줄이는 장점은 있지만, 지금 질문에서는 확인할 건 확인하는 쪽이 오래 끌리지 않아 보여요.`,
-      star
+      `${loserSubject}도 말실수 위험을 줄이는 장점은 있지만, 지금 질문에서는 확인할 건 확인하는 쪽이 오래 끌리지 않아 보여요.`
     ],
     shopping: [
       opening,
       `${subject} 쪽은 ${pair} 보여서 오늘 기준에서는 더 납득되는 선택입니다.`,
-      `${loserSubject}도 통장을 지키거나 충동을 줄이는 장점이 있지만, 지금은 사용 장면이 보이는지가 더 중요합니다.`,
-      star
+      `${loserSubject}도 통장을 지키거나 충동을 줄이는 장점이 있지만, 지금은 사용 장면이 보이는지가 더 중요합니다.`
     ],
     attendance: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 오늘 이후의 뒤처리를 줄이는 쪽이에요.`,
-      `${loserSubject}도 당장 몸은 편할 수 있지만, 설명하고 메우는 일이 남는지까지 같이 봐야 합니다.`,
-      star
+      `${loserSubject}도 당장 몸은 편할 수 있지만, 설명하고 메우는 일이 남는지까지 같이 봐야 합니다.`
     ],
     money: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 지금 감정으로 버튼을 누르는 위험을 줄여줍니다.`,
-      `${loserSubject}도 기회처럼 보일 수 있지만, 오늘은 수익 상상보다 틀렸을 때의 충격을 먼저 봤습니다.`,
-      star
+      `${loserSubject}도 기회처럼 보일 수 있지만, 오늘은 수익 상상보다 틀렸을 때의 충격을 먼저 봤습니다.`
     ],
     drink: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 오늘 끝나고 남는 후폭풍이 더 작아 보입니다.`,
-      `${loserSubject}도 분위기 장점은 있지만, 다음 일정까지 같이 보면 ${winnerName} 쪽이 덜 위험합니다.`,
-      star
+      `${loserSubject}도 분위기 장점은 있지만, 다음 일정까지 같이 보면 ${winnerName} 쪽이 덜 위험합니다.`
     ],
     childcare: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 아이와 보호자 둘 다 덜 흔들릴 가능성이 큽니다.`,
-      `${loserSubject}도 장점은 있지만, 오늘은 웃고 끝낼 수 있는지가 더 중요합니다.`,
-      star
+      `${loserSubject}도 장점은 있지만, 오늘은 웃고 끝낼 수 있는지가 더 중요합니다.`
     ],
     hygiene: [
       opening,
       `${winnerName} 쪽은 ${pair} 바로 체감되는 선택이에요.`,
-      `${loserName}도 당장 귀찮음은 줄지만, 끝나고 남는 몸 상태까지 보면 ${winnerName} 쪽이 앞섭니다.`,
-      star
+      `${loserName}도 당장 귀찮음은 줄지만, 끝나고 남는 몸 상태까지 보면 ${winnerName} 쪽이 앞섭니다.`
     ],
     exercise: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 선택 후 체감이 더 분명합니다.`,
-      `${loserSubject}도 휴식 장점은 있지만, 아픈 게 아니라면 작게 움직이는 쪽이 더 남습니다.`,
-      star
+      `${loserSubject}도 휴식 장점은 있지만, 아픈 게 아니라면 작게 움직이는 쪽이 더 남습니다.`
     ],
     study: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 내일의 압박을 조금 덜어냅니다.`,
-      `${loserSubject}도 지금 피로를 줄이지만, 마감이나 시험이 있다면 미룬 만큼 다시 돌아옵니다.`,
-      star
+      `${loserSubject}도 지금 피로를 줄이지만, 마감이나 시험이 있다면 미룬 만큼 다시 돌아옵니다.`
     ],
     game: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 오늘 리듬에는 더 맞아 보입니다.`,
-      `${loserSubject}도 장점은 있지만, 한 판이 여러 판으로 늘어날 상황인지가 결론을 갈랐어요.`,
-      star
+      `${loserSubject}도 장점은 있지만, 한 판이 여러 판으로 늘어날 상황인지가 결론을 갈랐어요.`
     ],
     travel: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 오늘 현실 조건에 더 맞습니다.`,
-      `${loserSubject}도 끌리지만, 지금은 떠나는 장면과 돌아오는 장면을 같이 놓고 봤습니다.`,
-      star
+      `${loserSubject}도 끌리지만, 지금은 떠나는 장면과 돌아오는 장면을 같이 놓고 봤습니다.`
     ],
     place: [
       opening,
       `${subject} 쪽은 ${pair} 있어서 오늘 움직임에 더 납득됩니다.`,
-      `${loserSubject}도 괜찮지만, 지금 컨디션까지 보면 ${winnerName} 쪽이 덜 삐걱댑니다.`,
-      star
+      `${loserSubject}도 괜찮지만, 지금 컨디션까지 보면 ${winnerName} 쪽이 덜 삐걱댑니다.`
     ]
   };
   return (lines[category] || [
     `이 고민은 별자리보다 <strong>하고 난 뒤의 현실감</strong>이 먼저예요.`,
     `${subject} 쪽은 ${pair} 있어서 오늘 선택으로 더 납득됩니다.`,
-    `${loserSubject}도 장점은 있지만, 지금 질문에서는 ${winnerName} 쪽이 더 설명 가능한 선택입니다.`,
-    star
+    `${loserSubject}도 장점은 있지만, 지금 질문에서는 ${winnerName} 쪽이 더 설명 가능한 선택입니다.`
   ]).join(" ");
 }
 
@@ -1498,16 +1483,49 @@ function realityOpeningLine(category, winner, loser, question) {
   const winnerTopic = withParticle(winner.name, "은", "는");
   const loserTopic = withParticle(loser.name, "은", "는");
   const raw = `${question} ${winner.name} ${loser.name}`.toLowerCase();
+  if (category === "food") {
+    if (includesAny(raw, ["김밥"]) && includesAny(raw, ["라면"])) {
+      return includesAny(winner.name, ["김밥"])
+        ? "오늘 배는 뜨거운 국물보다 깔끔하게 끝나는 쪽을 먼저 봤습니다."
+        : "오늘은 깔끔함보다 뜨거운 국물 한 젓가락이 더 크게 들어왔습니다.";
+    }
+    if (includesAny(raw, ["소고기"]) && includesAny(raw, ["집밥"])) {
+      return includesAny(winner.name, ["집밥"])
+        ? "소고기는 확실히 끌리지만, 오늘은 밖에서 한 판 벌이기보다 집에서 편하게 끝내는 그림이 더 편해 보입니다."
+        : "집밥은 편하지만, 오늘은 소고기처럼 확실히 기분 내는 한 끼가 더 선명합니다.";
+    }
+    if (includesAny(raw, ["짬뽕"]) && includesAny(raw, ["짜장"])) {
+      return includesAny(winner.name, ["짬뽕"])
+        ? "짜장면의 무난함이 붙잡았지만, 오늘 입은 얼큰한 국물 쪽으로 먼저 움직였습니다."
+        : "배는 뜨거운 국물도 떠올렸지만, 오늘은 달달한 춘장 소스처럼 편하게 끝나는 쪽이 더 가까웠습니다.";
+    }
+  }
+  if (category === "beverage" && includesAny(raw, ["아메리카노", "아아", "뜨아"])) {
+    return includesAny(winner.name, ["아이스", "아아"])
+      ? "따뜻한 잔도 나쁘지 않지만, 지금 손은 차갑게 깨는 쪽으로 먼저 갑니다."
+      : "차가운 한 모금도 끌리지만, 오늘 몸은 따뜻하게 내려가는 쪽을 더 편하게 봅니다.";
+  }
+  if (category === "shopping" && includesAny(raw, ["닌텐도", "플스", "playstation", "ps5"])) {
+    return `마음은 ${winnerName} 쪽 화면을 켜고 있는데, ${loserName}도 오래 고민하게 만드는 후보입니다.`;
+  }
+  if (category === "place" && includesAny(raw, ["동물원"]) && includesAny(raw, ["놀이공원"])) {
+    return includesAny(winner.name, ["놀이공원"])
+      ? "동물원은 천천히 구경하는 재미가 있고, 놀이공원은 하루가 이벤트처럼 커지는 쪽입니다."
+      : "놀이공원은 확실히 크지만, 오늘은 동물원처럼 천천히 구경하는 그림이 더 편해 보입니다.";
+  }
   const byCategory = {
     food: [
-      `${winnerTopic} ${firstSubject} 먼저 오고, ${loserTopic} ${loserFirstInstrument} 마지막까지 붙잡습니다.`,
-      `입은 ${winnerName} 쪽으로 기울었는데, ${loserName}도 그냥 지나치기엔 아쉬운 후보입니다.`,
-      `${winnerName}과 ${loserName} 사이에서 오늘은 맛보다 몸 상태가 먼저 심사위원으로 올라왔습니다.`
+      `${winnerTopic} ${firstSubject} 먼저 오고, ${loserTopic} ${loserFirstInstrument} 끝까지 유혹합니다.`,
+      `오늘 입맛은 ${winnerName} 쪽으로 먼저 움직였고, ${loserName}은 마지막까지 후보석에 앉아 있습니다.`,
+      `${winnerName}은 먹는 장면이 바로 떠오르고, ${loserName}은 먹고 난 뒤 느낌을 다시 보게 합니다.`,
+      `젓가락은 ${winnerName} 쪽으로 갔고, 머리는 ${loserName}도 한 번 더 보라고 합니다.`,
+      `오늘 한 끼는 거창한 정답보다, 먹고 나서 몸이 어떻게 느낄지가 더 크게 보입니다.`
     ],
     beverage: [
       `${winnerTopic} ${firstSubject} 먼저 오고, ${loserTopic} ${loserFirstInstrument} 마지막까지 붙잡습니다.`,
       `${winnerTopic} 지금 마시는 순간이 선명하고, ${loserTopic} 마신 뒤 몸 상태를 다시 보게 합니다.`,
-      `커피는 맛보다 온도가 먼저 결정할 때가 있습니다. 오늘은 ${winnerName}과 ${loserName}을 그 기준으로 봤습니다.`
+      `커피는 맛보다 온도가 먼저 결정할 때가 있습니다. 오늘은 마신 뒤 몸의 느낌이 더 크게 보입니다.`,
+      `손은 ${winnerName} 쪽 컵을 떠올리고, ${loserName}은 천천히 마시는 그림으로 따라옵니다.`
     ],
     gift: [
       `${winnerName}은 받는 순간의 반응이 먼저 보이고, ${loserName}은 오래 가지고 놀 그림이 따라옵니다.`,
@@ -1517,16 +1535,22 @@ function realityOpeningLine(category, winner, loser, question) {
     relationship: [
       `${subject}는 답을 빨리 확인하는 쪽이고, ${loserSubject}는 말을 아끼는 쪽입니다.`,
       `이건 누가 맞냐보다, 지금 말을 꺼냈을 때 상대가 받을 수 있느냐의 문제입니다.`,
-      `${winnerName}은 마음을 밖으로 꺼내는 선택이고, ${loserName}은 조금 더 품고 가는 선택입니다.`
+      `${winnerName}은 마음을 밖으로 꺼내는 선택이고, ${loserName}은 조금 더 품고 가는 선택입니다.`,
+      `보내는 건 금방이지만, 그 뒤의 대화까지 생각하면 ${winnerName} 쪽 그림이 더 선명합니다.`,
+      `${loserName}은 조용히 넘어가는 길이고, ${winnerName}은 확인하고 넘어가는 길입니다.`
     ],
     shopping: [
       `${winnerName}은 바로 쓰는 장면이 보이고, ${loserName}은 카드값 앞에서 한 번 더 멈추게 합니다.`,
       `마음은 ${winnerName} 쪽을 보고 있는데, 지갑은 ${loserName} 쪽 의견도 조용히 냅니다.`,
-      `${winnerName}은 갖는 순간이 선명하고, ${loserName}은 며칠 뒤에도 필요한지 묻습니다.`
+      `${winnerName}은 갖는 순간이 선명하고, ${loserName}은 며칠 뒤에도 필요한지 묻습니다.`,
+      `결제 직전의 손은 ${winnerName} 쪽으로 가지만, ${loserName}은 사용 빈도를 다시 묻습니다.`,
+      `${winnerName}은 오늘 바로 생기는 변화가 있고, ${loserName}은 통장에 남는 여유가 있습니다.`
     ],
     attendance: [
       `${winnerTopic} 오늘을 어렵게 만들고, ${loserTopic} 내일 설명할 일을 만들 수 있습니다.`,
-      `반차와 출근류 고민은 지금 몸보다 내일 밀릴 일을 같이 봐야 답이 나옵니다.`,
+      `${winnerName}은 오늘의 피로를 감수하는 쪽이고, ${loserName}은 오늘 숨 쉴 공간을 만드는 쪽입니다.`,
+      `${winnerName}은 내일 일을 덜 만들고, ${loserName}은 오늘 몸을 먼저 챙깁니다.`,
+      `알람은 ${winnerName}을 가리키고, 몸은 ${loserName} 쪽에서 조용히 버팁니다.`,
       `${winnerName}은 책임 쪽에 가깝고, ${loserName}은 회복 쪽에 가깝습니다. 문제는 오늘 컨디션입니다.`
     ],
     money: [
@@ -1572,7 +1596,9 @@ function realityOpeningLine(category, winner, loser, question) {
     place: [
       `${winnerName}은 오늘 장면을 만들고, ${loserName}은 동선과 체력을 아끼는 쪽입니다.`,
       `${winnerName}은 가는 순간의 재미가 있고, ${loserName}은 돌아오는 길의 체력까지 계산하게 합니다.`,
-      `${winnerName}과 ${loserName}은 둘 다 그럴듯하지만, 오늘은 이동 거리와 사람 많은 정도가 먼저입니다.`
+      `${winnerName}은 가서 볼 장면이 선명하고, ${loserName}은 이동 전부터 체력을 다시 계산하게 합니다.`,
+      `${winnerName}은 하루를 크게 만들고, ${loserName}은 일정의 무게를 줄이는 쪽입니다.`,
+      `${winnerName}은 도착한 뒤의 재미가 있고, ${loserName}은 돌아오는 길의 편함이 있습니다.`
     ]
   };
   const pool = byCategory[category] || [

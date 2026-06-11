@@ -620,7 +620,7 @@ function realityReading(profile, question, choiceA, choiceB, recommended, mood) 
   if (profile.type === "relationship") {
     return `관계 고민은 정답보다 말투가 판을 바꿔요. 마음이 크다고 크게 던지면 상대는 답보다 부담을 먼저 받을 수 있거든요. 오늘은 감정을 숨기는 게 아니라 <strong>받을 수 있는 크기로 건네는 것</strong>이 중요하고, 그쪽에 가까운 선택이 <strong>${safeRecommended}</strong>이에요.`;
   }
-  return `형이 보기엔 <strong>${escapeHtml(question)}</strong> 이 고민은 마음은 한쪽으로 끌리는데, 현실이 "잠깐만" 하고 붙잡는 모양이에요. 오늘은 멋진 선택보다 하고 나서 덜 찝찝한 선택이 이깁니다. 그래서 <strong>${safeRecommended}</strong> 쪽이 조금 더 안정적으로 보여요.`;
+  return `형이 보기엔 <strong>${escapeHtml(question)}</strong> 이 고민은 마음은 한쪽으로 끌리는데, 현실이 "잠깐만" 하고 붙잡는 모양이에요. 오늘은 멋진 선택보다 끝나고 설명이 되는 선택이 이깁니다. 그래서 <strong>${safeRecommended}</strong> 쪽이 조금 더 안정적으로 보여요.`;
 }
 
 function fortuneReading(sign, mood, wordInsights, seed, profile, question, choiceA, choiceB, recommended) {
@@ -769,7 +769,7 @@ function finalRecommendationText(profile, recommended, adviceLine) {
 }
 
 const optionFeatureBank = [
-  { keys: ["김치찌개"], category: "food", features: ["김치의 새콤함", "매콤한 국물", "돼지고기나 참치가 들어갔을 때 올라오는 묵직한 맛", "밥이랑 잘 맞는 만족감"], caution: "속이 예민하거나 자극적인 국물이 부담되면 피하는 게 좋아요.", vibe: "확실한 맛" },
+  { keys: ["김치찌개"], category: "food", features: ["김치의 새콤함", "매콤한 국물", "밥이랑 잘 맞는 국물 맛", "반찬 없이도 한 끼가 되는 느낌"], caution: "속이 예민하거나 자극적인 국물이 부담되면 피하는 게 좋아요.", vibe: "확실한 맛" },
   { keys: ["된장찌개"], category: "food", features: ["구수한 된장 향", "담백한 국물", "속이 편한 느낌", "익숙하고 편안한 한 끼"], caution: "강한 맛으로 스트레스를 풀고 싶은 날엔 조금 심심하게 느껴질 수 있어요.", vibe: "편한 맛" },
   { keys: ["짬뽕"], category: "food", features: ["얼큰한 국물", "해장되는 느낌", "땀나는 매운맛", "스트레스가 풀리는 자극"], caution: "속이 예민하거나 매운맛이 부담되는 날엔 먹고 나서 후회할 수 있어요.", vibe: "얼큰한 폭발력" },
   { keys: ["짜장면", "자장면"], category: "food", features: ["달달한 춘장 소스", "실패 확률이 낮은 중국집 기본값", "어릴 때 먹던 추억", "면 한 그릇으로 편하게 끝나는 느낌"], caution: "얼큰한 국물이나 해장감을 원하면 조금 답답하게 느껴질 수 있어요.", vibe: "편한 기본값" },
@@ -1322,6 +1322,7 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   const first = escapeHtml(winner.features[0] || "바로 체감되는 장점");
   const second = escapeHtml(winner.features[1] || "끝나고 남는 느낌");
   const loserFirst = escapeHtml(loser.features[0] || "반대 선택의 장점");
+  const loserFirstTopic = withParticle(loser.features[0] || "반대 선택의 장점", "은", "는");
   const pair = featurePairText(winner.features[0] || "바로 체감되는 장점", winner.features[1] || "끝나고 남는 느낌");
   const cardLabel = narrativeCardPreview(cards);
   const star = `별자리 카드는 <strong>${escapeHtml(cardLabel)}</strong>${hasBatchim(cardLabel) ? "이라서" : "라서"} 마지막에 살짝만 가산점을 줬어요.`;
@@ -1329,7 +1330,7 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
     food: [
       `음식 고민은 말이 길어져도 결국 <strong>오늘 입맛, 속 상태, 같이 먹는 상황</strong>이 제일 큽니다.`,
       `${winnerName} 쪽은 ${pair} 바로 느껴지는 선택이에요.`,
-      `반대로 ${loserName}도 ${loserFirst}은 있지만, 오늘 질문에서는 ${winnerName} 쪽 그림이 더 선명합니다.`,
+      `반대로 ${loserName}도 ${loserFirstTopic} 있지만, 오늘 질문에서는 ${winnerName} 쪽 그림이 더 선명합니다.`,
       star
     ],
     gift: [
@@ -1341,7 +1342,7 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
     relationship: [
       `관계 고민은 이기고 지는 문제가 아니라 <strong>상대가 받아들일 수 있는 타이밍과 말투</strong>가 핵심이에요.`,
       `${subject} 쪽은 ${pair} 있어서 혼자 상상만 키우는 시간을 줄일 수 있습니다.`,
-      `${loserSubject}도 부담을 낮추는 장점은 있지만, 지금 질문에서는 확인할 건 확인하는 쪽이 덜 오래 남아 보여요.`,
+      `${loserSubject}도 말실수 위험을 줄이는 장점은 있지만, 지금 질문에서는 확인할 건 확인하는 쪽이 오래 끌리지 않아 보여요.`,
       star
     ],
     shopping: [
@@ -1351,8 +1352,8 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
       star
     ],
     attendance: [
-      `출근 고민은 기분보다 <strong>몸 상태, 연락 부담, 내일 밀릴 일</strong>이 먼저입니다.`,
-      `${subject} 쪽은 ${pair} 있어서 오늘 이후의 부담을 줄이는 쪽이에요.`,
+      `출근 고민은 기분보다 <strong>몸 상태, 연락과 업무 뒤처리, 내일 밀릴 일</strong>이 먼저입니다.`,
+      `${subject} 쪽은 ${pair} 있어서 오늘 이후의 뒤처리를 줄이는 쪽이에요.`,
       `${loserSubject}도 당장 몸은 편할 수 있지만, 설명하고 메우는 일이 남는지까지 같이 봐야 합니다.`,
       star
     ],
@@ -1364,7 +1365,7 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
     ],
     drink: [
       `술 고민은 지금 기분과 <strong>내일 아침 컨디션</strong>이 정면으로 붙는 선택이에요.`,
-      `${subject} 쪽은 ${pair} 있어서 오늘 끝나고 남는 부담이 더 작아 보입니다.`,
+      `${subject} 쪽은 ${pair} 있어서 오늘 끝나고 남는 후폭풍이 더 작아 보입니다.`,
       `${loserSubject}도 분위기 장점은 있지만, 다음 일정까지 같이 보면 ${winnerName} 쪽이 덜 위험합니다.`,
       star
     ],
@@ -1414,9 +1415,41 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   return (lines[category] || [
     `이 고민은 별자리보다 <strong>하고 난 뒤의 현실감</strong>이 먼저예요.`,
     `${subject} 쪽은 ${pair} 있어서 오늘 선택으로 더 납득됩니다.`,
-    `${loserSubject}도 장점은 있지만, 지금 질문에서는 ${winnerName} 쪽이 덜 찝찝하게 남습니다.`,
+    `${loserSubject}도 장점은 있지만, 지금 질문에서는 ${winnerName} 쪽이 더 설명 가능한 선택입니다.`,
     star
   ]).join(" ");
+}
+
+function probabilityReason(category, winner, loser, winnerScore, loserScore) {
+  const gap = winnerScore - loserScore;
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const categoryLens = {
+    food: "입맛, 속 상태, 같이 먹는 상황",
+    gift: "첫 반응과 오래 가지고 놀 가능성",
+    relationship: "타이밍, 말투, 이후 대화 여지",
+    shopping: "가격, 사용 빈도, 며칠 뒤 필요성",
+    attendance: "몸 상태, 연락, 내일 밀릴 일",
+    money: "손실 감당 범위와 감정 매매 위험",
+    drink: "오늘 분위기와 내일 컨디션",
+    childcare: "안전, 아이 컨디션, 보호자 체력",
+    hygiene: "개운함과 당장 귀찮음",
+    exercise: "몸 상태와 끝난 뒤 회복감",
+    study: "시작 장벽과 내일 압박",
+    game: "재미와 멈출 수 있는 시간",
+    travel: "비용, 동선, 돌아온 뒤 피로",
+    place: "이동 거리와 끝나고 남는 체력"
+  };
+  const lens = categoryLens[category] || "오늘 질문의 현실 조건";
+  const lensObject = withParticle(lens, "을", "를");
+  const loserTopic = withParticle(loser.name, "은", "는");
+  if (gap <= 12) {
+    return `거의 반반이지만 ${lens}에서 ${winnerName} 쪽이 한 끗 앞섰어요. ${loserName}도 충분히 말이 되는 선택입니다.`;
+  }
+  if (gap <= 24) {
+    return `${lensObject} 같이 봤을 때 ${winnerName} 쪽 근거가 조금 더 많았습니다. 그래도 상황이 바뀌면 ${loserName}도 뒤집힐 수 있어요.`;
+  }
+  return `${lens} 기준으로는 ${winnerName} 쪽 근거가 꽤 선명합니다. ${loserTopic} 조건이 바뀔 때 다시 볼 선택이에요.`;
 }
 
 function cardReasonLine(cards, winner, loser, category) {
@@ -2601,9 +2634,10 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
   const text = `${analysis.name} ${analysis.subjectName || ""} ${question}`.toLowerCase();
   let score = 50 + (hashText(`${analysis.name}-${seed}`) % 9) - 4;
   if (category === "food") {
-    if (includesAny(text, ["김치", "라면", "짬뽕", "떡볶이", "치킨"]) && mood >= 5) score += 8;
-    if (includesAny(text, ["된장", "국밥", "담백", "속 편"]) && (mood <= 4 || includesAny(question, ["속", "편", "부담"]))) score += 10;
-    if (analysis.intent === "go" && !includesAny(question, ["속", "부담", "다이어트", "아프"])) score += 7;
+    if (includesAny(text, ["김치", "라면", "짬뽕", "떡볶이", "치킨"]) && mood >= 5 && includesAny(question, ["매콤", "얼큰", "자극", "스트레스"])) score += 6;
+    if (includesAny(text, ["된장", "국밥", "순대국", "담백", "속 편", "짜장"]) && (mood <= 4 || includesAny(question, ["속", "편", "부담", "무난", "간단"]))) score += 10;
+    if (includesAny(text, ["삼겹살", "감자탕", "고기", "돈까스"]) && includesAny(question, ["가볍", "속", "부담", "다이어트", "느끼"])) score -= 8;
+    if (analysis.intent === "go" && !includesAny(question, ["속", "부담", "다이어트", "아프"])) score += 3;
     if (analysis.intent === "skip" && includesAny(question, ["속", "부담", "다이어트", "아프"])) score += 9;
   }
   if (category === "childcare") {
@@ -2648,8 +2682,9 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
     if (analysis.intent === "skip" && includesAny(question, ["늦은", "밤", "싸웠", "화났", "부담"])) score += 8;
   }
   if (includesAny(question, ["어제 술", "술 많이", "숙취", "해장"])) {
-    if (includesAny(text, ["감자탕", "해장", "묵직", "국물"])) score += 18;
-    if (includesAny(text, ["순대국", "국밥", "뜨끈"])) score += 4;
+    if (includesAny(text, ["감자탕", "해장", "묵직", "국물"])) score += 10;
+    if (includesAny(text, ["순대국", "국밥", "뜨끈"])) score += 8;
+    if (includesAny(text, ["짬뽕", "얼큰"])) score += 7;
   }
   score += Math.round(zodiacBoost(sign, analysis, question).boost * 0.35);
   score += Math.round(cardOptionBoost(cards, analysis) * 0.4);
@@ -2696,7 +2731,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     cardDrivenReason,
     cardReason,
     optionFeatureSentence(winner),
-    `${escapeHtml(loser.name)}도 나쁘진 않은데, 지금은 ${escapeHtml(winner.name)} 쪽이 끝나고 덜 찝찝해 보입니다.`
+    `${escapeHtml(loser.name)}도 나쁘진 않은데, 지금은 ${escapeHtml(winner.name)} 쪽이 끝나고 더 설명이 됩니다.`
   ].join(" ");
   const whyByCategory = {
     food: categoryRealityReason("food", winner, loser, question, cardLabels),
@@ -2748,7 +2783,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     zodiacCards: cardLabels,
     futureComment: futureComment(category, winner, question, seed, sign),
     resultTitle: `${escapeHtml(winner.name)} 승`,
-    finalText: `<strong>${escapeHtml(winner.name)} ${winnerScore}%</strong><br><strong>${escapeHtml(loser.name)} ${loserScore}%</strong>`
+    finalText: `<strong>${escapeHtml(winner.name)} ${winnerScore}%</strong><br><strong>${escapeHtml(loser.name)} ${loserScore}%</strong><br><small>${probabilityReason(category, winner, loser, winnerScore, loserScore)}</small>`
   };
 }
 

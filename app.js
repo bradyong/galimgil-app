@@ -409,6 +409,16 @@ function includesAny(text, words) {
   return words.some((word) => text.includes(word));
 }
 
+function hasChildcareContext(text) {
+  const compact = String(text).replace(/\s/g, "").toLowerCase();
+  const falsePositiveWords = ["아이스", "아이폰", "아이패드", "아이돌", "아이디어", "아이템"];
+  if (falsePositiveWords.some((word) => compact.includes(word))) {
+    const withoutFalsePositive = falsePositiveWords.reduce((next, word) => next.replaceAll(word, ""), compact);
+    return includesAny(withoutFalsePositive, ["아기", "자녀", "아들", "딸", "개월", "육아", "키즈카페", "놀이터", "어린이집", "유치원", "초등"]);
+  }
+  return includesAny(compact, ["아이랑", "아이와", "아이한테", "아이선물", "아기", "자녀", "아들", "딸", "개월", "육아", "키즈카페", "놀이터", "어린이집", "유치원", "초등"]);
+}
+
 function dangerousChoiceCheck(question, choiceA = "", choiceB = "") {
   const raw = `${question} ${choiceA} ${choiceB}`.toLowerCase();
   const compact = raw.replace(/\s/g, "");
@@ -476,7 +486,7 @@ function choiceProfile(question, choiceA, choiceB) {
     profile.type = "travel";
   } else if (giftContext) {
     profile.type = "gift";
-  } else if (includesAny(text, ["아이", "아기", "개월", "키즈카페", "놀이터", "어린이집", "육아"])) {
+  } else if (hasChildcareContext(text)) {
     profile.type = "childcare";
     const badOutdoor = includesAny(text, ["비", "눈", "춥", "덥", "미세먼지", "황사", "폭염", "한파"]);
     if (!badOutdoor && includesAny(a, ["놀이터", "공원", "산책"])) profile.forced = "A";
@@ -790,6 +800,9 @@ const optionFeatureBank = [
   { keys: ["치킨에 맥주", "치맥"], category: "food", features: ["바삭한 치킨 껍질", "맥주 한 모금의 시원함", "배달 상자를 여는 편한 맛", "소파 앞에서 바로 시작되는 가벼운 분위기"], caution: "느끼함이 빨리 오거나 배달 기다림이 길면 흥이 살짝 꺼질 수 있어요.", vibe: "바삭한 즉시 만족" },
   { keys: ["삼겹살에 맥주", "삼겹살", "고기"], category: "food", features: ["불판에서 올라오는 고기 냄새", "쌈과 기름진 한 점의 묵직함", "직접 구워 먹는 재미", "자리 분위기가 천천히 달아오르는 느낌"], caution: "굽는 수고와 냄새가 부담이면 치킨보다 번거롭게 느껴질 수 있어요.", vibe: "불판 만족" },
   { keys: ["피자"], category: "food", features: ["치즈의 고소함", "토핑 고르는 재미", "든든한 한 판", "같이 먹기 좋은 분위기"], caution: "속이 더부룩하거나 혼자 간단히 먹고 싶으면 부담될 수 있어요.", vibe: "풍성함" },
+  { keys: ["아이스아메리카노", "아아", "차가운 아메리카노"], category: "beverage", features: ["차갑게 바로 깨는 느낌", "입안이 가벼워지는 쓴맛", "더울 때 시원하게 들어가는 점", "속이 예민하면 차가움이 부담될 수 있는 점"], caution: "속이 비었거나 몸이 차가운 날엔 천천히 마시는 게 좋아요.", vibe: "시원한 각성" },
+  { keys: ["따뜻한 아메리카노", "뜨아", "핫아메리카노", "아메리카노"], category: "beverage", features: ["따뜻하게 손에 감기는 느낌", "천천히 마시기 좋은 온도", "속이 덜 놀라는 점", "더운 날엔 답답하게 느껴질 수 있는 점"], caution: "이미 덥거나 갈증이 크면 시원한 쪽이 더 당길 수 있어요.", vibe: "따뜻한 정리" },
+  { keys: ["라떼", "카페라떼"], category: "beverage", features: ["우유의 부드러움", "쓴맛이 덜한 편안함", "출출할 때 살짝 채워지는 느낌", "깔끔한 커피를 원하면 무겁게 느껴질 수 있는 점"], caution: "가볍게 마시고 싶으면 아메리카노 쪽이 더 나을 수 있어요.", vibe: "부드러운 커피" },
   { keys: ["술", "소주", "맥주", "와인", "막걸리"], category: "drink", features: ["기분이 확 풀리는 느낌", "사람들과 말이 조금 더 쉬워지는 분위기", "내일 아침 컨디션을 담보로 잡는 점", "한 잔이 두 잔으로 변신하기 쉬운 점"], caution: "내일 일정이 있거나 이미 피곤하면 내일의 내가 강하게 항의할 수 있어요.", vibe: "오늘의 유혹" },
   { keys: ["키즈카페"], category: "childcare", features: ["실내라 날씨 영향을 덜 받는 점", "장난감과 시설이 많은 점", "큰 아이들과 동선이 겹치면 부딪힐 수 있는 점", "소리와 자극이 많아 아이가 금방 흥분할 수 있는 점"], caution: "사람이 많으면 보호자가 계속 따라다니며 봐야 해요.", vibe: "실내 자극" },
   { keys: ["놀이터"], category: "childcare", features: ["공간이 넓은 점", "아이가 자기 속도로 뛰어놀 수 있는 점", "돈이 거의 들지 않는 점", "날씨와 미끄럼틀·그네 주변 안전을 봐야 하는 점"], caution: "비, 추위, 미세먼지가 있으면 만족도가 확 떨어질 수 있어요.", vibe: "자유로운 몸놀이" },
@@ -798,9 +811,9 @@ const optionFeatureBank = [
   { keys: ["레고", "블록"], category: "gift", features: ["만들면서 오래 집중할 수 있는 점", "완성했을 때 뿌듯함이 큰 점", "부모가 같이 놀아주기 좋은 점", "작은 부품 관리가 필요한 점"], caution: "나이나 집중 시간이 맞지 않으면 부모 숙제가 될 수 있어요.", vibe: "만드는 재미" },
   { keys: ["책", "그림책", "동화책"], category: "gift", features: ["잠들기 전 같이 보기 좋은 점", "오래 두고 반복해서 읽기 쉬운 점", "부모와 대화가 생기는 점", "당장 반응은 장난감보다 조용할 수 있는 점"], caution: "화려한 장난감을 기대한 날이면 첫 리액션은 약할 수 있어요.", vibe: "조용한 선물" },
   { keys: ["공원"], category: "place", features: ["넓은 공간", "걷기 좋은 동선", "답답함이 풀리는 느낌", "날씨 영향을 많이 받음"], caution: "날씨가 나쁘면 금방 피곤해질 수 있어요.", vibe: "환기" },
-  { keys: ["동물원"], category: "place", features: ["동물 보는 재미", "천천히 걷는 동선", "아이와 이야기할 거리가 많은 점", "날씨와 걷는 거리에 체력이 많이 쓰이는 점"], caution: "더운 날이나 사람이 많은 날엔 그늘과 쉬는 시간을 꼭 잡아야 해요.", vibe: "구경하는 재미" },
+  { keys: ["동물원"], category: "place", features: ["동물 보는 재미", "천천히 걷는 동선", "구경할 거리가 계속 이어지는 점", "날씨와 걷는 거리에 체력이 많이 쓰이는 점"], caution: "더운 날이나 사람이 많은 날엔 그늘과 쉬는 시간을 꼭 잡아야 해요.", vibe: "구경하는 재미" },
   { keys: ["놀이공원"], category: "place", features: ["놀이기구의 확실한 재미", "하루가 이벤트처럼 느껴지는 점", "대기줄과 사람 많은 변수", "돌아올 때 체력이 크게 빠지는 점"], caution: "대기 시간이 길면 기대감보다 피로가 먼저 올 수 있어요.", vibe: "큰 이벤트" },
-  { keys: ["카페"], category: "place", features: ["앉아서 쉬기 좋음", "대화하기 편함", "커피나 디저트로 기분 전환 가능", "오래 있으면 비용이 쌓임"], caution: "아이가 있거나 사람이 많으면 생각보다 정신없을 수 있어요.", vibe: "잠깐의 여유" },
+  { keys: ["카페"], category: "place", features: ["앉아서 쉬기 좋음", "대화하기 편함", "커피나 디저트로 기분 전환 가능", "오래 있으면 비용이 쌓임"], caution: "사람이 많거나 자리가 불편하면 생각보다 정신없을 수 있어요.", vibe: "잠깐의 여유" },
   { keys: ["출근"], category: "attendance", features: ["오늘 할 일을 미루지 않는 점", "내일 부담이 줄어드는 점", "책임을 지켰다는 마음이 남는 점", "몸이 피곤하면 하루가 길게 느껴질 수 있는 점"], caution: "진짜 아프면 무리하지 말고 먼저 연락하는 게 맞아요.", vibe: "최소 책임" },
   { keys: ["결근", "안한다", "쉰다", "쉬기"], category: "attendance", features: ["몸을 쉬게 할 수 있는 점", "당장 피로가 줄어드는 점", "대신 설명과 뒷일이 생길 수 있는 점", "무단이면 부담이 커지는 점"], caution: "쉬더라도 연락과 이유 정리는 꼭 필요해요.", vibe: "회복" },
   { keys: ["점심"], category: "daily", features: ["지금 바로 배고픔을 해결하는 점", "오후를 덜 예민하게 보내는 점", "오래 끌지 않아도 되는 점", "하루 리듬을 빨리 잡는 점"], caution: "저녁 약속이나 더 맛있는 계획이 있으면 조금 아쉬울 수 있어요.", vibe: "지금 챙김" },
@@ -832,6 +845,7 @@ function inferCategory(question, choiceA, choiceB, profile) {
   const text = `${question} ${choiceA} ${choiceB}`.toLowerCase();
   if (profile.type !== "general") return profile.type;
   if (includesAny(text, ["찌개", "라면", "밥", "국밥", "순대국", "순댓국", "감자탕", "치킨", "피자", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "메뉴", "먹을"])) return "food";
+  if (includesAny(text, ["아메리카노", "아이스", "아아", "뜨아", "커피", "라떼", "카페라떼", "콜드브루"])) return "beverage";
   if (includesAny(text, ["술", "소주", "맥주", "와인", "막걸리", "마실까", "한잔", "한 잔"])) return "drink";
   if (includesAny(text, ["샤워", "씻", "목욕", "머리감", "세수", "양치"])) return "hygiene";
   if (includesAny(text, ["운동", "헬스", "러닝", "뛸까", "뛰", "요가", "필라테스", "산책"])) return "exercise";
@@ -839,6 +853,7 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["게임", "롤", "배그", "플스", "스팀", "모바일게임"])) return "game";
   if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
   if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈"])) return "travel";
+  if (hasChildcareContext(text)) return "childcare";
   if (includesAny(text, ["카페", "공원", "영화", "마트", "백화점", "여행", "놀러", "어디"])) return "place";
   if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제"])) return "shopping";
   return "daily";
@@ -882,6 +897,7 @@ function analyzeOption(option, category) {
     gift: { features: [`${option}를 받는 순간의 첫 반응`, "며칠 뒤에도 다시 찾을 가능성", "같이 놀아주기 쉬운 정도", "이미 비슷한 게 있는지"], caution: "첫 리액션과 오래 쓰는 재미를 같이 봐야 해요.", vibe: "선물 반응" },
     place: { features: [`${option}의 분위기`, "이동 거리", "사람 많은 정도", "끝나고 남는 피로감"], caution: "동선과 머무는 시간을 짧게 잡는 게 좋아요.", vibe: "장소감" },
     shopping: { features: [`${option}을 샀을 때 바로 쓰는 장면`, "가격 부담", "실제로 자주 쓸 가능성", "나중에 후회할 가능성"], caution: "지금 갖고 싶은 마음과 실제 사용 빈도를 따로 봐야 해요.", vibe: "구매 판단" },
+    beverage: { features: [`${option}를 마시는 첫 느낌`, "온도에 따라 달라지는 컨디션", "갈증이나 속 상태와 맞는지", "마시고 난 뒤 남는 깔끔함"], caution: "지금 몸이 더운지, 속이 비었는지 먼저 보면 좋아요.", vibe: "커피 선택" },
     drink: { features: [`${option} 선택 후 바로 풀리는 기분`, "내일 아침 컨디션 변수", "자리 분위기에 휩쓸릴 가능성", "한 잔만 하겠다는 약속의 수상함"], caution: "내일 일정과 지금 피로도를 먼저 봐야 해요.", vibe: "한 잔의 유혹" },
     hygiene: { features: [`${option} 후 몸이 개운해지는 점`, "찝찝함을 털어내는 점", "잠들기 전 마음이 가벼워지는 점", "시작 전 귀찮음이 큰 점"], caution: "전부 다 하려다 미루지 말고 짧게라도 끝내는 게 좋아요.", vibe: "개운함" },
     study: { features: [`${option}로 진도를 조금이라도 당기는 점`, "마감이나 시험 부담을 줄이는 점", "시작 전 저항감", "끝나고 마음이 덜 쫓기는 점"], caution: "오래 하겠다고 잡으면 시작이 어려우니 작게 끊는 게 좋아요.", vibe: "진도" },
@@ -1344,6 +1360,12 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
       `반대로 ${loserName}도 ${loserFirstTopic} 있지만, 오늘 질문에서는 ${winnerName} 쪽 그림이 더 선명합니다.`,
       star
     ],
+    beverage: [
+      opening,
+      `${winnerName} 쪽은 ${pair} 바로 체감되는 선택이에요.`,
+      `반대로 ${loserName}도 ${loserFirstTopic} 있지만, 오늘 질문에서는 온도와 마신 뒤 느낌을 먼저 봤습니다.`,
+      star
+    ],
     gift: [
       opening,
       `${winnerName} 쪽은 ${pair} 살아 있어서 받는 순간의 표정이 더 잘 그려집니다.`,
@@ -1437,6 +1459,7 @@ function probabilityReason(category, winner, loser, winnerScore, loserScore) {
   const loserName = escapeHtml(loser.name);
   const categoryLens = {
     food: "입맛, 속 상태, 같이 먹는 상황",
+    beverage: "온도, 갈증, 속 상태",
     gift: "첫 반응과 오래 가지고 놀 가능성",
     relationship: "타이밍, 말투, 이후 대화 여지",
     shopping: "가격, 사용 빈도, 며칠 뒤 필요성",
@@ -1480,6 +1503,11 @@ function realityOpeningLine(category, winner, loser, question) {
       `${winnerTopic} ${firstSubject} 먼저 오고, ${loserTopic} ${loserFirstInstrument} 마지막까지 붙잡습니다.`,
       `입은 ${winnerName} 쪽으로 기울었는데, ${loserName}도 그냥 지나치기엔 아쉬운 후보입니다.`,
       `${winnerName}과 ${loserName} 사이에서 오늘은 맛보다 몸 상태가 먼저 심사위원으로 올라왔습니다.`
+    ],
+    beverage: [
+      `${winnerTopic} ${firstSubject} 먼저 오고, ${loserTopic} ${loserFirstInstrument} 마지막까지 붙잡습니다.`,
+      `${winnerTopic} 지금 마시는 순간이 선명하고, ${loserTopic} 마신 뒤 몸 상태를 다시 보게 합니다.`,
+      `커피는 맛보다 온도가 먼저 결정할 때가 있습니다. 오늘은 ${winnerName}과 ${loserName}을 그 기준으로 봤습니다.`
     ],
     gift: [
       `${winnerName}은 받는 순간의 반응이 먼저 보이고, ${loserName}은 오래 가지고 놀 그림이 따라옵니다.`,
@@ -2743,6 +2771,12 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
     if (analysis.intent === "go" && !includesAny(question, ["속", "부담", "다이어트", "아프"])) score += 3;
     if (analysis.intent === "skip" && includesAny(question, ["속", "부담", "다이어트", "아프"])) score += 9;
   }
+  if (category === "beverage") {
+    if (includesAny(text, ["아이스", "아아", "차가운", "콜드"]) && includesAny(question, ["덥", "갈증", "시원", "졸려", "깨"])) score += 10;
+    if (includesAny(text, ["따뜻", "뜨아", "핫", "라떼"]) && includesAny(question, ["춥", "속", "빈속", "편하게", "천천히"])) score += 10;
+    if (includesAny(text, ["아이스", "차가운"]) && includesAny(question, ["속", "빈속", "춥", "배아"])) score -= 6;
+    if (includesAny(text, ["따뜻", "뜨아", "핫"]) && includesAny(question, ["덥", "갈증", "시원"])) score -= 5;
+  }
   if (category === "childcare") {
     if (includesAny(text, ["놀이터", "공원"]) && !includesAny(question, ["비", "춥", "미세먼지", "폭염", "한파"])) score += 12;
     if (includesAny(text, ["키즈카페", "실내"]) && includesAny(question, ["비", "춥", "미세먼지", "폭염", "한파"])) score += 14;
@@ -2838,6 +2872,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   ].join(" ");
   const whyByCategory = {
     food: categoryRealityReason("food", winner, loser, question, cardLabels),
+    beverage: categoryRealityReason("beverage", winner, loser, question, cardLabels),
     drink: categoryRealityReason("drink", winner, loser, question, cardLabels),
     childcare: categoryRealityReason("childcare", winner, loser, question, cardLabels),
     gift: categoryRealityReason("gift", winner, loser, question, cardLabels),
@@ -2854,6 +2889,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   };
   const adviceByCategory = {
     food: `오늘의 메뉴는 위장이 아니라 표정이 고르게 두세요.`,
+    beverage: `커피는 취향도 중요하지만 지금 몸이 원하는 온도가 먼저입니다.`,
     drink: `오늘 술잔보다 내일 아침 얼굴색이 더 큰 발언권을 가집니다.`,
     childcare: `아이의 웃음도 중요하지만, 보호자 체력 게이지도 생명줄입니다.`,
     gift: `선물은 물건보다 뜯는 순간의 표정이 먼저입니다.`,

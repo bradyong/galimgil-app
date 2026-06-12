@@ -293,6 +293,9 @@ function withRoParticle(value) {
 }
 
 function scenarioActionText(subject, option, category, intent) {
+  const optionText = String(option || "").replace(/\s/g, "").toLowerCase();
+  const subjectText = String(subject || "").toLowerCase();
+  if (intent === "skip" && category === "shopping" && includesAny(subjectText, ["tv", "티비", "텔레비전", "테레비"]) && includesAny(optionText, ["그냥", "본다", "보기", "유지"])) return `${escapeHtml(subject)} 그냥 보기`;
   if (intent === "skip") return `${escapeHtml(subject)} 미루기`;
   if (category === "food") return `${withParticle(subject, "을", "를")} ${escapeHtml(option)}`;
   if (category === "childcare" || category === "place") return `${escapeHtml(subject)}에 ${escapeHtml(option)}`;
@@ -470,7 +473,7 @@ function choiceProfile(question, choiceA, choiceB) {
   } else if (includesAny(text, ["매수", "매도", "투자", "코인", "주식", "종목", "차트"]) && !giftContext) {
     profile.type = "money";
     profile.forced = includesAny(a, ["관망", "기다", "보류"]) ? "A" : includesAny(b, ["관망", "기다", "보류"]) ? "B" : null;
-  } else if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "사도"])) {
+  } else if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "사도", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "tv", "티비", "텔레비전", "가전"])) {
     profile.type = "shopping";
   } else if (includesAny(text, ["고백", "연락", "전화", "통화", "문자", "카톡", "사과", "화해"])) {
     profile.type = "relationship";
@@ -832,6 +835,7 @@ const optionFeatureBank = [
   { keys: ["공부", "시험공부", "복습", "예습", "강의", "숙제", "과제"], category: "study", features: ["미래의 부담을 조금 덜어내는 점", "시작하면 생각보다 진도가 잡히는 점", "시험이나 마감 앞에서 마음이 덜 쫓기는 점", "책상 앞까지 가는 과정이 제일 어려운 점"], caution: "처음부터 오래 하려 하지 말고 20분만 잡아도 흐름이 생겨요.", vibe: "진도 한 칸" },
   { keys: ["게임", "롤", "배그", "플스", "스팀", "모바일게임"], category: "game", features: ["머리를 잠깐 꺼두는 재미", "스트레스가 빠르게 풀리는 점", "시간이 순식간에 사라지는 점", "한 판만 하겠다는 약속이 자주 흔들리는 점"], caution: "내일 일정이 있으면 종료 시간을 먼저 정해두는 게 좋아요.", vibe: "한 판의 유혹" },
   { keys: ["여행", "놀러", "숙소", "호텔", "비행기", "기차"], category: "travel", features: ["일상에서 빠져나오는 기분 전환", "사진과 추억이 남는 점", "비용과 동선 계산이 필요한 점", "체력이 생각보다 빨리 닳을 수 있는 점"], caution: "설렘만 보지 말고 이동 시간과 예산을 같이 봐야 해요.", vibe: "작은 탈출" },
+  { keys: ["TV", "티비", "텔레비전", "테레비"], category: "shopping", features: ["화질이 바로 달라지는 점", "시청환경이 좋아지는 점", "거실이나 방 분위기가 바뀌는 점", "구매 비용과 설치 고민이 따라오는 점"], caution: "지금 TV가 아직 볼 만하면 화면 크기, 화질, 설치 공간, 예산을 같이 봐야 해요.", vibe: "시청환경 교체" },
   { keys: ["산다", "구매", "결제", "예약", "주문"], category: "shopping", features: ["바로 쓰거나 누릴 수 있는 장점", "가격만큼 자주 쓸지 따져봐야 하는 점", "카드값이 따라붙는 현실감", "며칠 뒤에도 필요하다고 느낄지"], caution: "진짜 자주 쓸지, 지금 기분만 그런 건지 한 번만 더 보면 좋아요.", vibe: "구매 판단" },
   { keys: ["안 산다", "안산다", "안 사", "사지 않는다", "보류"], category: "shopping", features: ["통장을 지키는 점", "충동 결제를 줄이는 점", "배송 기다림이 사라지는 점", "대신 계속 생각날 수 있는 점"], caution: "계속 생각나면 하루 뒤 다시 봐도 늦지 않아요.", vibe: "통장 방어" },
   { keys: ["매수", "투자"], category: "money", features: ["기회를 잡는 느낌", "수익 기대감", "가격 변동 리스크", "틀렸을 때 손실 가능성"], caution: "손실 한도 없이 들어가면 감정이 흔들릴 수 있어요.", vibe: "공격적 선택" },
@@ -858,7 +862,7 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈"])) return "travel";
   if (hasChildcareContext(text)) return "childcare";
   if (includesAny(text, ["카페", "공원", "영화", "마트", "백화점", "여행", "놀러", "어디"])) return "place";
-  if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제"])) return "shopping";
+  if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "tv", "티비", "텔레비전", "가전"])) return "shopping";
   return "daily";
 }
 
@@ -914,8 +918,8 @@ function analyzeOption(option, category) {
 
 function optionIntent(option) {
   const text = String(option).replace(/\s/g, "").toLowerCase();
-  if (includesAny(text, ["만다", "안간", "안한다", "안판다", "안마신", "안마셔", "마시지마", "말자", "보류", "쉬", "쉰", "기다", "관망", "패스", "보유", "홀딩"])) return "skip";
-  if (includesAny(text, ["간다", "가기", "간", "한다", "먹", "마신", "마셔", "산다", "살래", "매수", "매도", "판다", "연락", "고백", "출근"])) return "go";
+  if (includesAny(text, ["만다", "그냥", "그대로", "유지", "안간", "안한다", "안판다", "안바꾼", "안바꾸", "안마신", "안마셔", "마시지마", "말자", "보류", "쉬", "쉰", "기다", "관망", "패스", "보유", "홀딩"])) return "skip";
+  if (includesAny(text, ["간다", "가기", "간", "한다", "먹", "마신", "마셔", "산다", "살래", "바꾼", "바꾸", "교체", "매수", "매도", "판다", "연락", "고백", "출근"])) return "go";
   return "specific";
 }
 
@@ -1017,6 +1021,17 @@ function findScenario(question, category) {
 
 function skipFeaturesForScenario(option, scenario, category) {
   const scenarioName = scenario.name;
+  if (category === "shopping" && includesAny(String(scenarioName).toLowerCase(), ["tv", "티비", "텔레비전", "테레비"])) {
+    return {
+      name: option,
+      category,
+      subjectName: scenarioName,
+      intent: "skip",
+      features: ["TV 교체를 미뤄서 예산을 지키는 점", "지금 쓰는 시청환경을 유지하는 점", "설치와 배송 고민이 사라지는 점", "대신 화질이나 화면 크기 아쉬움이 남는 점"],
+      caution: "화질이 너무 답답하거나 화면 크기가 계속 거슬리면 미루는 쪽도 오래 편하진 않을 수 있어요.",
+      vibe: "TV 유지"
+    };
+  }
   const byCategory = {
     childcare: {
       features: [`${scenarioName}의 사람 많은 시간을 피할 수 있는 점`, "아이 컨디션을 집에서 지켜볼 수 있는 점", "큰 아이들과 부딪히거나 자극이 과해질 위험을 줄이는 점", "부모도 체력을 아낄 수 있는 점"],
@@ -1378,7 +1393,7 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
     shopping: [
       opening,
       `${subject} 쪽은 ${pair} 보여서 오늘 기준에서는 더 납득되는 선택입니다.`,
-      `${loserSubject}도 통장을 지키거나 충동을 줄이는 장점이 있지만, 지금은 사용 장면이 보이는지가 더 중요합니다.`
+      `${loserSubject}도 ${loserFirstTopic} 있지만, 지금은 가격과 실제 사용 장면을 같이 봐야 합니다.`
     ],
     attendance: [
       opening,
@@ -1507,6 +1522,11 @@ function realityOpeningLine(category, winner, loser, question) {
   }
   if (category === "shopping" && includesAny(raw, ["닌텐도", "플스", "playstation", "ps5"])) {
     return `마음은 ${winnerName} 쪽 화면을 켜고 있는데, ${loserName}도 오래 고민하게 만드는 후보입니다.`;
+  }
+  if (category === "shopping" && includesAny(raw, ["tv", "티비", "텔레비전", "테레비"])) {
+    return winner.intent === "go"
+      ? "TV를 바꾸면 화질과 시청환경은 바로 달라집니다. 문제는 그 만족감 옆에 비용과 설치 고민도 같이 온다는 점이에요."
+      : "지금 TV를 그냥 보면 돈은 지킵니다. 대신 화질, 화면 크기, 시청환경에 대한 아쉬움도 그대로 남아요.";
   }
   if (category === "place" && includesAny(raw, ["동물원"]) && includesAny(raw, ["놀이공원"])) {
     return includesAny(winner.name, ["놀이공원"])
@@ -2840,6 +2860,14 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
     if (analysis.intent === "go" && includesAny(question, ["답답", "휴가", "기분전환", "놀러"])) score += 10;
     if (analysis.intent === "skip" && includesAny(question, ["돈", "비싸", "피곤", "시간없", "일정"])) score += 12;
   }
+  const questionText = String(question).toLowerCase();
+  if (category === "shopping" && includesAny(questionText, ["tv", "티비", "텔레비전", "테레비"])) {
+    const tvProblem = includesAny(questionText, ["오래", "고장", "화질", "작", "불편", "눈아", "안보", "안 보", "안좋", "안 좋", "큰 화면"]);
+    if (analysis.intent === "go" && tvProblem) score += 24;
+    if (analysis.intent === "skip" && includesAny(questionText, ["돈", "비싸", "부담", "아직", "멀쩡", "그냥", "볼만", "볼 만"])) score += 12;
+    if (analysis.intent === "skip" && tvProblem) score -= 8;
+    if (analysis.intent === "go" && includesAny(questionText, ["돈", "비싸", "부담", "아직", "멀쩡", "볼만", "볼 만"])) score -= 5;
+  }
   if (category === "relationship") {
     if (analysis.intent === "go" && includesAny(question, ["전화", "통화", "연락", "카톡", "문자"]) && !includesAny(question, ["싸웠", "부담", "늦은"])) score += 8;
     if (analysis.intent === "skip" && includesAny(question, ["늦은", "밤", "싸웠", "화났", "부담"])) score += 8;
@@ -2927,7 +2955,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     attendance: `내일의 나한테 욕 덜 먹는 쪽으로 갑시다.`,
     money: `지갑이 비명 지르기 전에 한 번만 더 물어봅시다.`,
     relationship: `말은 짧게, 여운은 길게 가는 쪽이 이깁니다.`,
-    shopping: `장바구니는 설레고, 카드값은 현실주의자입니다.`,
+    shopping: `사는 선택은 오늘의 만족이고, 미루는 선택은 예산을 지키는 일입니다.`,
     place: `나갈 때의 신남보다 돌아올 때의 멀쩡함이 진짜 승자입니다.`,
     daily: `오늘은 끝나고 나서 "그래도 잘했다" 싶은 쪽으로 갑시다.`
   };

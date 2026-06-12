@@ -1381,7 +1381,9 @@ function cleanPlayTone(text) {
     .replaceAll("납득됩니다", "고개가 끄덕여집니다")
     .replaceAll("납득되는", "고개 끄덕이는")
     .replaceAll("납득", "고개 끄덕")
-    .replaceAll("장면", "순간")
+    .replaceAll("그 장면", "그 순간")
+    .replaceAll("그런 장면", "그런 순간")
+    .replaceAll("오늘 장면", "오늘 순간")
     .replaceAll("그림", "느낌")
     .replaceAll("회의실", "대기실")
     .replaceAll("머릿속 회의", "속마음 수다")
@@ -1397,46 +1399,46 @@ function foodSceneOpening(winner, loser, question) {
   const winnerText = `${winner.name} ${winner.features.join(" ")}`.toLowerCase();
   if (includesAny(raw, ["김밥"]) && includesAny(raw, ["라면"])) {
     return includesAny(winnerText, ["김밥"])
-      ? "라면 물은 끓고 있는데, 오늘 속은 김밥 쪽으로 조용히 손을 들었습니다."
-      : "김밥은 깔끔하게 끝나지만, 오늘은 라면 냄비가 먼저 눈치를 줍니다.";
+      ? "라면 냄비가 보글거리는데도, 손은 이미 김밥 꼬다리 하나 집고 있습니다."
+      : "김밥 꼬다리도 좋지만, 오늘은 라면 냄새가 방 문틈을 먼저 뚫고 들어왔습니다.";
   }
   if (includesAny(raw, ["짜장"]) && includesAny(raw, ["짬뽕"])) {
     return includesAny(winnerText, ["짜장"])
-      ? "오늘은 국물로 달래기보다, 젓가락에 춘장 묻혀서 바로 결론 내는 날입니다."
-      : "짜장면이 안전하게 웃고 있지만, 오늘 입은 짬뽕 국물 쪽으로 이미 기울었습니다.";
+      ? "짬뽕 국물도 손짓하지만, 오늘 젓가락은 춘장 묻은 면을 먼저 끌어올립니다."
+      : "짜장 소스도 묵직한데, 오늘은 짬뽕 국물 한 숟갈에 이마가 살짝 풀리는 쪽입니다.";
   }
   if (includesAny(raw, ["콩국수"]) && includesAny(raw, ["라면"])) {
     return includesAny(winnerText, ["콩국수"])
-      ? "라면은 익숙하게 부르지만, 오늘 혀는 차가운 콩국수 쪽에 이미 자리 잡았습니다."
-      : "콩국수의 차가운 고소함도 좋지만, 오늘은 라면 냄새가 방 문틈까지 들어온 느낌입니다.";
+      ? "라면 냄새가 익숙하게 부르지만, 오늘 젓가락은 차가운 콩국수 그릇에 먼저 닿습니다."
+      : "콩국수 그릇은 시원한 척하지만, 오늘은 라면 국물 첫 숟갈이 더 크게 들어옵니다.";
   }
   if (includesAny(raw, ["치킨"]) && includesAny(raw, ["삼겹살"])) {
     return includesAny(winnerText, ["삼겹살", "고기"])
-      ? "치킨 상자도 설레지만, 오늘 그림은 삼겹살 불판 앞에서 더 오래 머뭅니다."
-      : "삼겹살 불판은 크게 벌어지는 선택이고, 오늘은 치킨 상자 뜯는 쪽이 더 가볍게 들어옵니다.";
+      ? "치킨 상자도 설레지만, 오늘은 삼겹살 뒤집는 소리에서 이미 졌습니다."
+      : "삼겹살 불판도 센데, 오늘은 치킨 상자 열 때 나는 김이 먼저 이깁니다.";
   }
   if (includesAny(raw, ["소고기"]) && includesAny(raw, ["집밥"])) {
     return includesAny(winnerText, ["집밥"])
-      ? "소고기는 확실히 끌리지만, 오늘은 밖에서 한 판 벌이기보다 집에서 편하게 끝내는 쪽이 더 편해 보입니다."
-      : "집밥은 조용히 붙잡지만, 오늘은 소고기 굽는 냄새가 더 크게 이깁니다.";
+      ? "소고기 굽는 냄새도 무섭지만, 오늘은 집밥 첫 숟갈에 어깨가 내려가는 쪽입니다."
+      : "집밥은 조용히 붙잡지만, 오늘은 소고기 굽는 냄새가 이미 문 앞까지 왔습니다.";
   }
   if (includesAny(winnerText, ["차갑", "냉면", "콩국수"])) {
-    return `${loserName}도 끌리지만, 오늘 입안은 ${winnerName}처럼 차갑게 정리되는 쪽을 먼저 상상했습니다.`;
+    return `${loserName}도 끌리지만, 오늘은 ${winnerName} 첫 젓가락에 입안이 차갑게 정리되는 쪽입니다.`;
   }
   if (includesAny(winnerText, ["매콤", "얼큰", "떡볶이", "짬뽕", "김치"])) {
-    return `${loserName}도 무난하지만, 오늘은 ${winnerName}처럼 냄새부터 치고 들어오는 쪽이 더 강합니다.`;
+    return `${loserName}도 좋지만, 오늘은 ${winnerName} 냄새 맡는 순간 침이 먼저 나오는 쪽입니다.`;
   }
   if (includesAny(winnerText, ["깔끔", "담백", "집밥", "초밥", "김밥"])) {
-    return `${loserName}의 유혹도 있지만, 오늘은 ${winnerName}처럼 먹고 바로 정리되는 쪽이 더 편합니다.`;
+    return `${loserName}의 유혹도 있지만, 오늘은 ${winnerName} 한 입 먹고 바로 고개 끄덕이는 쪽입니다.`;
   }
   if (includesAny(winnerText, ["불판", "고기", "푸짐", "치즈", "튀김", "바삭"])) {
-    return `${withParticle(winner.name, "은", "는")} 시작하면 판이 커지는 메뉴입니다. 오늘은 그 냄새와 식감이 ${loserName}보다 먼저 들어왔습니다.`;
+    return `${withParticle(winner.name, "은", "는")} 첫입 전에 이미 소리가 납니다. 오늘은 그 바삭함과 냄새가 ${loserName}보다 먼저 들어왔습니다.`;
   }
   const pool = [
-    `${winnerName}은 첫 장면부터 냄새가 있고, ${loserName}은 마지막까지 머릿속에서 젓가락을 붙잡습니다.`,
+    `${winnerName}은 첫입 전에 이미 냄새가 올라오고, ${loserName}은 마지막까지 젓가락을 붙잡습니다.`,
     `${loserName}도 후보석에 앉아 있지만, 오늘 입맛은 ${winnerName} 쪽 테이블에 먼저 착석했습니다.`,
     `배는 조용한 척했지만, ${winnerName} 쪽 장면에서 이미 숟가락을 들었습니다.`,
-    `${winnerName}은 먹는 순간이 바로 떠오르고, ${loserName}은 먹고 난 뒤 아쉬움을 다시 계산하게 합니다.`,
+    `${winnerName}은 한 입 넣는 순간이 바로 떠오르고, ${loserName}은 먹고 난 뒤 아쉬움을 다시 계산하게 합니다.`,
     `오늘 메뉴판에서 ${winnerName} 글자가 조금 더 크게 보였습니다. 착각일 수 있는데 배는 이미 믿고 있습니다.`
   ];
   return pick(pool, hashText(`${question}-${winner.name}-${loser.name}-food-scene`));
@@ -1448,15 +1450,14 @@ function foodRealityReason(winner, loser, question) {
   const winnerTopic = withParticle(winner.name, "은", "는");
   const winnerObject = withParticle(winner.name, "을", "를");
   const opening = foodSceneOpening(winner, loser, question);
-  const first = winner.features[0] || "바로 당기는 맛";
-  const second = winner.features[1] || "먹고 난 뒤 느낌";
-  const loserFirst = loser.features[0] || "반대쪽 장점";
+  const first = winner.features[0] || "첫입";
+  const second = winner.features[1] || "젓가락이 가는 속도";
   const detailPool = [
-    `${winnerTopic} ${featurePairText(first, second)} 있어서 머리로 오래 재기보다 입이 먼저 이해하는 선택이에요.`,
-    `${winnerTopic} ${escapeHtml(first)} 쪽이 확실합니다. ${loserName}도 ${withParticle(loserFirst, "은", "는")} 있지만, 오늘은 첫입 쪽이 더 빨리 옵니다.`,
-    `${winnerObject} 고르면 고민은 짧고 식사는 바로 시작됩니다. ${loserName}은 좋지만, 지금 끌림은 조금 덜 세게 들어옵니다.`,
-    `지금은 대단한 미식 평가보다 "먹고 나서 괜히 골랐나?"가 덜 남는 쪽을 봤습니다. 그 기준에선 ${winnerName}이 조금 앞섭니다.`,
-    `${winnerName}은 냄새, 식감, 먹고 난 뒤 기분 중 하나가 확실히 살아 있습니다. ${loserName}은 다음 판에 다시 올라와도 안 늦습니다.`
+    `${winnerTopic} 첫입 들어가는 속도가 빠릅니다. 생각보다 젓가락이 먼저 움직일 쪽이에요.`,
+    `${winnerObject} 고르면 한입 먹고 말이 줄어들 가능성이 있습니다. ${loserName}은 다음 끼니에 다시 부르면 됩니다.`,
+    `${winnerName} 쪽은 먹고 나서 "아 이거였네"가 나올 확률이 더 큽니다. 후회는 잠깐 쉬는 걸로 갑시다.`,
+    `지금은 설명보다 숟가락입니다. ${winnerName} 쪽이 입에 들어가는 속도가 더 빨라 보여요.`,
+    `${winnerName}은 냄새, 첫입, 먹고 난 뒤 표정 중 하나가 바로 옵니다. ${loserName}은 오늘 후보석에 잠깐 앉혀둡시다.`
   ];
   return cleanPlayTone([
     opening,
@@ -2720,7 +2721,7 @@ function futureComment(category, winner, question, seed, sign) {
       `한 입 먹고 고개를 끄덕였습니다. 말은 필요 없었습니다.`,
       `배고픈 나와 고민 많은 내가 동시에 조용해졌습니다.`,
       `오늘 메뉴판은 ${name}에서 접혔습니다.`,
-      `입맛이 먼저 결재 올리고 미래의 내가 승인했습니다.`,
+      `입맛이 먼저 주문서 올리고 미래의 내가 승인했습니다.`,
       `먹고 나서 "괜히 고민했네"가 나올 수 있습니다.`
     ],
     money: includesAny(winnerRaw, ["안판다", "보유", "홀딩", "관망", "기다"]) ? [

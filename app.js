@@ -841,7 +841,9 @@ const optionFeatureBank = [
   { keys: ["운동", "헬스", "러닝", "뛴다", "뛰기", "요가", "필라테스"], category: "exercise", features: ["몸을 움직이며 기분이 풀리는 점", "하고 나면 뿌듯함이 남는 점", "시작 전까지 귀찮음이 강한 점", "체력과 시간이 필요한 점"], caution: "몸이 진짜 피곤하거나 아프면 무리하지 않는 게 좋아요.", vibe: "몸의 시동" },
   { keys: ["운동안", "안운동", "안 한다", "안한다", "쉰다"], category: "exercise", features: ["오늘 체력을 아낄 수 있는 점", "소파와 타협하기 쉬운 점", "회복 시간을 확보하는 점", "미루는 습관이 생길 수 있는 점"], caution: "쉬기로 했다면 죄책감 대신 회복 시간을 제대로 쓰는 게 좋아요.", vibe: "운동 보류" },
   { keys: ["공부", "시험공부", "복습", "예습", "강의", "숙제", "과제"], category: "study", features: ["미래의 부담을 조금 덜어내는 점", "시작하면 생각보다 진도가 잡히는 점", "시험이나 마감 앞에서 마음이 덜 쫓기는 점", "책상 앞까지 가는 과정이 제일 어려운 점"], caution: "처음부터 오래 하려 하지 말고 20분만 잡아도 흐름이 생겨요.", vibe: "진도 한 칸" },
-  { keys: ["게임", "롤", "배그", "플스", "스팀", "모바일게임"], category: "game", features: ["머리를 잠깐 꺼두는 재미", "스트레스가 빠르게 풀리는 점", "시간이 순식간에 사라지는 점", "한 판만 하겠다는 약속이 자주 흔들리는 점"], caution: "내일 일정이 있으면 종료 시간을 먼저 정해두는 게 좋아요.", vibe: "한 판의 유혹" },
+  { keys: ["스타크래프트", "스타"], category: "game", features: ["빌드 꼬이면 바로 티 나는 점", "내 손과 판단을 끝까지 의심하게 되는 점", "한 판 끝나고 리플레이가 생각나는 점", "실수 원인이 꽤 정직하게 드러나는 점"], caution: "한 번 말리면 내 탓인지 종족 탓인지 오래 따지게 될 수 있어요.", vibe: "내 실수 추적" },
+  { keys: ["롤", "리그오브레전드", "리그 오브 레전드"], category: "game", features: ["팀원 핑이 먼저 올라오는 점", "내가 잘해도 판이 흔들릴 수 있는 점", "채팅창을 참는 것도 실력인 점", "이기면 한 판 더가 바로 따라오는 점"], caution: "남 탓 버튼이 너무 쉽게 켜지면 한 판이 세 판으로 번질 수 있어요.", vibe: "팀 운명 공동체" },
+  { keys: ["게임", "배그", "플스", "스팀", "모바일게임"], category: "game", features: ["머리를 잠깐 꺼두는 재미", "스트레스가 빠르게 풀리는 점", "시간이 순식간에 사라지는 점", "한 판만 하겠다는 약속이 자주 흔들리는 점"], caution: "내일 일정이 있으면 종료 시간을 먼저 정해두는 게 좋아요.", vibe: "한 판의 유혹" },
   { keys: ["여행", "놀러", "숙소", "호텔", "비행기", "기차"], category: "travel", features: ["일상에서 빠져나오는 기분 전환", "사진과 추억이 남는 점", "비용과 동선 계산이 필요한 점", "체력이 생각보다 빨리 닳을 수 있는 점"], caution: "설렘만 보지 말고 이동 시간과 예산을 같이 봐야 해요.", vibe: "작은 탈출" },
   { keys: ["TV", "티비", "텔레비전", "테레비"], category: "shopping", features: ["화질이 바로 달라지는 점", "시청환경이 좋아지는 점", "거실이나 방 분위기가 바뀌는 점", "구매 비용과 설치 고민이 따라오는 점"], caution: "지금 TV가 아직 볼 만하면 화면 크기, 화질, 설치 공간, 예산을 같이 봐야 해요.", vibe: "시청환경 교체" },
   { keys: ["산다", "구매", "결제", "예약", "주문"], category: "shopping", features: ["바로 쓰거나 누릴 수 있는 장점", "가격만큼 자주 쓸지 따져봐야 하는 점", "카드값이 따라붙는 현실감", "며칠 뒤에도 필요하다고 느낄지"], caution: "진짜 자주 쓸지, 지금 기분만 그런 건지 한 번만 더 보면 좋아요.", vibe: "구매 판단" },
@@ -865,7 +867,7 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["샤워", "씻", "목욕", "머리감", "세수", "양치"])) return "hygiene";
   if (includesAny(text, ["운동", "헬스", "러닝", "뛸까", "뛰", "요가", "필라테스", "산책"])) return "exercise";
   if (includesAny(text, ["공부", "시험", "숙제", "과제", "강의", "복습", "예습"])) return "study";
-  if (includesAny(text, ["게임", "롤", "배그", "플스", "스팀", "모바일게임"])) return "game";
+  if (includesAny(text, ["게임", "롤", "리그오브레전드", "리그 오브 레전드", "스타", "스타크래프트", "배그", "플스", "스팀", "모바일게임"])) return "game";
   if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
   if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑"])) return "travel";
   if (hasChildcareContext(text)) return "childcare";
@@ -1584,12 +1586,38 @@ function foodCharacterLines(foodName) {
   return bank.find((item) => item.keys.some((key) => name.includes(key))) || null;
 }
 
+function optionCharacterLine(entry, optionName, question, salt = "") {
+  if (!entry || !entry.lines || !entry.lines.length) return null;
+  return pick(entry.lines, hashText(`${question}-${optionName}-${salt}-character-line`));
+}
+
+function foodComparisonLine(winner, loser, question) {
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const winnerCharacter = foodCharacterLines(winner.name);
+  const loserCharacter = foodCharacterLines(loser.name);
+  if (winnerCharacter && loserCharacter) {
+    const winnerLine = optionCharacterLine(winnerCharacter, winner.name, question, "winner");
+    const loserLine = optionCharacterLine(loserCharacter, loser.name, question, "loser");
+    const closer = pick([
+      `둘 다 말은 되는데, 오늘은 ${winnerName} 쪽이 한입 넣는 속도가 더 빨라 보입니다.`,
+      `이건 누가 더 훌륭하냐보다 지금 손이 어디로 먼저 가느냐 싸움입니다. 오늘은 ${winnerName}입니다.`,
+      `${loserName}도 끝까지 버티지만, 오늘 메뉴판에서는 ${winnerName} 쪽이 더 오래 눈에 남습니다.`,
+      `그래서 결론은 ${winnerName}. 설명보다 한입이 먼저 나올 쪽입니다.`
+    ], hashText(`${question}-${winner.name}-${loser.name}-food-comparison-close`));
+    return cleanPlayTone(`${winnerLine} ${loserLine} ${closer}`);
+  }
+  return null;
+}
+
 function foodRealityReason(winner, loser, question) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
   const winnerTopic = withParticle(winner.name, "은", "는");
   const winnerObject = withParticle(winner.name, "을", "를");
   const opening = foodSceneOpening(winner, loser, question);
+  const comparison = foodComparisonLine(winner, loser, question);
+  if (comparison) return comparison;
   const character = foodCharacterLines(winner.name);
   if (character) {
     const line = pick(character.lines, hashText(`${question}-${winner.name}-food-character`));
@@ -1615,6 +1643,62 @@ function foodRealityReason(winner, loser, question) {
     opening,
     pick(detailPool, hashText(`${question}-${winner.name}-${loser.name}-food-detail`))
   ].join(" "));
+}
+
+function gameCharacterLines(gameName) {
+  const name = String(gameName || "").toLowerCase();
+  const bank = [
+    { keys: ["스타크래프트", "스타"], lines: [
+      "스타는 내가 못한 이유를 끝까지 찾게 만드는 게임입니다. 변명도 결국 빌드오더 앞에서 작아집니다.",
+      "스타는 조용히 시작했다가 손이 꼬이는 순간 바로 들킵니다.",
+      "스타는 남 탓하기 전에 내 앞마당부터 보게 만듭니다.",
+      "스타는 한 판 끝나면 '아까 그 타이밍'이 계속 머리에 남습니다."
+    ], future: [
+      "리플레이 보면서 3분 전의 나를 혼낼 수 있습니다.",
+      "졌어도 빌드 탓인지 손 탓인지 끝까지 따집니다.",
+      "한 판 끝나고도 머릿속 미니맵이 꺼지지 않습니다."
+    ] },
+    { keys: ["롤", "리그오브레전드", "리그 오브 레전드"], lines: [
+      "롤은 남이 못한 이유를 찾게 만드는 속도가 빠릅니다. 채팅창은 늘 위험 구역입니다.",
+      "롤은 내가 잘해도 팀원이 같이 타야 도착하는 버스입니다.",
+      "롤은 한 판만 하겠다는 말을 가장 쉽게 배신합니다.",
+      "롤은 이기면 한 판 더, 지면 억울해서 한 판 더가 붙습니다."
+    ], future: [
+      "끝나고 전적 검색창을 열 가능성이 있습니다.",
+      "남 탓 버튼을 참으면 이미 절반은 이긴 겁니다.",
+      "한 판만 한다는 약속은 잠깐 심문이 필요합니다."
+    ] },
+    { keys: ["배그"], lines: [
+      "배그는 조용히 걷다가 갑자기 심장이 먼저 뛰는 게임입니다.",
+      "배그는 총소리 한 번에 자세가 바로 바뀝니다.",
+      "배그는 파밍할 땐 평화롭고, 맞는 순간 현실로 돌아옵니다.",
+      "배그는 오래 숨어도 마지막엔 손이 대답해야 합니다."
+    ], future: [
+      "발소리 하나에 방 안 공기가 바뀔 수 있습니다.",
+      "죽고 나서 방금 그 각도를 다시 떠올립니다.",
+      "치킨은 못 먹어도 심장은 뛰었습니다."
+    ] }
+  ];
+  return bank.find((item) => item.keys.some((key) => name.includes(key))) || null;
+}
+
+function gameRealityReason(winner, loser, question) {
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const winnerCharacter = gameCharacterLines(winner.name);
+  const loserCharacter = gameCharacterLines(loser.name);
+  if (winnerCharacter && loserCharacter) {
+    const winnerLine = optionCharacterLine(winnerCharacter, winner.name, question, "game-winner");
+    const loserLine = optionCharacterLine(loserCharacter, loser.name, question, "game-loser");
+    const closer = pick([
+      `둘 다 시간 먹는 속도는 빠른데, 오늘은 ${winnerName} 쪽이 시작 버튼을 더 세게 누릅니다.`,
+      `${loserName}도 위험하지만, 오늘 손가락은 ${winnerName} 쪽 단축키를 먼저 기억합니다.`,
+      `이건 승패 예측보다 어떤 스트레스를 고를지 문제입니다. 오늘은 ${winnerName} 쪽입니다.`,
+      `그래서 ${winnerName} 승. 끝나고 한 판 더 하고 싶어지는 쪽도 아마 이쪽입니다.`
+    ], hashText(`${question}-${winner.name}-${loser.name}-game-comparison-close`));
+    return cleanPlayTone(`${winnerLine} ${loserLine} ${closer}`);
+  }
+  return playfulRealityReason("game", winner, loser, question);
 }
 
 function playfulRealityReason(category, winner, loser, question) {
@@ -1728,6 +1812,7 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   const pair = featurePairText(winner.features[0] || "바로 체감되는 장점", winner.features[1] || "끝나고 남는 느낌");
   const opening = realityOpeningLine(category, winner, loser, question);
   if (category === "food") return foodRealityReason(winner, loser, question);
+  if (category === "game") return gameRealityReason(winner, loser, question);
   return playfulRealityReason(category, winner, loser, question);
 }
 
@@ -2833,6 +2918,12 @@ function futureComment(category, winner, question, seed, sign) {
   const signName = sign && sign[0] ? sign[0] : "황소자리";
   if (category === "food") {
     const character = foodCharacterLines(winner.name);
+    if (character && character.future) {
+      return cleanPlayTone(pick(character.future, seed + raw.length + question.length + variationSeed));
+    }
+  }
+  if (category === "game") {
+    const character = gameCharacterLines(winner.name);
     if (character && character.future) {
       return cleanPlayTone(pick(character.future, seed + raw.length + question.length + variationSeed));
     }

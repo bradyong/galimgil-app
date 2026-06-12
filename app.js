@@ -428,8 +428,9 @@ function dangerousChoiceCheck(question, choiceA = "", choiceB = "") {
   const directKeywords = [
     "죽을까", "자살", "극단적선택", "뛰어내릴까", "목숨", "죽고싶", "죽고싶다",
     "사라지고싶", "사라지고싶다", "해칠까", "자해", "약먹을까", "목맬까",
-    "목매", "죽인다", "죽일까", "해코지", "폭력", "때릴까", "범죄", "훔칠까", "불법",
-    "마약", "약물", "필로폰", "대마", "코카인", "도박", "카지노", "불법토토", "토토할까"
+    "목매", "죽인다", "죽일까", "해코지", "폭력", "때릴까", "때린다", "때리", "범죄", "훔칠까", "훔친다", "훔치", "불법",
+    "마약", "약물", "필로폰", "대마", "코카인", "도박", "카지노", "불법토토", "토토할까",
+    "음주운전", "술먹고운전", "술마시고운전", "무면허", "방화", "불지를까", "협박"
   ];
   const dangerous = directKeywords.some((keyword) => compact.includes(keyword)) ||
     (compact.includes("칼") && includesAny(compact, ["해칠", "찌를", "찌르", "죽일", "자해"])) ||
@@ -806,6 +807,10 @@ const optionFeatureBank = [
   { keys: ["치킨에 맥주", "치맥"], category: "food", features: ["바삭한 치킨 껍질", "맥주 한 모금의 시원함", "배달 상자를 여는 편한 맛", "소파 앞에서 바로 시작되는 가벼운 분위기"], caution: "느끼함이 빨리 오거나 배달 기다림이 길면 흥이 살짝 꺼질 수 있어요.", vibe: "바삭한 즉시 만족" },
   { keys: ["삼겹살에 맥주", "삼겹살", "고기"], category: "food", features: ["불판에서 올라오는 고기 냄새", "쌈과 기름진 한 점의 묵직함", "직접 구워 먹는 재미", "자리 분위기가 천천히 달아오르는 느낌"], caution: "굽는 수고와 냄새가 부담이면 치킨보다 번거롭게 느껴질 수 있어요.", vibe: "불판 만족" },
   { keys: ["피자"], category: "food", features: ["치즈의 고소함", "토핑 고르는 재미", "든든한 한 판", "같이 먹기 좋은 분위기"], caution: "속이 더부룩하거나 혼자 간단히 먹고 싶으면 부담될 수 있어요.", vibe: "풍성함" },
+  { keys: ["콩국수"], category: "food", features: ["차갑고 고소한 콩물", "면을 시원하게 넘기는 느낌", "더운 날 입맛을 식혀주는 점", "걸쭉한 식감이 취향을 탈 수 있는 점"], caution: "뜨끈하거나 자극적인 걸 원하는 날엔 심심하게 느껴질 수 있어요.", vibe: "차가운 고소함" },
+  { keys: ["냉면"], category: "food", features: ["차가운 육수", "쫄깃한 면발", "더운 날 바로 식는 느낌", "식초와 겨자로 맛을 조절하는 재미"], caution: "속이 차거나 든든한 한 끼를 원하면 조금 가볍게 느껴질 수 있어요.", vibe: "시원한 한 그릇" },
+  { keys: ["떡볶이"], category: "food", features: ["매콤달달한 양념", "쫀득한 떡 식감", "분식집 냄새처럼 바로 당기는 점", "먹고 나서 물을 찾게 될 수 있는 점"], caution: "속이 예민하거나 자극을 피하고 싶은 날엔 후폭풍이 있을 수 있어요.", vibe: "매콤한 폭주" },
+  { keys: ["초밥", "스시"], category: "food", features: ["깔끔한 한 점씩 먹는 재미", "밥과 회의 담백함", "무겁지 않게 기분 내는 점", "양이 부족하면 아쉬움이 남는 점"], caution: "뜨끈하고 든든한 걸 원하면 먹고 나서 허전할 수 있어요.", vibe: "깔끔한 기분" },
   { keys: ["아이스아메리카노", "아아", "차가운 아메리카노"], category: "beverage", features: ["차갑게 바로 깨는 느낌", "입안이 가벼워지는 쓴맛", "더울 때 시원하게 들어가는 점", "속이 예민하면 차가움이 부담될 수 있는 점"], caution: "속이 비었거나 몸이 차가운 날엔 천천히 마시는 게 좋아요.", vibe: "시원한 각성" },
   { keys: ["따뜻한 아메리카노", "뜨아", "핫아메리카노", "아메리카노"], category: "beverage", features: ["따뜻하게 손에 감기는 느낌", "천천히 마시기 좋은 온도", "속이 덜 놀라는 점", "더운 날엔 답답하게 느껴질 수 있는 점"], caution: "이미 덥거나 갈증이 크면 시원한 쪽이 더 당길 수 있어요.", vibe: "따뜻한 정리" },
   { keys: ["라떼", "카페라떼"], category: "beverage", features: ["우유의 부드러움", "쓴맛이 덜한 편안함", "출출할 때 살짝 채워지는 느낌", "깔끔한 커피를 원하면 무겁게 느껴질 수 있는 점"], caution: "가볍게 마시고 싶으면 아메리카노 쪽이 더 나을 수 있어요.", vibe: "부드러운 커피" },
@@ -1358,6 +1363,78 @@ function optionDisplayName(analysis, category) {
     : analysis.name;
 }
 
+function foodSceneOpening(winner, loser, question) {
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const raw = `${question} ${winner.name} ${loser.name}`.toLowerCase();
+  const winnerText = `${winner.name} ${winner.features.join(" ")}`.toLowerCase();
+  if (includesAny(raw, ["김밥"]) && includesAny(raw, ["라면"])) {
+    return includesAny(winnerText, ["김밥"])
+      ? "라면 물은 끓고 있는데, 오늘 속은 김밥 쪽으로 조용히 손을 들었습니다."
+      : "김밥은 깔끔하게 끝나지만, 오늘은 라면 냄비가 먼저 눈치를 줍니다.";
+  }
+  if (includesAny(raw, ["짜장"]) && includesAny(raw, ["짬뽕"])) {
+    return includesAny(winnerText, ["짜장"])
+      ? "오늘은 국물로 달래기보다, 젓가락에 춘장 묻혀서 바로 결론 내는 날입니다."
+      : "짜장면이 안전하게 웃고 있지만, 오늘 입은 짬뽕 국물 쪽으로 이미 기울었습니다.";
+  }
+  if (includesAny(raw, ["콩국수"]) && includesAny(raw, ["라면"])) {
+    return includesAny(winnerText, ["콩국수"])
+      ? "라면은 익숙하게 부르지만, 오늘 혀는 차가운 콩국수 쪽에 이미 자리 잡았습니다."
+      : "콩국수의 차가운 고소함도 좋지만, 오늘은 라면 냄새가 방 문틈까지 들어온 느낌입니다.";
+  }
+  if (includesAny(raw, ["치킨"]) && includesAny(raw, ["삼겹살"])) {
+    return includesAny(winnerText, ["삼겹살", "고기"])
+      ? "치킨 상자도 설레지만, 오늘 그림은 삼겹살 불판 앞에서 더 오래 머뭅니다."
+      : "삼겹살 불판은 크게 벌어지는 선택이고, 오늘은 치킨 상자 뜯는 쪽이 더 가볍게 들어옵니다.";
+  }
+  if (includesAny(raw, ["소고기"]) && includesAny(raw, ["집밥"])) {
+    return includesAny(winnerText, ["집밥"])
+      ? "소고기는 확실히 끌리지만, 오늘은 밖에서 한 판 벌이기보다 집에서 편하게 끝내는 그림이 더 편해 보입니다."
+      : "집밥은 조용히 붙잡지만, 오늘은 소고기 굽는 냄새가 더 크게 이깁니다.";
+  }
+  if (includesAny(winnerText, ["차갑", "냉면", "콩국수"])) {
+    return `${loserName}도 끌리지만, 오늘 입안은 ${winnerName}처럼 차갑게 정리되는 쪽을 먼저 상상했습니다.`;
+  }
+  if (includesAny(winnerText, ["매콤", "얼큰", "떡볶이", "짬뽕", "김치"])) {
+    return `${loserName}도 무난하지만, 오늘은 ${winnerName}처럼 냄새부터 치고 들어오는 쪽이 더 강합니다.`;
+  }
+  if (includesAny(winnerText, ["깔끔", "담백", "집밥", "초밥", "김밥"])) {
+    return `${loserName}의 유혹도 있지만, 오늘은 ${winnerName}처럼 먹고 바로 정리되는 그림이 더 편합니다.`;
+  }
+  if (includesAny(winnerText, ["불판", "고기", "푸짐", "치즈", "튀김", "바삭"])) {
+    return `${winnerName}은 시작하면 판이 커지는 메뉴입니다. 오늘은 그 냄새와 식감이 ${loserName}보다 먼저 들어왔습니다.`;
+  }
+  const pool = [
+    `${winnerName}은 첫 장면부터 냄새가 있고, ${loserName}은 마지막까지 머릿속에서 젓가락을 붙잡습니다.`,
+    `${loserName}도 후보석에 앉아 있지만, 오늘 입맛은 ${winnerName} 쪽 테이블에 먼저 착석했습니다.`,
+    `배는 조용한 척했지만, ${winnerName} 쪽 장면에서 이미 숟가락을 들었습니다.`,
+    `${winnerName}은 먹는 순간이 바로 떠오르고, ${loserName}은 먹고 난 뒤 아쉬움을 다시 계산하게 합니다.`,
+    `오늘 메뉴판에서 ${winnerName} 글자가 조금 더 크게 보였습니다. 착각일 수 있는데 배는 이미 믿고 있습니다.`
+  ];
+  return pick(pool, hashText(`${question}-${winner.name}-${loser.name}-food-scene`));
+}
+
+function foodRealityReason(winner, loser, question) {
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const opening = foodSceneOpening(winner, loser, question);
+  const first = winner.features[0] || "바로 당기는 맛";
+  const second = winner.features[1] || "먹고 난 뒤 느낌";
+  const loserFirst = loser.features[0] || "반대쪽 장점";
+  const detailPool = [
+    `${winnerName} 쪽은 ${featurePairText(first, second)} 있어서 머리로 오래 재기보다 입이 먼저 이해하는 선택이에요.`,
+    `${winnerName}은 ${escapeHtml(first)} 쪽이 확실합니다. ${loserName}도 ${withParticle(loserFirst, "은", "는")} 있지만, 오늘은 먹는 순간의 그림이 덜 흐립니다.`,
+    `${winnerName}을 고르면 고민은 짧고 식사는 바로 시작됩니다. ${loserName}은 좋지만, 지금 끌림은 조금 덜 세게 들어옵니다.`,
+    `지금은 대단한 미식 평가보다 "먹고 나서 괜히 골랐나?"가 덜 남는 쪽을 봤습니다. 그 기준에선 ${winnerName}이 조금 앞섭니다.`,
+    `${winnerName}은 냄새, 식감, 먹고 난 뒤 기분 중 하나가 확실히 살아 있습니다. ${loserName}은 다음 판에 다시 올라와도 됩니다.`
+  ];
+  return [
+    opening,
+    pick(detailPool, hashText(`${question}-${winner.name}-${loser.name}-food-detail`))
+  ].join(" ");
+}
+
 function categoryRealityReason(category, winner, loser, question, cards = []) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
@@ -1371,9 +1448,7 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   const opening = realityOpeningLine(category, winner, loser, question);
   const lines = {
     food: [
-      opening,
-      `${winnerName} 쪽은 ${pair} 바로 느껴지는 선택이에요.`,
-      `반대로 ${loserName}도 ${loserFirstTopic} 있지만, 오늘 질문에서는 ${winnerName} 쪽 그림이 더 선명합니다.`
+      foodRealityReason(winner, loser, question)
     ],
     beverage: [
       opening,
@@ -2742,7 +2817,40 @@ function futureComment(category, winner, question, seed, sign) {
       `돌아오는 길의 피로까지 계산하면 꽤 현실적인 선택입니다.`,
       `오늘의 탈출 버튼이 살짝 반짝였습니다.`
     ],
-    shopping: [
+    beverage: [
+      `${name} 한 모금 뒤에 미래의 내가 온도를 납득했습니다.`,
+      `컵을 드는 순간부터 답이 조금 선명해졌습니다.`,
+      `마시고 나서 "오늘은 이 온도였네"가 나올 수 있습니다.`,
+      `카페인보다 먼저 손끝 온도가 반응했습니다.`,
+      `미래의 내가 컵을 내려놓고 조용히 고개를 끄덕입니다.`,
+      `갈증과 기분이 짧게 회의를 끝냈습니다.`,
+      `오늘 커피 선택은 생각보다 몸이 먼저 알고 있었습니다.`,
+      `한 모금 마시고 나면 고민이 조금 덜 진지해질 겁니다.`,
+      `컵 안의 온도가 오늘 기분을 설득했습니다.`,
+      `마지막 한 모금까지 덜 어색하면 성공입니다.`
+    ],
+    shopping: includesAny(winnerRaw, ["tv", "티비", "텔레비전", "테레비"]) && winner.intent === "go" ? [
+      `리모컨을 들 때마다 오늘 선택이 다시 떠오를 수 있습니다.`,
+      `거실 화면 앞에서 미래의 내가 조용히 평가합니다.`,
+      `화질이 바뀌면 영화 첫 장면부터 티가 납니다.`,
+      `바꿨다면 배송 기사님 오는 날부터 거실 분위기가 달라집니다.`,
+      `미래의 내가 리모컨을 누르며 "그래, 이 정도면 됐다" 할 수도 있습니다.`,
+      `화면 크기와 카드값이 서로 눈치를 봅니다.`,
+      `TV 앞에 앉는 시간이 많다면 이 선택은 매일 검토됩니다.`,
+      `거실 조명이 꺼지고 화면이 켜질 때 답이 다시 보일 겁니다.`,
+      `오늘의 선택은 리모컨보다 통장이 더 오래 기억할 수도 있습니다.`
+    ] : includesAny(winnerRaw, ["tv", "티비", "텔레비전", "테레비"]) ? [
+      `안 바꿨다면 통장은 웃고, 화면은 조금 더 버팁니다.`,
+      `리모컨은 그대로고 예산도 그대로라 일단 평화롭습니다.`,
+      `거실 화면은 조금 더 일하게 됐고, 통장은 박수칩니다.`,
+      `화질 아쉬움은 남지만 카드값 공포는 오늘 쉬어갑니다.`,
+      `미래의 내가 TV 앞에서 "아직은 볼 만하지"라고 합리화할 수 있습니다.`,
+      `새 화면은 미뤘지만 예산표는 덜 흔들렸습니다.`,
+      `화면 크기는 그대로지만 지출도 그대로라 균형은 맞습니다.`,
+      `오늘은 리모컨보다 통장의 표정이 더 밝습니다.`,
+      `거실 분위기는 그대로고, 잔고도 그대로에 가깝습니다.`,
+      `TV는 한 시즌 더 연장 계약을 따낸 셈입니다.`
+    ] : [
       `장바구니가 오늘도 혼자 결제 연기를 했습니다.`,
       `카드는 긴장했고 손가락은 침착한 척했습니다.`,
       `사고 나서 합리화 문장이 자동 생성됐습니다.`,
@@ -2780,6 +2888,9 @@ function futureComment(category, winner, question, seed, sign) {
     ]
   };
   const starts = startsByCategory[category] || startsByCategory.daily;
+  if (category !== "daily") {
+    return pick(starts, seed + raw.length + name.length + question.length + variationSeed);
+  }
   const zodiacStarts = {
     "양자리": [`어차피 할 거였잖아?`, `그래도 질렀네.`, `멈췄으면 더 답답했을 듯.`, `출발이 결론보다 빨랐습니다.`, `후회는 나중 부서로 넘겼습니다.`],
     "황소자리": [`좋아. 다시 눕자.`, `귀찮음 대비 효율이 괜찮았다.`, `생각보다 안 힘들었네.`, `편한 쪽으로 잘 마무리했습니다.`, `배부르고 편하면 일단 성공입니다.`],
@@ -2897,7 +3008,25 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const recommendA = aScore >= bScore;
   const winner = recommendA ? a : b;
   const loser = recommendA ? b : a;
-  const winnerScore = Math.max(55, Math.min(75, recommendA ? aScore : bScore));
+  const rawWinnerScore = recommendA ? aScore : bScore;
+  const rawLoserScore = recommendA ? bScore : aScore;
+  const scoreGap = Math.abs(rawWinnerScore - rawLoserScore);
+  const uncertaintyWords = ["모르", "애매", "고민", "반반", "불안", "혹시", "잘"];
+  const strongContextWords = ["고장", "아프", "마감", "시험", "화질", "비", "춥", "숙취", "해장", "돈", "비싸", "내일", "너무"];
+  const uncertainty = includesAny(question, uncertaintyWords);
+  const strongContext = includesAny(question, strongContextWords) || profile.forced;
+  let winnerScore = 55;
+  if (scoreGap <= 3 || uncertainty) {
+    winnerScore = 51 + ((seed + rawWinnerScore) % 4);
+  } else if (scoreGap <= 8) {
+    winnerScore = 53 + ((seed + rawWinnerScore) % 5);
+  } else if (scoreGap <= 18) {
+    winnerScore = 58 + ((seed + rawWinnerScore) % 8);
+  } else {
+    winnerScore = 66 + ((seed + rawWinnerScore) % 10);
+  }
+  if (strongContext && scoreGap > 8) winnerScore = Math.max(winnerScore, 64 + ((seed + rawWinnerScore) % 9));
+  winnerScore = Math.max(51, Math.min(75, winnerScore));
   const loserScore = 100 - winnerScore;
   const winnerSubject = withParticle(winner.name, "은", "는");
   const loserSubject = withParticle(loser.name, "은", "는");

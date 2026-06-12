@@ -798,6 +798,7 @@ const optionFeatureBank = [
   { keys: ["라면"], category: "food", features: ["뜨거운 국물", "짭짤한 면발", "빠르게 채워지는 허기", "야식 같은 즉각적인 만족감"], caution: "붓기나 속 쓰림이 걱정되면 조심하는 게 좋아요.", vibe: "즉시 만족" },
   { keys: ["김밥"], category: "food", features: ["깔끔하게 집어먹기 좋은 점", "속이 과하게 무겁지 않은 점", "이동 중에도 먹기 편한 점", "국물 없이 먹으면 살짝 심심할 수 있는 점"], caution: "뜨끈한 국물이나 자극적인 맛을 원하면 아쉬울 수 있어요.", vibe: "깔끔한 한 끼" },
   { keys: ["집밥"], category: "food", features: ["편하게 끝나는 한 끼", "자극이 덜한 느낌", "밖에 나가지 않아도 되는 점", "특별한 맛의 재미는 약할 수 있는 점"], caution: "확실히 기분 내고 싶은 날엔 조금 심심할 수 있어요.", vibe: "편한 마무리" },
+  { keys: ["제육", "제육볶음"], category: "food", features: ["첫 쌈 싸는 손맛", "빨간 양념이 밥에 묻는 순간", "밥 한 숟갈 더 부르는 힘", "먹고 나면 물이 당길 수 있는 점"], caution: "매운 양념이 부담되는 날엔 끝까지 조금 세게 느껴질 수 있어요.", vibe: "밥도둑" },
   { keys: ["소고기"], category: "food", features: ["확실히 기분 내는 맛", "구워 먹는 재미", "특별한 식사 느낌", "비용과 준비가 커질 수 있는 점"], caution: "가볍게 끝내고 싶은 날엔 밖에서 한 판 벌이는 느낌이 부담될 수 있어요.", vibe: "확실한 한 판" },
   { keys: ["돈까스"], category: "food", features: ["바삭한 튀김", "든든한 양", "소스의 달큰함", "실패 확률이 낮은 메뉴"], caution: "느끼한 음식이 부담되면 끝까지 먹기 무거울 수 있어요.", vibe: "든든함" },
   { keys: ["국밥"], category: "food", features: ["뜨끈한 국물", "든든한 포만감", "속을 채워주는 느낌", "혼밥에도 편한 안정감"], caution: "가볍게 먹고 싶은 날엔 무겁게 느껴질 수 있어요.", vibe: "회복감" },
@@ -1407,6 +1408,16 @@ function foodSceneOpening(winner, loser, question) {
       ? "짬뽕 국물도 손짓하지만, 오늘 젓가락은 춘장 묻은 면을 먼저 끌어올립니다."
       : "짜장 소스도 묵직한데, 오늘은 짬뽕 국물 한 숟갈에 이마가 살짝 풀리는 쪽입니다.";
   }
+  if (includesAny(raw, ["김치찌개"]) && includesAny(raw, ["된장찌개"])) {
+    return includesAny(winnerText, ["김치찌개"])
+      ? "냄비 뚜껑 열리는 순간 김치찌개 냄새가 먼저 나옵니다. 밥은 이미 옆에서 대기 중입니다."
+      : "김치찌개도 세게 부르지만, 오늘은 된장찌개 첫 숟갈에 어깨가 조용히 내려갑니다.";
+  }
+  if (includesAny(raw, ["제육"]) && includesAny(raw, ["돈까스"])) {
+    return includesAny(winnerText, ["제육"])
+      ? "돈까스 바삭 소리도 센데, 오늘은 제육 첫 쌈 싸는 순간 후회할 시간이 사라집니다."
+      : "제육 양념도 밥을 부르지만, 오늘은 돈까스 자르는 소리에서 이미 마음이 흔들렸습니다.";
+  }
   if (includesAny(raw, ["콩국수"]) && includesAny(raw, ["라면"])) {
     return includesAny(winnerText, ["콩국수"])
       ? "라면 냄새가 익숙하게 부르지만, 오늘 젓가락은 차가운 콩국수 그릇에 먼저 닿습니다."
@@ -1602,12 +1613,28 @@ function probabilityReason(category, winner, loser, winnerScore, loserScore) {
     place: `${winnerName} 쪽이 나갔다 온 값이 조금 더 있습니다.`
   };
   if (gap <= 12) {
-    return cleanPlayTone(`거의 반반입니다. 그래도 ${lightReason[category] || `${winnerName} 쪽이 한 끗 앞섭니다.`} ${loserName}도 아직 후보석에 앉아 있어요.`);
+    const closePool = [
+      `AI도 마지막 3초까지 고민했습니다. 그래도 ${lightReason[category] || `${winnerName} 쪽이 한 끗 앞섭니다.`}`,
+      `오늘은 동전 던졌어도 이상하지 않습니다. 그래도 ${winnerName} 쪽으로 살짝 굴러갔어요.`,
+      `연장전 끝에 ${winnerName} 쪽이 겨우 이겼습니다. ${loserName}도 벤치에서 아직 안 일어났어요.`,
+      `심판 판정까지 갔습니다. 오늘은 ${winnerName} 쪽 손을 아주 살짝 들어줍니다.`
+    ];
+    return cleanPlayTone(pick(closePool, hashText(`${winner.name}-${loser.name}-${winnerScore}-${category}-close`)));
   }
   if (gap <= 24) {
-    return cleanPlayTone(`${lightReason[category] || `${winnerName} 쪽이 조금 앞섭니다.`} 상황이 바뀌면 ${loserName}도 바로 재등장 가능합니다.`);
+    const midPool = [
+      `${lightReason[category] || `${winnerName} 쪽이 조금 앞섭니다.`} ${loserName}도 따라왔지만 막판 스퍼트가 부족했습니다.`,
+      `중간까지 비볐는데 마지막에 ${winnerName} 쪽이 치고 나갔습니다.`,
+      `${winnerName} 쪽이 오늘은 한 발 빨랐습니다. ${loserName}은 다음 판에서 바로 복수 가능합니다.`
+    ];
+    return cleanPlayTone(pick(midPool, hashText(`${winner.name}-${loser.name}-${winnerScore}-${category}-mid`)));
   }
-  return cleanPlayTone(`오늘은 ${winnerName} 쪽이 꽤 세게 들어왔습니다. ${loserTopic} 다음 판에서 다시 싸워봅시다.`);
+  const strongPool = [
+    `오늘은 ${winnerName} 쪽이 꽤 세게 들어왔습니다. ${loserTopic} 다음 판에서 다시 싸워봅시다.`,
+    `${winnerName} 쪽이 초반부터 치고 나갔습니다. ${loserName}은 추격하다가 숨이 찼습니다.`,
+    `이건 꽤 확실한 승입니다. ${winnerName} 쪽이 먼저 결승선 밟았습니다.`
+  ];
+  return cleanPlayTone(pick(strongPool, hashText(`${winner.name}-${loser.name}-${winnerScore}-${category}-strong`)));
 }
 
 function realityOpeningLine(category, winner, loser, question) {
@@ -2633,53 +2660,27 @@ function starInterferenceLines(category, sign, cards, winner, loser, hasQuestion
   const signLabel = `${sign[1]} ${escapeHtml(sign[0])}`;
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
-  const winnerSaid = escapeHtml(withParticle(winner.name, "이라고", "라고"));
-  const subject = escapeHtml(subjectName || winner.name);
   const cardText = escapeHtml(narrativeCardPreview(cards));
-  const aside = zodiacAside(sign, category, winner);
-
-  if (category === "food") {
-    return [
-      situationOverruledStars
-        ? `${signLabel}가 ${loserName} 냄새에 잠깐 흔들렸는데, 오늘 몸 상태가 ${winnerName} 쪽 의자를 빼줬습니다. 별도 결국 배 속 평화를 무시하진 못하네요.`
-        : aside,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
-    ];
-  }
-  if (category === "money") {
-    return [
-      aside,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
-    ];
-  }
-  if (category === "childcare") {
-    return [
-      aside,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
-    ];
-  }
-  if (category === "drink") {
-    return [
-      aside,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
-    ];
-  }
-  if (category === "attendance") {
-    return [
-      aside,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
-    ];
-  }
-  if (category === "relationship") {
-    return [
-      aside,
-      `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
-    ];
-  }
-  return [
-    aside,
-    `${signLabel}의 오늘 카드: <strong>${cardText}</strong>. ${aside}`
-  ];
+  const tinyPools = {
+    food: [
+      `${signLabel}는 옆에서 젓가락만 들고 있습니다. 카드가 <strong>${cardText}</strong>라서 ${winnerName} 쪽에 살짝 앉았네요.`,
+      `${signLabel}도 ${loserName} 냄새에 흔들렸지만, 마지막 젓가락은 ${winnerName} 쪽입니다.`
+    ],
+    shopping: [
+      `${signLabel}는 계산대 옆에서 조용히 구경 중입니다. 오늘 카드는 <strong>${cardText}</strong>.`,
+      `${signLabel}가 한마디만 합니다. "${winnerName}, 나쁘지 않은데?"`
+    ],
+    relationship: [
+      `${signLabel}는 옆에서 눈치만 봅니다. 오늘 카드는 <strong>${cardText}</strong>, 말은 짧게 가래요.`,
+      `${signLabel}가 크게 참견하진 않습니다. 그냥 ${winnerName} 쪽을 살짝 밀었습니다.`
+    ],
+    daily: [
+      `${signLabel}는 오늘 조연입니다. 주인공은 그냥 ${winnerName}입니다.`,
+      `${signLabel}가 팝콘 들고 ${winnerName} 쪽에 앉았습니다.`
+    ]
+  };
+  const pool = tinyPools[category] || tinyPools.daily;
+  return pool;
 }
 
 function futureComment(category, winner, question, seed, sign) {
@@ -3496,11 +3497,11 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       <p>${escapeHtml(choiceA)} vs ${escapeHtml(choiceB)}</p>
     </div>
     <div class="report-section">
-      <h4>🌟 오늘 ${escapeHtml(signName)} 카드</h4>
+      <h4>🌟 별 한 스푼</h4>
       <p class="zodiac-card-row">${narrative.zodiacCards.map((card) => `<span>🎲 ${escapeHtml(card)}</span>`).join("")}</p>
     </div>
     <div class="report-section">
-      <h4>🌟 별의 참견</h4>
+      <h4>🌟 별의 한마디</h4>
       <p>${narrative.fortune}</p>
     </div>
     <div class="report-section">

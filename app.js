@@ -476,7 +476,7 @@ function choiceProfile(question, choiceA, choiceB) {
     profile.forced = includesAny(a, ["관망", "기다", "보류"]) ? "A" : includesAny(b, ["관망", "기다", "보류"]) ? "B" : null;
   } else if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "사도", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "tv", "티비", "텔레비전", "가전"])) {
     profile.type = "shopping";
-  } else if (includesAny(text, ["고백", "연락", "전화", "통화", "문자", "카톡", "사과", "화해"])) {
+  } else if (includesAny(text, ["고백", "연락", "전화", "통화", "문자", "카톡", "사과", "화해", "친구", "만난다", "만날까"])) {
     profile.type = "relationship";
   } else if (includesAny(text, ["샤워", "씻", "목욕", "머리감", "세수", "양치"])) {
     profile.type = "hygiene";
@@ -486,7 +486,7 @@ function choiceProfile(question, choiceA, choiceB) {
     profile.type = "study";
   } else if (includesAny(text, ["게임", "롤", "배그", "플스", "스팀", "모바일게임"])) {
     profile.type = "game";
-  } else if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈"])) {
+  } else if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑"])) {
     profile.type = "travel";
   } else if (giftContext) {
     profile.type = "gift";
@@ -864,9 +864,10 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["공부", "시험", "숙제", "과제", "강의", "복습", "예습"])) return "study";
   if (includesAny(text, ["게임", "롤", "배그", "플스", "스팀", "모바일게임"])) return "game";
   if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
-  if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈"])) return "travel";
+  if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑"])) return "travel";
   if (hasChildcareContext(text)) return "childcare";
-  if (includesAny(text, ["카페", "공원", "영화", "마트", "백화점", "여행", "놀러", "어디"])) return "place";
+  if (includesAny(text, ["친구", "만난다", "만날까", "약속"])) return "relationship";
+  if (includesAny(text, ["카페", "공원", "영화", "마트", "백화점", "여행", "놀러", "어디", "캠핑"])) return "place";
   if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "tv", "티비", "텔레비전", "가전"])) return "shopping";
   return "daily";
 }
@@ -1363,6 +1364,32 @@ function optionDisplayName(analysis, category) {
     : analysis.name;
 }
 
+function cleanPlayTone(text) {
+  return String(text || "")
+    .replaceAll("컨디션", "몸 상태")
+    .replaceAll("분위기", "공기")
+    .replaceAll("선명합니다", "또렷합니다")
+    .replaceAll("선명해", "또렷해")
+    .replaceAll("선명한", "또렷한")
+    .replaceAll("선명하고", "또렷하고")
+    .replaceAll("자연스럽게", "슬쩍")
+    .replaceAll("자연스럽다", "괜찮다")
+    .replaceAll("자연스럽습니다", "괜찮습니다")
+    .replaceAll("설명이 됩니다", "말이 됩니다")
+    .replaceAll("설명 가능한", "말 되는")
+    .replaceAll("설명 가능", "말 됨")
+    .replaceAll("납득됩니다", "고개가 끄덕여집니다")
+    .replaceAll("납득되는", "고개 끄덕이는")
+    .replaceAll("납득", "고개 끄덕")
+    .replaceAll("장면", "순간")
+    .replaceAll("그림", "느낌")
+    .replaceAll("회의실", "대기실")
+    .replaceAll("머릿속 회의", "속마음 수다")
+    .replaceAll("선택장애", "결정 고민")
+    .replaceAll("선택 기록", "선택 흔적")
+    .replaceAll("휴전", "잠깐 악수");
+}
+
 function foodSceneOpening(winner, loser, question) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
@@ -1390,7 +1417,7 @@ function foodSceneOpening(winner, loser, question) {
   }
   if (includesAny(raw, ["소고기"]) && includesAny(raw, ["집밥"])) {
     return includesAny(winnerText, ["집밥"])
-      ? "소고기는 확실히 끌리지만, 오늘은 밖에서 한 판 벌이기보다 집에서 편하게 끝내는 그림이 더 편해 보입니다."
+      ? "소고기는 확실히 끌리지만, 오늘은 밖에서 한 판 벌이기보다 집에서 편하게 끝내는 쪽이 더 편해 보입니다."
       : "집밥은 조용히 붙잡지만, 오늘은 소고기 굽는 냄새가 더 크게 이깁니다.";
   }
   if (includesAny(winnerText, ["차갑", "냉면", "콩국수"])) {
@@ -1400,10 +1427,10 @@ function foodSceneOpening(winner, loser, question) {
     return `${loserName}도 무난하지만, 오늘은 ${winnerName}처럼 냄새부터 치고 들어오는 쪽이 더 강합니다.`;
   }
   if (includesAny(winnerText, ["깔끔", "담백", "집밥", "초밥", "김밥"])) {
-    return `${loserName}의 유혹도 있지만, 오늘은 ${winnerName}처럼 먹고 바로 정리되는 그림이 더 편합니다.`;
+    return `${loserName}의 유혹도 있지만, 오늘은 ${winnerName}처럼 먹고 바로 정리되는 쪽이 더 편합니다.`;
   }
   if (includesAny(winnerText, ["불판", "고기", "푸짐", "치즈", "튀김", "바삭"])) {
-    return `${winnerName}은 시작하면 판이 커지는 메뉴입니다. 오늘은 그 냄새와 식감이 ${loserName}보다 먼저 들어왔습니다.`;
+    return `${withParticle(winner.name, "은", "는")} 시작하면 판이 커지는 메뉴입니다. 오늘은 그 냄새와 식감이 ${loserName}보다 먼저 들어왔습니다.`;
   }
   const pool = [
     `${winnerName}은 첫 장면부터 냄새가 있고, ${loserName}은 마지막까지 머릿속에서 젓가락을 붙잡습니다.`,
@@ -1418,21 +1445,122 @@ function foodSceneOpening(winner, loser, question) {
 function foodRealityReason(winner, loser, question) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
+  const winnerTopic = withParticle(winner.name, "은", "는");
+  const winnerObject = withParticle(winner.name, "을", "를");
   const opening = foodSceneOpening(winner, loser, question);
   const first = winner.features[0] || "바로 당기는 맛";
   const second = winner.features[1] || "먹고 난 뒤 느낌";
   const loserFirst = loser.features[0] || "반대쪽 장점";
   const detailPool = [
-    `${winnerName} 쪽은 ${featurePairText(first, second)} 있어서 머리로 오래 재기보다 입이 먼저 이해하는 선택이에요.`,
-    `${winnerName}은 ${escapeHtml(first)} 쪽이 확실합니다. ${loserName}도 ${withParticle(loserFirst, "은", "는")} 있지만, 오늘은 먹는 순간의 그림이 덜 흐립니다.`,
-    `${winnerName}을 고르면 고민은 짧고 식사는 바로 시작됩니다. ${loserName}은 좋지만, 지금 끌림은 조금 덜 세게 들어옵니다.`,
+    `${winnerTopic} ${featurePairText(first, second)} 있어서 머리로 오래 재기보다 입이 먼저 이해하는 선택이에요.`,
+    `${winnerTopic} ${escapeHtml(first)} 쪽이 확실합니다. ${loserName}도 ${withParticle(loserFirst, "은", "는")} 있지만, 오늘은 첫입 쪽이 더 빨리 옵니다.`,
+    `${winnerObject} 고르면 고민은 짧고 식사는 바로 시작됩니다. ${loserName}은 좋지만, 지금 끌림은 조금 덜 세게 들어옵니다.`,
     `지금은 대단한 미식 평가보다 "먹고 나서 괜히 골랐나?"가 덜 남는 쪽을 봤습니다. 그 기준에선 ${winnerName}이 조금 앞섭니다.`,
-    `${winnerName}은 냄새, 식감, 먹고 난 뒤 기분 중 하나가 확실히 살아 있습니다. ${loserName}은 다음 판에 다시 올라와도 됩니다.`
+    `${winnerName}은 냄새, 식감, 먹고 난 뒤 기분 중 하나가 확실히 살아 있습니다. ${loserName}은 다음 판에 다시 올라와도 안 늦습니다.`
   ];
-  return [
+  return cleanPlayTone([
     opening,
     pick(detailPool, hashText(`${question}-${winner.name}-${loser.name}-food-detail`))
-  ].join(" ");
+  ].join(" "));
+}
+
+function playfulRealityReason(category, winner, loser, question) {
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const winnerTopic = withParticle(winner.name, "은", "는");
+  const loserTopic = withParticle(loser.name, "은", "는");
+  const subject = escapeHtml(optionDisplayName(winner, category));
+  const loserSubject = escapeHtml(optionDisplayName(loser, category));
+  const first = winner.features[0] || "바로 체감되는 장점";
+  const second = winner.features[1] || "끝나고 남는 느낌";
+  const loserFirst = loser.features[0] || "반대쪽 장점";
+  const opening = realityOpeningLine(category, winner, loser, question);
+  const feature = featurePairText(first, second);
+  const pools = {
+    beverage: [
+      `${opening} ${winnerName}은 ${feature} 쪽이라 컵을 들었을 때 바로 답이 옵니다.`,
+      `${winnerName}은 한 모금 뒤 표정이 덜 애매합니다. ${loserName}도 좋지만 오늘 컵은 이쪽으로 기웁니다.`
+    ],
+    gift: [
+      `${winnerName}은 받는 순간 표정이 먼저 튈 가능성이 큽니다. ${loserName}도 좋지만 오늘 리액션 담당은 ${winnerName}입니다.`,
+      `${subject} 쪽은 ${feature} 쪽이라 포장 뜯는 순간이 더 재밌습니다.`
+    ],
+    relationship: [
+      `${subject} 쪽은 마음속 소리를 밖으로 조금 꺼내는 선택입니다. ${loserSubject}는 편하지만 폰을 계속 보게 만들 수 있어요.`,
+      `${winnerTopic} 보내고 나서 떨릴 수는 있어도, 혼자 상상 시즌2 찍는 시간은 줄여줍니다.`
+    ],
+    shopping: [
+      `${opening} ${subject} 쪽은 ${feature} 쪽이라 사고 나서 쓸 순간이 바로 떠오릅니다.`,
+      `${winnerTopic} 손가락이 결제 버튼 근처까지 간 선택입니다. ${loserTopic} 지갑이 옆에서 팔짱 끼고 보는 쪽이고요.`
+    ],
+    attendance: [
+      `${winnerName}은 오늘 귀찮고, ${loserName}은 내일 찝찝할 수 있습니다. 오늘은 어느 쪽 욕을 덜 먹을지 싸움이에요.`,
+      `${subject} 쪽은 지금 몸은 투덜대도 나중에 일이 덜 쌓이는 편입니다.`
+    ],
+    money: [
+      `${winnerName}은 계좌 앞에서 손을 덜 떨게 하는 쪽입니다. ${loserName}은 맞으면 좋지만 틀리면 꽤 시끄럽습니다.`,
+      `${subject} 쪽은 ${feature} 쪽입니다. 돈 문제는 멋보다 잠이 잘 오는지가 꽤 중요합니다.`
+    ],
+    drink: [
+      `${winnerName}은 오늘 밤을 살리고, ${loserName}은 내일 아침을 살립니다. 오늘 별은 일단 덜 후회할 쪽을 찍었습니다.`,
+      `${subject} 쪽은 ${feature} 쪽입니다. 술잔보다 알람이 더 무섭다면 답은 빨리 나옵니다.`
+    ],
+    childcare: [
+      `${winnerName}은 아이 웃음과 어른 체력을 같이 봤을 때 덜 빡센 쪽입니다. ${loserName}도 좋지만 돌아오는 길까지 생각해야죠.`,
+      `${subject} 쪽은 ${feature} 쪽입니다. 아이가 웃어도 보호자가 방전되면 엔딩이 조금 흐립니다.`
+    ],
+    hygiene: [
+      `${winnerName}은 시작 전 5분만 귀찮고, 끝나면 몸이 바로 편을 듭니다. ${loserName}은 지금은 편한데 찝찝함이 오래 남을 수 있어요.`,
+      `${subject} 쪽은 ${feature} 쪽입니다. 물 틀기 전까지만 세상 귀찮은 선택입니다.`
+    ],
+    exercise: [
+      `${winnerName}은 하기 전엔 싫고 끝나면 괜히 뿌듯한 쪽입니다. ${loserName}은 소파가 박수치는 선택이고요.`,
+      `${subject} 쪽은 ${feature} 쪽입니다. 운동화가 오늘은 장식품 탈출을 노립니다.`
+    ],
+    study: [
+      `${winnerName}은 미래의 내가 덜 째려보는 쪽입니다. ${loserName}은 지금은 달콤한데 마감이 뒤에서 웃고 있어요.`,
+      `${subject} 쪽은 ${feature} 쪽입니다. 책상에 앉는 순간 이미 반은 이겼습니다.`
+    ],
+    game: [
+      `${winnerName}은 재미 담당이고, ${loserName}은 시간 담당입니다. 오늘은 종료 버튼 누를 자신까지 같이 봐야 합니다.`,
+      `${subject} 쪽은 ${feature} 쪽입니다. 한 판이 세 판 되는 마법만 조심하면 됩니다.`
+    ],
+    travel: [
+      winner.intent === "skip"
+        ? `${winnerTopic} 텐트 대신 집 천장을 고르는 쪽입니다. ${loserTopic} 바람은 좋지만 짐 싸는 순간부터 일이 커집니다.`
+        : `${winnerTopic} 귀찮음 위에 바람 한 컵 붓는 선택입니다. ${loserTopic} 돈과 체력을 아끼는 쪽이고요.`,
+      `${subject} 쪽은 ${feature} 쪽입니다. 다녀오면 피곤해도 얘깃거리는 남습니다.`
+    ],
+    place: [
+      `${winnerName}은 나가서 뭐라도 생기는 쪽입니다. ${loserName}은 체력과 지갑이 덜 삐지는 쪽이고요.`,
+      `${subject} 쪽은 ${feature} 쪽입니다. 돌아오는 길 표정까지 생각하면 이쪽이 조금 낫습니다.`
+    ]
+  };
+  if (category === "shopping" && includesAny(`${winner.subjectName || ""} ${loser.subjectName || ""} ${question}`.toLowerCase(), ["tv", "티비", "텔레비전", "테레비"])) {
+    const tvPool = winner.intent === "go" ? [
+      `TV를 바꾸면 리모컨 누르는 순간부터 기분이 달라집니다. 대신 카드값도 같이 큰 화면으로 등장합니다.`,
+      `새 TV는 화질로 꼬시고, 기존 TV는 예산으로 버팁니다. 오늘은 화면 쪽 욕심이 조금 더 셉니다.`
+    ] : [
+      `TV를 그냥 보면 화면은 그대로지만 통장은 조용히 웃습니다. 새 화질은 다음 시즌으로 미뤄둡시다.`,
+      `새 TV는 거실에서 손짓하지만, 오늘은 리모컨보다 예산이 더 큰소리칩니다.`
+    ];
+    return cleanPlayTone(pick(tvPool, hashText(`${question}-${winner.name}-${loser.name}-tv-play`)));
+  }
+  if (category === "relationship" && includesAny(String(question).toLowerCase(), ["친구", "약속", "만난다", "만날까"])) {
+    const friendPool = includesAny(`${winner.name}`.toLowerCase(), ["일찍", "집", "들어", "안"]) ? [
+      `친구 약속도 좋지만 오늘은 집 문이 꽤 설득력 있습니다. 나가면 재밌고, 들어가면 내일의 내가 덜 째려봅니다.`,
+      `친구는 보고 싶고 침대도 보고 싶습니다. 오늘은 침대 쪽 영업력이 조금 더 셉니다.`
+    ] : [
+      `집도 좋지만 친구 얼굴 보면 바로 말 많아질 날입니다. 나가서 웃고 오면 오늘 하루가 덜 납작해집니다.`,
+      `일찍 들어가는 것도 어른스럽지만, 오늘은 친구 만나서 쓸데없는 얘기 좀 하는 쪽이 더 삽니다.`
+    ];
+    return cleanPlayTone(pick(friendPool, hashText(`${question}-${winner.name}-${loser.name}-friend-play`)));
+  }
+  const pool = pools[category] || [
+    `${winnerName}은 지금 바로 할 말이 있는 선택입니다. ${loserName}도 괜찮지만 오늘은 이쪽이 덜 질질 끌립니다.`,
+    `${subject} 쪽은 ${feature} 쪽이라 끝나고 "아 몰라, 됐다"가 조금 더 빨리 나옵니다.`
+  ];
+  return cleanPlayTone(pick(pool, hashText(`${question}-${winner.name}-${loser.name}-${category}-play`)));
 }
 
 function categoryRealityReason(category, winner, loser, question, cards = []) {
@@ -1446,119 +1574,39 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   const loserFirstTopic = withParticle(loser.features[0] || "반대 선택의 장점", "은", "는");
   const pair = featurePairText(winner.features[0] || "바로 체감되는 장점", winner.features[1] || "끝나고 남는 느낌");
   const opening = realityOpeningLine(category, winner, loser, question);
-  const lines = {
-    food: [
-      foodRealityReason(winner, loser, question)
-    ],
-    beverage: [
-      opening,
-      `${winnerName} 쪽은 ${pair} 바로 체감되는 선택이에요.`,
-      `반대로 ${loserName}도 ${loserFirstTopic} 있지만, 오늘 질문에서는 온도와 마신 뒤 느낌을 먼저 봤습니다.`
-    ],
-    gift: [
-      opening,
-      `${winnerName} 쪽은 ${pair} 살아 있어서 받는 순간의 표정이 더 잘 그려집니다.`,
-      `${loserName}도 좋은 선택이지만, 오늘은 ${subject} 쪽이 첫날 반응과 이후 활용 사이 균형이 낫습니다.`
-    ],
-    relationship: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 혼자 상상만 키우는 시간을 줄일 수 있습니다.`,
-      `${loserSubject}도 말실수 위험을 줄이는 장점은 있지만, 지금 질문에서는 확인할 건 확인하는 쪽이 오래 끌리지 않아 보여요.`
-    ],
-    shopping: [
-      opening,
-      `${subject} 쪽은 ${pair} 보여서 오늘 기준에서는 더 납득되는 선택입니다.`,
-      `${loserSubject}도 ${loserFirstTopic} 있지만, 지금은 가격과 실제 사용 장면을 같이 봐야 합니다.`
-    ],
-    attendance: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 오늘 이후의 뒤처리를 줄이는 쪽이에요.`,
-      `${loserSubject}도 당장 몸은 편할 수 있지만, 설명하고 메우는 일이 남는지까지 같이 봐야 합니다.`
-    ],
-    money: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 지금 감정으로 버튼을 누르는 위험을 줄여줍니다.`,
-      `${loserSubject}도 기회처럼 보일 수 있지만, 오늘은 수익 상상보다 틀렸을 때의 충격을 먼저 봤습니다.`
-    ],
-    drink: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 오늘 끝나고 남는 후폭풍이 더 작아 보입니다.`,
-      `${loserSubject}도 분위기 장점은 있지만, 다음 일정까지 같이 보면 ${winnerName} 쪽이 덜 위험합니다.`
-    ],
-    childcare: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 아이와 보호자 둘 다 덜 흔들릴 가능성이 큽니다.`,
-      `${loserSubject}도 장점은 있지만, 오늘은 웃고 끝낼 수 있는지가 더 중요합니다.`
-    ],
-    hygiene: [
-      opening,
-      `${winnerName} 쪽은 ${pair} 바로 체감되는 선택이에요.`,
-      `${loserName}도 당장 귀찮음은 줄지만, 끝나고 남는 몸 상태까지 보면 ${winnerName} 쪽이 앞섭니다.`
-    ],
-    exercise: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 선택 후 체감이 더 분명합니다.`,
-      `${loserSubject}도 휴식 장점은 있지만, 아픈 게 아니라면 작게 움직이는 쪽이 더 남습니다.`
-    ],
-    study: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 내일의 압박을 조금 덜어냅니다.`,
-      `${loserSubject}도 지금 피로를 줄이지만, 마감이나 시험이 있다면 미룬 만큼 다시 돌아옵니다.`
-    ],
-    game: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 오늘 리듬에는 더 맞아 보입니다.`,
-      `${loserSubject}도 장점은 있지만, 한 판이 여러 판으로 늘어날 상황인지가 결론을 갈랐어요.`
-    ],
-    travel: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 오늘 현실 조건에 더 맞습니다.`,
-      `${loserSubject}도 끌리지만, 지금은 떠나는 장면과 돌아오는 장면을 같이 놓고 봤습니다.`
-    ],
-    place: [
-      opening,
-      `${subject} 쪽은 ${pair} 있어서 오늘 움직임에 더 납득됩니다.`,
-      `${loserSubject}도 괜찮지만, 지금 컨디션까지 보면 ${winnerName} 쪽이 덜 삐걱댑니다.`
-    ]
-  };
-  return (lines[category] || [
-    `이 고민은 별자리보다 <strong>하고 난 뒤의 현실감</strong>이 먼저예요.`,
-    `${subject} 쪽은 ${pair} 있어서 오늘 선택으로 더 납득됩니다.`,
-    `${loserSubject}도 장점은 있지만, 지금 질문에서는 ${winnerName} 쪽이 더 설명 가능한 선택입니다.`
-  ]).join(" ");
+  if (category === "food") return foodRealityReason(winner, loser, question);
+  return playfulRealityReason(category, winner, loser, question);
 }
 
 function probabilityReason(category, winner, loser, winnerScore, loserScore) {
   const gap = winnerScore - loserScore;
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
-  const categoryLens = {
-    food: "입맛, 속 상태, 같이 먹는 상황",
-    beverage: "온도, 갈증, 속 상태",
-    gift: "첫 반응과 오래 가지고 놀 가능성",
-    relationship: "타이밍, 말투, 이후 대화 여지",
-    shopping: "가격, 사용 빈도, 며칠 뒤 필요성",
-    attendance: "몸 상태, 연락, 내일 밀릴 일",
-    money: "손실 감당 범위와 감정 매매 위험",
-    drink: "오늘 분위기와 내일 컨디션",
-    childcare: "안전, 아이 컨디션, 보호자 체력",
-    hygiene: "개운함과 당장 귀찮음",
-    exercise: "몸 상태와 끝난 뒤 회복감",
-    study: "시작 장벽과 내일 압박",
-    game: "재미와 멈출 수 있는 시간",
-    travel: "비용, 동선, 돌아온 뒤 피로",
-    place: "이동 거리와 끝나고 남는 체력"
-  };
-  const lens = categoryLens[category] || "오늘 질문의 현실 조건";
-  const lensObject = withParticle(lens, "을", "를");
   const loserTopic = withParticle(loser.name, "은", "는");
+  const lightReason = {
+    food: `${winnerName} 쪽에 젓가락이 조금 더 빨리 갑니다.`,
+    beverage: `${winnerName} 컵이 오늘 손에 더 먼저 잡힙니다.`,
+    gift: `${winnerName} 쪽이 뜯는 순간 반응이 더 좋아 보입니다.`,
+    relationship: `${winnerName} 쪽이 폰을 덜 오래 쳐다보게 합니다.`,
+    shopping: `${winnerName} 쪽이 지갑과 욕망 사이에서 조금 이깁니다.`,
+    attendance: `${winnerName} 쪽이 내일의 나한테 덜 혼납니다.`,
+    money: `${winnerName} 쪽이 계좌 앞에서 덜 떨립니다.`,
+    drink: `${winnerName} 쪽이 내일 아침까지 덜 무섭습니다.`,
+    childcare: `${winnerName} 쪽이 웃음과 체력 사이에서 조금 낫습니다.`,
+    hygiene: `${winnerName} 쪽이 끝나고 몸이 덜 투덜댑니다.`,
+    exercise: `${winnerName} 쪽이 끝나고 괜히 뿌듯할 확률이 높습니다.`,
+    study: `${winnerName} 쪽이 내일의 압박을 조금 줄입니다.`,
+    game: `${winnerName} 쪽이 재미와 시간 사이에서 오늘은 앞섭니다.`,
+    travel: `${winnerName} 쪽이 다녀온 뒤 할 말이 더 남습니다.`,
+    place: `${winnerName} 쪽이 나갔다 온 값이 조금 더 있습니다.`
+  };
   if (gap <= 12) {
-    return `거의 반반이지만 ${lens}에서 ${winnerName} 쪽이 한 끗 앞섰어요. ${loserName}도 충분히 말이 되는 선택입니다.`;
+    return cleanPlayTone(`거의 반반입니다. 그래도 ${lightReason[category] || `${winnerName} 쪽이 한 끗 앞섭니다.`} ${loserName}도 아직 후보석에 앉아 있어요.`);
   }
   if (gap <= 24) {
-    return `${lensObject} 같이 봤을 때 ${winnerName} 쪽 근거가 조금 더 많았습니다. 그래도 상황이 바뀌면 ${loserName}도 뒤집힐 수 있어요.`;
+    return cleanPlayTone(`${lightReason[category] || `${winnerName} 쪽이 조금 앞섭니다.`} 상황이 바뀌면 ${loserName}도 바로 재등장 가능합니다.`);
   }
-  return `${lens} 기준으로는 ${winnerName} 쪽 근거가 꽤 선명합니다. ${loserTopic} 조건이 바뀔 때 다시 볼 선택이에요.`;
+  return cleanPlayTone(`오늘은 ${winnerName} 쪽이 꽤 세게 들어왔습니다. ${loserTopic} 다음 판에서 다시 싸워봅시다.`);
 }
 
 function realityOpeningLine(category, winner, loser, question) {
@@ -2665,13 +2713,13 @@ function futureComment(category, winner, question, seed, sign) {
   const startsByCategory = {
     food: [
       `${name} 한 입 먹고 "아, 이거였네" 했습니다.`,
-      `국물 한 숟갈에 미래의 내가 조용히 납득했습니다.`,
+      `첫입 들어가자마자 말수가 줄었습니다.`,
       `단무지 두 번 리필하는 미래가 보입니다.`,
-      `${subject} 쪽으로 간 나, 음식 고민 회의는 끝냈습니다.`,
+      `${subject} 쪽으로 간 나, 젓가락부터 빨라졌습니다.`,
       `젓가락보다 숟가락이 먼저 박수쳤습니다.`,
       `한 입 먹고 고개를 끄덕였습니다. 말은 필요 없었습니다.`,
       `배고픈 나와 고민 많은 내가 동시에 조용해졌습니다.`,
-      `오늘의 메뉴 회의는 ${name}에서 폐회했습니다.`,
+      `오늘 메뉴판은 ${name}에서 접혔습니다.`,
       `입맛이 먼저 결재 올리고 미래의 내가 승인했습니다.`,
       `먹고 나서 "괜히 고민했네"가 나올 수 있습니다.`
     ],
@@ -2915,7 +2963,7 @@ function futureComment(category, winner, question, seed, sign) {
   };
   pushMixed(starts);
   pushMixed(zodiacStarts[signName] || zodiacStarts["황소자리"]);
-  return pick(pool, seed + raw.length + name.length + question.length + variationSeed);
+  return cleanPlayTone(pick(pool, seed + raw.length + name.length + question.length + variationSeed));
 }
 
 function scoreOption(analysis, category, question, mood, seed, sign, cards = []) {
@@ -3068,7 +3116,8 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     study: categoryRealityReason("study", winner, loser, question, cardLabels),
     game: categoryRealityReason("game", winner, loser, question, cardLabels),
     travel: categoryRealityReason("travel", winner, loser, question, cardLabels),
-    place: categoryRealityReason("place", winner, loser, question, cardLabels)
+    place: categoryRealityReason("place", winner, loser, question, cardLabels),
+    daily: categoryRealityReason("daily", winner, loser, question, cardLabels)
   };
   const adviceByCategory = {
     food: `오늘의 메뉴는 위장이 아니라 표정이 고르게 두세요.`,
@@ -3098,12 +3147,12 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     loser,
     winnerScore,
     loserScore,
-    advice: adviceByCategory[category] || adviceByCategory.daily,
-    why: whyByCategory[category] || defaultWhy,
+    advice: cleanPlayTone(adviceByCategory[category] || adviceByCategory.daily),
+    why: cleanPlayTone(whyByCategory[category] || defaultWhy),
     opposite: oppositeText,
-    fortune,
+    fortune: cleanPlayTone(fortune),
     zodiacCards: cardLabels,
-    futureComment: futureComment(category, winner, question, seed, sign),
+    futureComment: cleanPlayTone(futureComment(category, winner, question, seed, sign)),
     resultTitle: `${escapeHtml(winner.name)} 승`,
     finalText: `<strong>${escapeHtml(winner.name)} ${winnerScore}%</strong><br><strong>${escapeHtml(loser.name)} ${loserScore}%</strong><br><small>${probabilityReason(category, winner, loser, winnerScore, loserScore)}</small>`
   };
@@ -3425,7 +3474,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       `A: ${choiceA}`,
       `B: ${choiceB}`,
       `별자리 카드: ${narrative.zodiacCards.join(" + ")}`,
-      `왜?: ${narrative.why.replace(/<[^>]+>/g, "")}`,
+      `짧게 말하면: ${narrative.why.replace(/<[^>]+>/g, "")}`,
       `결과: ${recommended} 승`,
       `미래의 나: ${narrative.futureComment.replace(/<[^>]+>/g, "")}`,
       `확률: ${recommended} ${narrative.winnerScore}% / ${narrative.loser.name} ${narrative.loserScore}%`,
@@ -3454,7 +3503,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       <p>${narrative.fortune}</p>
     </div>
     <div class="report-section">
-      <h4>💡 왜 이 결과가 나왔냐면</h4>
+      <h4>💡 짧게 말하면</h4>
       <p>${narrative.why}</p>
     </div>
     <div class="report-section final-recommendation">
@@ -3466,7 +3515,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       <blockquote class="advice-quote">${narrative.futureComment}</blockquote>
     </div>
     <div class="report-section">
-      <h4>🎯 확률</h4>
+      <h4>🎯 오늘의 승률</h4>
       <p>${narrative.finalText}</p>
     </div>
     <div class="share-actions">

@@ -806,7 +806,8 @@ const optionFeatureBank = [
   { keys: ["감자탕"], category: "food", features: ["푸짐한 뼈고기", "묵직한 국물", "사람들과 먹기 좋은 양", "해장 느낌이 강한 에너지"], caution: "가볍게 먹고 싶거나 혼자 조용히 먹고 싶으면 살짝 과할 수 있어요.", vibe: "푸짐한 에너지" },
   { keys: ["치킨"], category: "food", features: ["바삭한 튀김", "짭짤한 양념", "기분 전환 느낌", "나눠 먹기 좋은 재미"], caution: "가볍게 끝내고 싶은 날엔 과해질 수 있어요.", vibe: "기분 전환" },
   { keys: ["치킨에 맥주", "치맥"], category: "food", features: ["바삭한 치킨 껍질", "맥주 한 모금의 시원함", "배달 상자를 여는 편한 맛", "소파 앞에서 바로 시작되는 가벼운 분위기"], caution: "느끼함이 빨리 오거나 배달 기다림이 길면 흥이 살짝 꺼질 수 있어요.", vibe: "바삭한 즉시 만족" },
-  { keys: ["삼겹살에 맥주", "삼겹살", "고기"], category: "food", features: ["불판에서 올라오는 고기 냄새", "쌈과 기름진 한 점의 묵직함", "직접 구워 먹는 재미", "자리 분위기가 천천히 달아오르는 느낌"], caution: "굽는 수고와 냄새가 부담이면 치킨보다 번거롭게 느껴질 수 있어요.", vibe: "불판 만족" },
+  { keys: ["곱창에 소주", "곱창"], category: "food", features: ["한 잔이 두 잔 되는 위험구역", "추가 주문 확률이 올라가는 점", "자리 끝나고 볶음밥까지 떠오르는 점", "다음 날 속이 항의할 수 있는 점"], caution: "내일 일정이 있으면 곱창보다 소주가 더 큰 변수가 될 수 있어요.", vibe: "위험한 술상" },
+  { keys: ["삼겹살에 소주", "삼겹살에 맥주", "삼겹살", "고기"], category: "food", features: ["불판에서 올라오는 고기 냄새", "쌈과 기름진 한 점의 묵직함", "먹고 집 가자는 말이 비교적 빨리 나오는 점", "굽는 수고와 냄새가 따라오는 점"], caution: "굽는 수고와 냄새가 부담이면 치킨보다 번거롭게 느껴질 수 있어요.", vibe: "불판 만족" },
   { keys: ["피자"], category: "food", features: ["치즈의 고소함", "토핑 고르는 재미", "든든한 한 판", "같이 먹기 좋은 분위기"], caution: "속이 더부룩하거나 혼자 간단히 먹고 싶으면 부담될 수 있어요.", vibe: "풍성함" },
   { keys: ["햄버거", "버거"], category: "food", features: ["포장지 열자마자 바로 드는 손", "한입에 소스가 삐져나오는 순간", "감튀를 곁들이는 속도감", "먹고 나면 손 닦을 휴지가 필요한 점"], caution: "천천히 먹고 싶은 날엔 너무 빨리 끝나서 허전할 수 있어요.", vibe: "손으로 드는 한 끼" },
   { keys: ["배달", "배달음식"], category: "food", features: ["문 열자마자 들어오는 냄새", "봉투 뜯는 순간의 기대감", "설거지가 줄어드는 기쁨", "기다리는 동안 배가 더 고파지는 점"], caution: "늦게 오면 배고픔이 예민함으로 변할 수 있어요.", vibe: "문 앞의 승부" },
@@ -861,7 +862,7 @@ const optionFeatureBank = [
 function inferCategory(question, choiceA, choiceB, profile) {
   const text = `${question} ${choiceA} ${choiceB}`.toLowerCase();
   if (profile.type !== "general") return profile.type;
-  if (includesAny(text, ["찌개", "라면", "밥", "국밥", "순대국", "순댓국", "감자탕", "치킨", "피자", "햄버거", "버거", "배달", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "메뉴", "먹을"])) return "food";
+  if (includesAny(text, ["찌개", "라면", "밥", "국밥", "순대국", "순댓국", "감자탕", "치킨", "피자", "햄버거", "버거", "배달", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "곱창", "삼겹살", "메뉴", "먹을"])) return "food";
   if (includesAny(text, ["아메리카노", "아이스", "아아", "뜨아", "커피", "라떼", "카페라떼", "콜드브루"])) return "beverage";
   if (includesAny(text, ["술", "소주", "맥주", "와인", "막걸리", "마실까", "한잔", "한 잔"])) return "drink";
   if (includesAny(text, ["샤워", "씻", "목욕", "머리감", "세수", "양치"])) return "hygiene";
@@ -1450,11 +1451,11 @@ function foodSceneOpening(winner, loser, question) {
     return `${withParticle(winner.name, "은", "는")} 첫입 전에 이미 소리가 납니다. 오늘은 그 바삭함과 냄새가 ${loserName}보다 먼저 들어왔습니다.`;
   }
   const pool = [
-    `${winnerName}은 첫입 전에 이미 냄새가 올라오고, ${loserName}은 마지막까지 젓가락을 붙잡습니다.`,
-    `${loserName}도 후보석에 앉아 있지만, 오늘 입맛은 ${winnerName} 쪽 테이블에 먼저 착석했습니다.`,
-    `배는 조용한 척했지만, ${winnerName} 쪽 장면에서 이미 숟가락을 들었습니다.`,
-    `${winnerName}은 한 입 넣는 순간이 바로 떠오르고, ${loserName}은 먹고 난 뒤 아쉬움을 다시 계산하게 합니다.`,
-    `오늘 메뉴판에서 ${winnerName} 글자가 조금 더 크게 보였습니다. 착각일 수 있는데 배는 이미 믿고 있습니다.`
+    `${loserName}도 괜찮은데, 오늘은 ${winnerName} 먹고 나서 "그래 이거였네" 할 확률이 높습니다.`,
+    `${winnerName} 쪽은 먹고 난 뒤 표정이 덜 복잡합니다. ${loserName}은 다음 끼니 후보로 남겨둡시다.`,
+    `오늘은 ${winnerName} 먹고 나서 후회보다 만족 핑계가 먼저 나올 그림입니다.`,
+    `${winnerName} 쪽은 계산할수록 배고파집니다. 그냥 고르면 마음이 빨리 조용해질 타입입니다.`,
+    `메뉴판 앞에서 오래 서 있으면 더 힘듭니다. 오늘은 ${winnerName}으로 끝내도 욕 덜 먹을 날입니다.`
   ];
   return pick(pool, hashText(`${question}-${winner.name}-${loser.name}-food-scene`));
 }
@@ -1525,18 +1526,20 @@ function foodCharacterLines(foodName) {
     { keys: ["라면"], lines: [
       "라면은 물 올리는 순간 이미 마음을 반쯤 가져갑니다.",
       "라면은 냄비 앞에서 기다리는 시간이 제일 위험합니다.",
-      "라면은 첫 젓가락보다 냄새가 먼저 먹습니다.",
-      "라면은 '간단히'라는 말로 시작해서 국물까지 보게 만듭니다."
+      "라면은 봉지 뜯는 순간부터 이미 판을 키웁니다.",
+      "라면은 '간단히'라는 말로 시작해서 국물까지 보게 만듭니다.",
+      "라면 고르면 국물까지 마실 확률이 높습니다. 내일 붓기는 일단 모르는 척합니다."
     ], future: [
-      "냄비 앞에서 괜히 한 번 더 젓게 됩니다.",
-      "국물 한 숟갈에 말이 줄어듭니다.",
+      "냄비 앞에서 괜히 타이머를 한 번 더 봅니다.",
+      "먹고 나면 말이 줄어듭니다.",
       "먹고 나서 물 찾는 미래까지 보입니다."
     ] },
     { keys: ["김밥"], lines: [
       "김밥은 꼬다리 하나로 승부를 시작합니다.",
-      "김밥은 젓가락 없이도 빠르게 들어오는 타입입니다.",
+      "김밥은 포장지만 열면 고민이 갑자기 작아지는 타입입니다.",
       "김밥은 한 줄만 먹자고 해놓고 두 개 더 집게 만듭니다.",
-      "김밥은 조용한데 손이 계속 갑니다. 이게 무섭습니다."
+      "김밥은 조용한데 손이 계속 갑니다. 이게 무섭습니다.",
+      "김밥 고르면 먹고 나서도 죄책감이 덜 남습니다. 배도 크게 항의하지 않습니다."
     ], future: [
       "꼬다리 먼저 먹고 이미 이긴 표정입니다.",
       "한 줄 끝이 생각보다 빨리 옵니다.",
@@ -1544,9 +1547,10 @@ function foodCharacterLines(foodName) {
     ] },
     { keys: ["햄버거", "버거"], lines: [
       "햄버거는 생각보다 행동이 먼저 나오는 음식입니다. 포장지 열면 이미 늦었습니다.",
-      "햄버거는 한입에 결론을 냅니다. 소스 삐져나오면 더 이상 회의 없습니다.",
+      "햄버거는 포장지 안에서 결론을 냅니다. 소스 삐져나오면 더 이상 회의 없습니다.",
       "햄버거는 양손을 쓰게 만드는 순간 이깁니다.",
-      "햄버거는 감튀 하나 집는 순간 팀플레이가 시작됩니다."
+      "햄버거는 감튀 하나 집는 순간 팀플레이가 시작됩니다.",
+      "햄버거는 먹는 동안 말이 짧아집니다. 휴지는 옆에 두는 게 예의입니다."
     ], future: [
       "소스 묻은 손가락을 보고도 웃을 수 있습니다.",
       "감튀를 하나만 먹는 미래는 거의 없습니다.",
@@ -1556,7 +1560,8 @@ function foodCharacterLines(foodName) {
       "피자는 혼자보다 같이 있을 때 강합니다. 한 조각만 먹겠다는 사람을 잘 못 봤습니다.",
       "피자는 박스 열리는 순간 방 안 공기를 바꿉니다.",
       "피자는 치즈 늘어나는 순간 말보다 사진이 먼저 나옵니다.",
-      "피자는 첫 조각보다 두 번째 조각에서 진심이 나옵니다."
+      "피자는 첫 조각보다 두 번째 조각에서 진심이 나옵니다.",
+      "피자는 남으면 내일도 핑계가 생깁니다. 이게 은근히 큰 장점입니다."
     ], future: [
       "한 조각만 먹겠다는 약속이 흔들립니다.",
       "치즈 늘어나는 순간 대화가 잠깐 멈춥니다.",
@@ -1582,6 +1587,27 @@ function foodCharacterLines(foodName) {
       "봉투 뜯는 손이 제일 빠릅니다.",
       "리뷰 쓰기 전에 이미 젓가락 들고 있습니다."
     ] }
+    ,
+    { keys: ["곱창"], lines: [
+      "곱창에 소주는 한 잔이 두 잔 되는 위험구역입니다.",
+      "곱창은 끝났다고 생각한 순간 볶음밥이 뒤에서 걸어 나옵니다.",
+      "곱창은 자리 분위기를 빨리 올립니다. 대신 내일 속이 항의서를 낼 수 있습니다.",
+      "곱창은 추가 주문 버튼을 너무 자연스럽게 누르게 만듭니다."
+    ], future: [
+      "볶음밥까지 가면 오늘은 이미 연장전입니다.",
+      "소주잔이 혼자 늘어난 척할 수 있습니다.",
+      "내일 속이 오늘의 결정을 기억할 예정입니다."
+    ] },
+    { keys: ["삼겹살"], lines: [
+      "삼겹살에 소주는 불판 앞에서 대화가 알아서 굴러갑니다.",
+      "삼겹살은 먹고 집 가자는 말이 비교적 빨리 나오는 타입입니다.",
+      "삼겹살은 굽는 사람이 생기는 순간 작은 리더십 테스트가 시작됩니다.",
+      "삼겹살은 쌈 하나 싸는 동안 오늘 얘기가 조금 정리됩니다."
+    ], future: [
+      "집에 가서 옷 냄새 맡고 오늘을 다시 떠올립니다.",
+      "마지막 한 점 양보 게임이 시작될 수 있습니다.",
+      "쌈장 뚜껑 닫는 순간 하루가 정리됩니다."
+    ] }
   ];
   return bank.find((item) => item.keys.some((key) => name.includes(key))) || null;
 }
@@ -1600,10 +1626,10 @@ function foodComparisonLine(winner, loser, question) {
     const winnerLine = optionCharacterLine(winnerCharacter, winner.name, question, "winner");
     const loserLine = optionCharacterLine(loserCharacter, loser.name, question, "loser");
     const closer = pick([
-      `둘 다 말은 되는데, 오늘은 ${winnerName} 쪽이 한입 넣는 속도가 더 빨라 보입니다.`,
-      `이건 누가 더 훌륭하냐보다 지금 손이 어디로 먼저 가느냐 싸움입니다. 오늘은 ${winnerName}입니다.`,
-      `${loserName}도 끝까지 버티지만, 오늘 메뉴판에서는 ${winnerName} 쪽이 더 오래 눈에 남습니다.`,
-      `그래서 결론은 ${winnerName}. 설명보다 한입이 먼저 나올 쪽입니다.`
+      `야 그냥 오늘은 ${winnerName} 가자. 먹고 나서 덜 궁시렁댈 쪽입니다.`,
+      `${loserName}도 좋은데, 오늘 끝나고 "괜히 골랐다" 덜 나올 쪽은 ${winnerName}입니다.`,
+      `둘 다 배신은 안 하는데, 오늘은 ${winnerName} 쪽이 식탁 엔딩이 더 깔끔합니다.`,
+      `결론만 말하면 ${winnerName}. 길게 따지면 더 배고파집니다.`
     ], hashText(`${question}-${winner.name}-${loser.name}-food-comparison-close`));
     return cleanPlayTone(`${winnerLine} ${loserLine} ${closer}`);
   }
@@ -1624,20 +1650,20 @@ function foodRealityReason(winner, loser, question) {
     const loserTopic = withParticle(loser.name, "은", "는");
     const detail = pick([
       `${loserName}도 버티지만, 오늘은 ${winnerName} 쪽으로 손이 먼저 갑니다.`,
-      `이건 분석보다 한입 문제입니다. ${winnerName} 앞에서 고민이 오래 못 갑니다.`,
-      `먹고 나서 후회할 시간보다 한입 더 넣는 속도가 빠를 쪽입니다.`,
-      `${winnerName} 쪽은 첫입 반응이 바로 옵니다. ${loserTopic} 다음 라운드로 보내도 됩니다.`
+      `이건 분석하면 더 배고파집니다. 오늘은 ${winnerName}으로 빨리 끝내는 쪽입니다.`,
+      `먹고 나서 "괜히 골랐다"가 덜 나올 쪽입니다.`,
+      `${winnerName} 쪽은 먹고 난 뒤 표정이 바로 정리됩니다. ${loserTopic} 다음 라운드로 보내도 됩니다.`
     ], hashText(`${question}-${winner.name}-food-character-detail`));
     return cleanPlayTone(`${line} ${detail}`);
   }
-  const first = winner.features[0] || "첫입";
-  const second = winner.features[1] || "젓가락이 가는 속도";
+  const first = winner.features[0] || "먹고 난 뒤 표정";
+  const second = winner.features[1] || "후회가 덜 남는 쪽";
   const detailPool = [
-    `${winnerTopic} 첫입 들어가는 속도가 빠릅니다. 생각보다 젓가락이 먼저 움직일 쪽이에요.`,
-    `${winnerObject} 고르면 한입 먹고 말이 줄어들 가능성이 있습니다. ${loserName}은 다음 끼니에 다시 부르면 됩니다.`,
+    `${winnerTopic} 먹고 나서 괜히 고개 끄덕일 쪽입니다.`,
+    `${winnerObject} 고르면 식사 끝나고 말이 덜 길어질 가능성이 있습니다. ${loserName}은 다음 끼니에 다시 부르면 됩니다.`,
     `${winnerName} 쪽은 먹고 나서 "아 이거였네"가 나올 확률이 더 큽니다. 후회는 잠깐 쉬는 걸로 갑시다.`,
-    `지금은 설명보다 숟가락입니다. ${winnerName} 쪽이 입에 들어가는 속도가 더 빨라 보여요.`,
-    `${winnerName}은 냄새, 첫입, 먹고 난 뒤 표정 중 하나가 바로 옵니다. ${loserName}은 오늘 후보석에 잠깐 앉혀둡시다.`
+    `지금은 설명보다 주문입니다. ${winnerName} 쪽이 끝나고 덜 궁시렁댈 선택이에요.`,
+    `${winnerName}은 먹고 난 뒤 표정이 바로 옵니다. ${loserName}은 오늘 후보석에 잠깐 앉혀둡시다.`
   ];
   return cleanPlayTone([
     opening,
@@ -1822,7 +1848,7 @@ function probabilityReason(category, winner, loser, winnerScore, loserScore) {
   const loserName = escapeHtml(loser.name);
   const loserTopic = withParticle(loser.name, "은", "는");
   const lightReason = {
-    food: `${winnerName} 쪽으로 한입이 먼저 갑니다.`,
+    food: `${winnerName} 쪽이 먹고 나서 덜 궁시렁댈 선택입니다.`,
     beverage: `${winnerName} 컵이 오늘 손에 더 먼저 잡힙니다.`,
     gift: `${winnerName} 쪽이 뜯는 순간 반응이 더 좋아 보입니다.`,
     relationship: `${winnerName} 쪽이 폰을 덜 오래 쳐다보게 합니다.`,
@@ -1839,6 +1865,15 @@ function probabilityReason(category, winner, loser, winnerScore, loserScore) {
     place: `${winnerName} 쪽이 나갔다 온 값이 조금 더 있습니다.`
   };
   if (gap <= 12) {
+    if (category === "food") {
+      const foodClosePool = [
+        `거의 반반인데, 오늘은 ${winnerName} 먹고 집에 가는 그림이 덜 찝찝합니다.`,
+        `${loserName}도 좋은데, 지금 고르면 ${winnerName} 쪽이 나중에 변명이 덜 필요합니다.`,
+        `막상 주문 직전까지 가면 ${winnerName} 쪽으로 손이 갈 확률이 살짝 높습니다.`,
+        `둘 다 괜찮아서 오래 끌면 배만 더 고픕니다. 오늘은 ${withRoParticle(winner.name)} 닫읍시다.`
+      ];
+      return cleanPlayTone(pick(foodClosePool, hashText(`${winner.name}-${loser.name}-${winnerScore}-${category}-food-close`)));
+    }
     const closePool = [
       `AI도 마지막 3초까지 고민했습니다. 그래도 ${lightReason[category] || `${winnerName} 쪽이 한 끗 앞섭니다.`}`,
       `오늘은 동전 던졌어도 이상하지 않습니다. 그래도 ${winnerName} 쪽으로 살짝 굴러갔어요.`,
@@ -2889,8 +2924,8 @@ function starInterferenceLines(category, sign, cards, winner, loser, hasQuestion
   const cardText = escapeHtml(narrativeCardPreview(cards));
   const tinyPools = {
     food: [
-      `${signLabel}는 옆에서 젓가락만 들고 있습니다. 카드가 <strong>${cardText}</strong>라서 ${winnerName} 쪽에 살짝 앉았네요.`,
-      `${signLabel}도 ${loserName} 냄새에 흔들렸지만, 마지막 젓가락은 ${winnerName} 쪽입니다.`
+      `${signLabel}는 오늘 메뉴판에 별가루만 조금 뿌렸습니다. 카드는 <strong>${cardText}</strong>, 결론은 ${winnerName} 쪽.`,
+      `${signLabel}도 ${loserName}에 잠깐 흔들렸지만, 계산대 앞에서는 ${winnerName} 쪽에 섰습니다.`
     ],
     shopping: [
       `${signLabel}는 계산대 옆에서 조용히 구경 중입니다. 오늘 카드는 <strong>${cardText}</strong>.`,
@@ -2952,12 +2987,12 @@ function futureComment(category, winner, question, seed, sign) {
   ];
   const startsByCategory = {
     food: [
-      `${name} 한 입 먹고 "아, 이거였네" 했습니다.`,
-      `첫입 들어가자마자 말수가 줄었습니다.`,
-      `단무지 두 번 리필하는 미래가 보입니다.`,
-      `${subject} 쪽으로 간 나, 젓가락부터 빨라졌습니다.`,
-      `젓가락보다 숟가락이 먼저 박수쳤습니다.`,
-      `한 입 먹고 고개를 끄덕였습니다. 말은 필요 없었습니다.`,
+      `${name} 먹고 "아, 이거였네" 할 확률이 높습니다.`,
+      `먹고 나서 말수가 줄면 성공입니다.`,
+      `추가 주문을 합리화하는 미래가 보입니다.`,
+      `${subject} 쪽으로 간 나, 메뉴판을 조용히 닫았습니다.`,
+      `계산서 보기 전까지는 꽤 행복할 예정입니다.`,
+      `먹고 나서 고개를 끄덕이면 그걸로 끝입니다.`,
       `배고픈 나와 고민 많은 내가 동시에 조용해졌습니다.`,
       `오늘 메뉴판은 ${name}에서 접혔습니다.`,
       `입맛이 먼저 주문서 올리고 미래의 내가 승인했습니다.`,

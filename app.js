@@ -485,7 +485,7 @@ function choiceProfile(question, choiceA, choiceB) {
     profile.type = "exercise";
   } else if (includesAny(text, ["공부", "시험", "숙제", "과제", "강의", "복습", "예습"])) {
     profile.type = "study";
-  } else if (includesAny(text, ["게임", "롤", "배그", "플스", "스팀", "모바일게임"])) {
+  } else if (includesAny(text, ["게임", "롤", "배그", "스팀", "모바일게임"]) && !includesAny(text, ["플스", "플레이스테이션", "닌텐도", "스위치", "게임기"])) {
     profile.type = "game";
   } else if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑"])) {
     profile.type = "travel";
@@ -839,6 +839,8 @@ const optionFeatureBank = [
   { keys: ["태국", "방콕", "푸켓", "치앙마이", "파타야"], category: "travel", features: ["휴양과 마사지의 느슨함", "수영장과 야시장의 재미", "더운 공기 속에서 천천히 쉬는 느낌", "날씨와 이동 피로가 변수인 점"], caution: "쇼핑과 도시 구경을 빽빽하게 하고 싶으면 일본보다 느슨하게 느껴질 수 있어요.", vibe: "휴양 여행" },
   { keys: ["제주도", "제주"], category: "travel", features: ["렌터카로 드라이브하는 재미", "바다와 오름, 자연을 보는 시간", "카페를 찍고 천천히 도는 여유", "날씨와 이동 동선 영향을 크게 받는 점"], caution: "운전이나 날씨 운이 안 맞으면 생각보다 피곤한 여행이 될 수 있어요.", vibe: "자연 드라이브" },
   { keys: ["부산"], category: "travel", features: ["바다와 밤바다의 기분", "회와 술자리로 이어지는 재미", "도시 여행과 바다 구경이 같이 되는 점", "사람 많은 시즌엔 이동이 답답할 수 있는 점"], caution: "조용한 자연 휴식을 원하면 부산의 도시 에너지가 살짝 시끄러울 수 있어요.", vibe: "바다 도시" },
+  { keys: ["경주"], category: "travel", features: ["역사 유적을 따라 걷는 재미", "한옥과 야경 사진이 잘 나오는 분위기", "조용히 구경하는 여행감", "밤에 너무 늦게까지 놀기엔 얌전할 수 있는 점"], caution: "먹거리와 술자리 중심으로 크게 놀고 싶으면 전주나 부산보다 차분하게 느껴질 수 있어요.", vibe: "역사 산책" },
+  { keys: ["전주"], category: "travel", features: ["한옥마을과 먹거리 중심의 여행", "비빔밥·막걸리·길거리 음식으로 이어지는 재미", "사진 찍고 천천히 걷기 좋은 분위기", "사람 많은 시간엔 관광지 느낌이 강해지는 점"], caution: "역사 유적을 깊게 보고 싶으면 경주보다 먹방 여행 쪽으로 느껴질 수 있어요.", vibe: "먹거리 산책" },
   { keys: ["영화"], category: "place", features: ["티켓 끊고 외출하는 이벤트감", "두 시간 정도 딱 몰입하는 시간", "끝나고 감상 얘기가 남는 점", "시간표와 이동이 따라오는 점"], caution: "집 밖으로 나갈 기운이 없으면 예매부터 귀찮아질 수 있어요.", vibe: "작은 이벤트" },
   { keys: ["드라마"], category: "place", features: ["침대나 소파에서 이어 보는 편함", "한 편만 보려다 다음 화로 넘어가는 위험", "새벽까지 이어질 수 있는 몰입", "외출 준비가 필요 없는 점"], caution: "다음 화 버튼을 못 끊으면 내일 아침이 살짝 삐질 수 있어요.", vibe: "연속시청" },
   { keys: ["출근"], category: "attendance", features: ["오늘 할 일을 미루지 않는 점", "내일 부담이 줄어드는 점", "책임을 지켰다는 마음이 남는 점", "몸이 피곤하면 하루가 길게 느껴질 수 있는 점"], caution: "진짜 아프면 무리하지 말고 먼저 연락하는 게 맞아요.", vibe: "최소 책임" },
@@ -862,7 +864,9 @@ const optionFeatureBank = [
   { keys: ["여행", "놀러", "숙소", "호텔", "비행기", "기차"], category: "travel", features: ["일상에서 빠져나오는 기분 전환", "사진과 추억이 남는 점", "비용과 동선 계산이 필요한 점", "체력이 생각보다 빨리 닳을 수 있는 점"], caution: "설렘만 보지 말고 이동 시간과 예산을 같이 봐야 해요.", vibe: "작은 탈출" },
   { keys: ["TV", "티비", "텔레비전", "테레비"], category: "shopping", features: ["화질이 바로 달라지는 점", "시청환경이 좋아지는 점", "거실이나 방 분위기가 바뀌는 점", "구매 비용과 설치 고민이 따라오는 점"], caution: "지금 TV가 아직 볼 만하면 화면 크기, 화질, 설치 공간, 예산을 같이 봐야 해요.", vibe: "시청환경 교체" },
   { keys: ["컴퓨터", "PC", "피씨", "노트북"], category: "shopping", features: ["버벅임이 줄어드는 성능 체감", "게임이나 작업 시간이 덜 답답해지는 점", "부품 가격과 신제품 타이밍 고민", "사고 나서 더 좋은 모델이 나올까 봐 찝찝한 점"], caution: "지금 컴퓨터가 아직 버틸 만하면 가격 안정이나 신제품 발표를 한 번 더 보는 것도 방법이에요.", vibe: "성능 지름신" },
-  { keys: ["게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "xbox", "엑스박스"], category: "shopping", features: ["켜자마자 놀 수 있는 재미", "독점작이나 새 게임 유혹", "사놓고 안 켤 수 있는 위험", "새 모델이나 할인 타이밍 고민"], caution: "하고 싶은 게임이 확실하지 않으면 박스만 예쁘게 모셔둘 수 있어요.", vibe: "게임 지름신" },
+  { keys: ["플스", "플레이스테이션", "ps5", "ps4"], category: "shopping", features: ["독점작과 고사양 게임의 유혹", "큰 화면에 연결해서 몰입하는 재미", "성능과 그래픽 체감", "휴대성은 약하고 TV 앞 시간이 필요하다는 점"], caution: "집에서 진득하게 할 시간이 없으면 성능보다 먼지가 먼저 쌓일 수 있어요.", vibe: "거치형 몰입" },
+  { keys: ["닌텐도", "스위치"], category: "shopping", features: ["휴대성과 가볍게 켜는 재미", "마리오·젤다·동숲 같은 독점작", "가족이나 친구와 같이 하기 쉬운 점", "그래픽 성능은 플스보다 약할 수 있는 점"], caution: "고사양 그래픽과 묵직한 게임을 원하면 플스 쪽이 더 끌릴 수 있어요.", vibe: "가벼운 게임기" },
+  { keys: ["게임기", "xbox", "엑스박스"], category: "shopping", features: ["켜자마자 놀 수 있는 재미", "독점작이나 새 게임 유혹", "사놓고 안 켤 수 있는 위험", "새 모델이나 할인 타이밍 고민"], caution: "하고 싶은 게임이 확실하지 않으면 박스만 예쁘게 모셔둘 수 있어요.", vibe: "게임 지름신" },
   { keys: ["자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약"], category: "shopping", features: ["이동 스트레스가 줄어드는 점", "출퇴근이나 가족 이동이 편해지는 점", "보험·세금·유지비가 따라오는 점", "신차/중고차 타이밍과 감가 걱정"], caution: "차는 사는 순간보다 유지하는 매달이 진짜 결정이에요.", vibe: "큰 이동비" },
   { keys: ["휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시"], category: "shopping", features: ["배터리와 카메라 체감이 바로 오는 점", "새 폰 만지는 설렘", "요금제와 할부가 따라오는 점", "곧 새 모델 나올까 봐 고민되는 점"], caution: "지금 폰이 배터리만 문제인지, 진짜 전체가 답답한지부터 보면 좋아요.", vibe: "손안의 지름신" },
   { keys: ["에어컨"], category: "shopping", features: ["더위 스트레스가 바로 줄어드는 점", "여름 밤 수면이 달라지는 점", "전기요금과 설치비 고민", "성수기 가격과 설치 대기 변수"], caution: "한여름이 오기 전에 움직이면 설치 대기와 가격 스트레스를 줄일 수 있어요.", vibe: "생존형 소비" },
@@ -887,9 +891,9 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["샤워", "씻", "목욕", "머리감", "세수", "양치"])) return "hygiene";
   if (includesAny(text, ["운동", "헬스", "러닝", "뛸까", "뛰", "요가", "필라테스", "산책"])) return "exercise";
   if (includesAny(text, ["공부", "시험", "숙제", "과제", "강의", "복습", "예습"])) return "study";
-  if (includesAny(text, ["게임", "롤", "리그오브레전드", "리그 오브 레전드", "스타", "스타크래프트", "배그", "플스", "스팀", "모바일게임"])) return "game";
+  if (includesAny(text, ["게임", "롤", "리그오브레전드", "리그 오브 레전드", "스타", "스타크래프트", "배그", "스팀", "모바일게임"]) && !includesAny(text, ["플스", "플레이스테이션", "닌텐도", "스위치", "게임기"])) return "game";
   if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
-  if (includesAny(text, ["여행", "휴가", "여름휴가", "겨울휴가", "해외", "국내", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑", "일본", "도쿄", "오사카", "후쿠오카", "교토", "태국", "방콕", "푸켓", "치앙마이", "파타야", "제주도", "제주", "부산"])) return "travel";
+  if (includesAny(text, ["여행", "휴가", "여름휴가", "겨울휴가", "해외", "국내", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑", "일본", "도쿄", "오사카", "후쿠오카", "교토", "태국", "방콕", "푸켓", "치앙마이", "파타야", "제주도", "제주", "부산", "경주", "전주"])) return "travel";
   if (hasChildcareContext(text)) return "childcare";
   if (includesAny(text, ["친구", "만난다", "만날까", "약속"])) return "relationship";
   if (includesAny(text, ["홍대", "합정", "카페", "공원", "영화", "드라마", "넷플릭스", "마트", "백화점", "여행", "놀러", "어디", "캠핑"])) return "place";
@@ -2019,6 +2023,36 @@ function culturalMeaningProfile(optionName) {
       ]
     },
     {
+      keys: ["경주"],
+      lines: [
+        "경주는 먹고 노는 여행보다 천천히 걷고 보는 여행에 가깝습니다. 유적, 한옥, 야경 사진이 조용히 점수를 쌓습니다.",
+        "경주는 역사책 느낌으로 시작하지만 밤에 조명 켜지면 사진 욕심이 슬쩍 올라옵니다.",
+        "경주는 시끄럽게 노는 곳이라기보다 걷다 보면 여행 온 티가 나는 쪽입니다. 분위기는 차분한데 남는 사진은 꽤 좋습니다.",
+        "경주는 속도를 늦춰야 맛이 납니다. 유적지와 골목을 천천히 보면 하루가 조용히 채워집니다."
+      ],
+      future: [
+        "야경 사진 한 장은 건질 가능성이 높습니다.",
+        "많이 먹었다기보다 많이 걸었다는 기억이 남을 수 있습니다.",
+        "역사 공부하러 간 척하다가 사진첩이 이깁니다.",
+        "돌아오면 조용한 여행이었다고 말할 수 있습니다."
+      ]
+    },
+    {
+      keys: ["전주"],
+      lines: [
+        "전주는 역사보다 먹거리 쪽이 먼저 손을 듭니다. 한옥마을 걷다가 길거리 음식이 자꾸 말을 겁니다.",
+        "전주는 사진도 찍고 먹기도 하는 여행입니다. 비빔밥, 막걸리, 길거리 음식이 동선을 자꾸 흔듭니다.",
+        "전주는 걷는 속도가 느려도 입은 바쁠 수 있습니다. 한옥마을은 배고플 때 특히 설득력이 강합니다.",
+        "전주는 여행 계획표보다 먹거리 리스트가 먼저 커지는 곳입니다. 사진 찍고 한입 먹고 다시 걷는 리듬입니다."
+      ],
+      future: [
+        "결국 뭘 먹었는지가 제일 또렷하게 남을 수 있습니다.",
+        "한옥마을 사진보다 간식 사진이 더 많아질 수 있습니다.",
+        "막걸리 한상 앞에서 일정표가 잠깐 조용해집니다.",
+        "돌아오는 길에 배는 꽤 설득당해 있을 겁니다."
+      ]
+    },
+    {
       keys: ["버스"],
       lines: [
         "버스는 돈을 아끼는 대신 시간을 조금 맡기는 선택입니다. 앉으면 이기고, 서서 가면 살짝 억울합니다.",
@@ -2243,6 +2277,54 @@ function highValuePurchaseReason(winner, loser, question) {
   return cleanPlayTone(`${mainLine} ${counterLine} ${closer}`);
 }
 
+function categoryDecisionFrame(category, winner, loser, question) {
+  const raw = `${question} ${winner.name} ${loser.name} ${winner.subjectName || ""} ${loser.subjectName || ""}`.toLowerCase();
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  if (category === "travel") {
+    if (includesAny(raw, ["일본", "태국", "해외", "비행"])) {
+      return `이건 나라 이름 싸움이 아니라 여행 방식 싸움입니다. 먼저 비용, 휴가 기간, 비행시간, 먹거리, 휴양인지 관광인지부터 봐야 합니다. `;
+    }
+    if (includesAny(raw, ["경주", "전주", "부산", "제주"])) {
+      return `이건 지역 이름보다 여행의 톤을 먼저 봐야 합니다. 역사, 먹거리, 사진, 걷는 분위기, 밤에 할 일이 기준입니다. `;
+    }
+    return `여행지는 이름보다 일정이 먼저입니다. 비용, 이동시간, 숙소, 먹거리, 쉬는 여행인지 돌아다니는 여행인지부터 봐야 합니다. `;
+  }
+  if (category === "shopping" && includesAny(raw, ["플스", "플레이스테이션", "닌텐도", "스위치", "게임기", "ps5"])) {
+    return `게임기는 그냥 사고 싶다고 고르면 금방 장식품 됩니다. 독점작, 휴대성, 성능, 같이 할 사람, 실제 플레이 시간을 먼저 봐야 합니다. `;
+  }
+  if (category === "shopping") {
+    return `소비는 물건 이름보다 사용 장면이 먼저입니다. 가격, 사용 빈도, 대체 가능성, 사고 난 뒤 후회 가능성을 같이 봐야 합니다. `;
+  }
+  return "";
+}
+
+function gameConsoleReason(winner, loser, question) {
+  const raw = `${question} ${winner.name} ${loser.name}`.toLowerCase();
+  if (!includesAny(raw, ["플스", "플레이스테이션", "닌텐도", "스위치", "게임기", "ps5"])) return null;
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const winnerRaw = String(winner.name).toLowerCase();
+  const loserRaw = String(loser.name).toLowerCase();
+  const frame = categoryDecisionFrame("shopping", winner, loser, question);
+  const winnerLine = includesAny(winnerRaw, ["플스", "플레이스테이션", "ps5", "ps4"])
+    ? `${winnerName}는 큰 화면에 앉아서 제대로 몰입하는 쪽입니다. 그래픽, 성능, 묵직한 독점작이 강점이고 대신 들고 다니는 재미는 약합니다.`
+    : includesAny(winnerRaw, ["닌텐도", "스위치"])
+      ? `${winnerName}는 가볍게 켜고 들고 다니는 쪽입니다. 마리오·젤다·동숲 같은 독점작과 같이 하는 재미가 강하고, 성능 싸움은 플스보다 약합니다.`
+      : `${winnerName}는 하고 싶은 게임이 확실할 때 힘을 받는 선택입니다.`;
+  const loserLine = includesAny(loserRaw, ["플스", "플레이스테이션", "ps5", "ps4"])
+    ? `${loserName}는 성능과 몰입감은 좋은데 TV 앞에 앉을 시간이 있어야 빛납니다.`
+    : includesAny(loserRaw, ["닌텐도", "스위치"])
+      ? `${loserName}는 휴대성과 가벼움은 좋은데 고사양 게임 욕심이 있으면 아쉬울 수 있습니다.`
+      : `${loserName}도 후보지만 실제로 켤 시간이 핵심입니다.`;
+  const closer = includesAny(winnerRaw, ["플스", "플레이스테이션", "ps5", "ps4"])
+    ? `그래서 오늘은 ${winnerName}. 혼자 진득하게 할 게임이 떠오르면 이쪽이 더 오래 갑니다.`
+    : includesAny(winnerRaw, ["닌텐도", "스위치"])
+      ? `그래서 오늘은 ${winnerName}. 자주 켜고 가볍게 즐길 그림이면 이쪽이 덜 방치됩니다.`
+      : `그래서 오늘은 ${winnerName}. 게임기는 스펙보다 실제로 켜는 시간이 이깁니다.`;
+  return cleanPlayTone(`${frame}${winnerLine} ${loserLine} ${closer}`);
+}
+
 function playfulRealityReason(category, winner, loser, question) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
@@ -2388,14 +2470,16 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   if (category === "food") return foodRealityReason(winner, loser, question);
   if (category === "game") return gameRealityReason(winner, loser, question);
   if (category === "shopping") {
+    const consoleReason = gameConsoleReason(winner, loser, question);
+    if (consoleReason) return consoleReason;
     const highValueReason = highValuePurchaseReason(winner, loser, question);
     if (highValueReason) return highValueReason;
   }
   const culturalReason = culturalRealityReason(winner, loser, question);
-  if (culturalReason) return culturalReason;
+  if (culturalReason) return cleanPlayTone(`${categoryDecisionFrame(category, winner, loser, question)}${culturalReason}`);
   const inferredReason = inferredRealityReason(category, winner, loser, question);
-  if (inferredReason) return inferredReason;
-  return playfulRealityReason(category, winner, loser, question);
+  if (inferredReason) return cleanPlayTone(`${categoryDecisionFrame(category, winner, loser, question)}${inferredReason}`);
+  return cleanPlayTone(`${categoryDecisionFrame(category, winner, loser, question)}${playfulRealityReason(category, winner, loser, question)}`);
 }
 
 function probabilityReason(category, winner, loser, winnerScore, loserScore) {

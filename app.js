@@ -296,6 +296,7 @@ function scenarioActionText(subject, option, category, intent) {
   const optionText = String(option || "").replace(/\s/g, "").toLowerCase();
   const subjectText = String(subject || "").toLowerCase();
   if (intent === "skip" && category === "shopping" && includesAny(subjectText, ["tv", "티비", "텔레비전", "테레비"]) && includesAny(optionText, ["그냥", "본다", "보기", "유지"])) return `${escapeHtml(subject)} 그냥 보기`;
+  if (intent === "skip" && category === "shopping" && includesAny(subjectText, ["컴퓨터", "pc", "피씨", "게임기", "플스", "닌텐도", "차", "자동차", "휴대폰", "핸드폰", "스마트폰", "에어컨"]) && includesAny(optionText, ["버틴", "버티", "참", "유지", "그냥", "보류", "미룬", "미루"])) return `${escapeHtml(subject)} 버티기`;
   if (intent === "skip") return `${escapeHtml(subject)} 미루기`;
   if (category === "food") return `${withParticle(subject, "을", "를")} ${escapeHtml(option)}`;
   if (category === "childcare" || category === "place") return `${escapeHtml(subject)}에 ${escapeHtml(option)}`;
@@ -829,6 +830,10 @@ const optionFeatureBank = [
   { keys: ["동물원"], category: "place", features: ["동물 보는 재미", "천천히 걷는 동선", "구경할 거리가 계속 이어지는 점", "날씨와 걷는 거리에 체력이 많이 쓰이는 점"], caution: "더운 날이나 사람이 많은 날엔 그늘과 쉬는 시간을 꼭 잡아야 해요.", vibe: "구경하는 재미" },
   { keys: ["놀이공원"], category: "place", features: ["놀이기구의 확실한 재미", "하루가 이벤트처럼 느껴지는 점", "대기줄과 사람 많은 변수", "돌아올 때 체력이 크게 빠지는 점"], caution: "대기 시간이 길면 기대감보다 피로가 먼저 올 수 있어요.", vibe: "큰 이벤트" },
   { keys: ["카페"], category: "place", features: ["앉아서 쉬기 좋음", "대화하기 편함", "커피나 디저트로 기분 전환 가능", "오래 있으면 비용이 쌓임"], caution: "사람이 많거나 자리가 불편하면 생각보다 정신없을 수 있어요.", vibe: "잠깐의 여유" },
+  { keys: ["홍대"], category: "place", features: ["술집과 사람 많은 거리", "즉흥적으로 코스가 바뀌는 분위기", "시끄럽고 에너지 높은 밤", "집에 갈 타이밍을 놓치기 쉬운 점"], caution: "조용히 쉬고 싶은 날이면 사람 많은 공기부터 피곤할 수 있어요.", vibe: "즉흥적인 밤" },
+  { keys: ["합정"], category: "place", features: ["카페와 맛집을 천천히 고르는 재미", "홍대보다 한 칸 낮은 소음", "데이트나 대화에 맞는 여유", "너무 조용하면 심심할 수 있는 점"], caution: "확실히 놀고 싶은 날엔 홍대보다 얌전하게 느껴질 수 있어요.", vibe: "여유 있는 약속" },
+  { keys: ["영화"], category: "place", features: ["티켓 끊고 외출하는 이벤트감", "두 시간 정도 딱 몰입하는 시간", "끝나고 감상 얘기가 남는 점", "시간표와 이동이 따라오는 점"], caution: "집 밖으로 나갈 기운이 없으면 예매부터 귀찮아질 수 있어요.", vibe: "작은 이벤트" },
+  { keys: ["드라마"], category: "place", features: ["침대나 소파에서 이어 보는 편함", "한 편만 보려다 다음 화로 넘어가는 위험", "새벽까지 이어질 수 있는 몰입", "외출 준비가 필요 없는 점"], caution: "다음 화 버튼을 못 끊으면 내일 아침이 살짝 삐질 수 있어요.", vibe: "연속시청" },
   { keys: ["출근"], category: "attendance", features: ["오늘 할 일을 미루지 않는 점", "내일 부담이 줄어드는 점", "책임을 지켰다는 마음이 남는 점", "몸이 피곤하면 하루가 길게 느껴질 수 있는 점"], caution: "진짜 아프면 무리하지 말고 먼저 연락하는 게 맞아요.", vibe: "최소 책임" },
   { keys: ["결근", "안한다", "쉰다", "쉬기"], category: "attendance", features: ["몸을 쉬게 할 수 있는 점", "당장 피로가 줄어드는 점", "대신 설명과 뒷일이 생길 수 있는 점", "무단이면 부담이 커지는 점"], caution: "쉬더라도 연락과 이유 정리는 꼭 필요해요.", vibe: "회복" },
   { keys: ["점심"], category: "daily", features: ["지금 바로 배고픔을 해결하는 점", "오후를 덜 예민하게 보내는 점", "오래 끌지 않아도 되는 점", "하루 리듬을 빨리 잡는 점"], caution: "저녁 약속이나 더 맛있는 계획이 있으면 조금 아쉬울 수 있어요.", vibe: "지금 챙김" },
@@ -847,6 +852,11 @@ const optionFeatureBank = [
   { keys: ["게임", "배그", "플스", "스팀", "모바일게임"], category: "game", features: ["머리를 잠깐 꺼두는 재미", "스트레스가 빠르게 풀리는 점", "시간이 순식간에 사라지는 점", "한 판만 하겠다는 약속이 자주 흔들리는 점"], caution: "내일 일정이 있으면 종료 시간을 먼저 정해두는 게 좋아요.", vibe: "한 판의 유혹" },
   { keys: ["여행", "놀러", "숙소", "호텔", "비행기", "기차"], category: "travel", features: ["일상에서 빠져나오는 기분 전환", "사진과 추억이 남는 점", "비용과 동선 계산이 필요한 점", "체력이 생각보다 빨리 닳을 수 있는 점"], caution: "설렘만 보지 말고 이동 시간과 예산을 같이 봐야 해요.", vibe: "작은 탈출" },
   { keys: ["TV", "티비", "텔레비전", "테레비"], category: "shopping", features: ["화질이 바로 달라지는 점", "시청환경이 좋아지는 점", "거실이나 방 분위기가 바뀌는 점", "구매 비용과 설치 고민이 따라오는 점"], caution: "지금 TV가 아직 볼 만하면 화면 크기, 화질, 설치 공간, 예산을 같이 봐야 해요.", vibe: "시청환경 교체" },
+  { keys: ["컴퓨터", "PC", "피씨", "노트북"], category: "shopping", features: ["버벅임이 줄어드는 성능 체감", "게임이나 작업 시간이 덜 답답해지는 점", "부품 가격과 신제품 타이밍 고민", "사고 나서 더 좋은 모델이 나올까 봐 찝찝한 점"], caution: "지금 컴퓨터가 아직 버틸 만하면 가격 안정이나 신제품 발표를 한 번 더 보는 것도 방법이에요.", vibe: "성능 지름신" },
+  { keys: ["게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "xbox", "엑스박스"], category: "shopping", features: ["켜자마자 놀 수 있는 재미", "독점작이나 새 게임 유혹", "사놓고 안 켤 수 있는 위험", "새 모델이나 할인 타이밍 고민"], caution: "하고 싶은 게임이 확실하지 않으면 박스만 예쁘게 모셔둘 수 있어요.", vibe: "게임 지름신" },
+  { keys: ["자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약"], category: "shopping", features: ["이동 스트레스가 줄어드는 점", "출퇴근이나 가족 이동이 편해지는 점", "보험·세금·유지비가 따라오는 점", "신차/중고차 타이밍과 감가 걱정"], caution: "차는 사는 순간보다 유지하는 매달이 진짜 결정이에요.", vibe: "큰 이동비" },
+  { keys: ["휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시"], category: "shopping", features: ["배터리와 카메라 체감이 바로 오는 점", "새 폰 만지는 설렘", "요금제와 할부가 따라오는 점", "곧 새 모델 나올까 봐 고민되는 점"], caution: "지금 폰이 배터리만 문제인지, 진짜 전체가 답답한지부터 보면 좋아요.", vibe: "손안의 지름신" },
+  { keys: ["에어컨"], category: "shopping", features: ["더위 스트레스가 바로 줄어드는 점", "여름 밤 수면이 달라지는 점", "전기요금과 설치비 고민", "성수기 가격과 설치 대기 변수"], caution: "한여름이 오기 전에 움직이면 설치 대기와 가격 스트레스를 줄일 수 있어요.", vibe: "생존형 소비" },
   { keys: ["산다", "구매", "결제", "예약", "주문"], category: "shopping", features: ["바로 쓰거나 누릴 수 있는 장점", "가격만큼 자주 쓸지 따져봐야 하는 점", "카드값이 따라붙는 현실감", "며칠 뒤에도 필요하다고 느낄지"], caution: "진짜 자주 쓸지, 지금 기분만 그런 건지 한 번만 더 보면 좋아요.", vibe: "구매 판단" },
   { keys: ["안 산다", "안산다", "안 사", "사지 않는다", "보류"], category: "shopping", features: ["통장을 지키는 점", "충동 결제를 줄이는 점", "배송 기다림이 사라지는 점", "대신 계속 생각날 수 있는 점"], caution: "계속 생각나면 하루 뒤 다시 봐도 늦지 않아요.", vibe: "통장 방어" },
   { keys: ["매수", "투자"], category: "money", features: ["기회를 잡는 느낌", "수익 기대감", "가격 변동 리스크", "틀렸을 때 손실 가능성"], caution: "손실 한도 없이 들어가면 감정이 흔들릴 수 있어요.", vibe: "공격적 선택" },
@@ -873,8 +883,8 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑"])) return "travel";
   if (hasChildcareContext(text)) return "childcare";
   if (includesAny(text, ["친구", "만난다", "만날까", "약속"])) return "relationship";
-  if (includesAny(text, ["카페", "공원", "영화", "마트", "백화점", "여행", "놀러", "어디", "캠핑"])) return "place";
-  if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "tv", "티비", "텔레비전", "가전"])) return "shopping";
+  if (includesAny(text, ["홍대", "합정", "카페", "공원", "영화", "드라마", "넷플릭스", "마트", "백화점", "여행", "놀러", "어디", "캠핑"])) return "place";
+  if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "버틴", "버티", "컴퓨터", "pc", "피씨", "노트북", "게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약", "휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시", "에어컨", "tv", "티비", "텔레비전", "가전"])) return "shopping";
   return "daily";
 }
 
@@ -930,7 +940,7 @@ function analyzeOption(option, category) {
 
 function optionIntent(option) {
   const text = String(option).replace(/\s/g, "").toLowerCase();
-  if (includesAny(text, ["만다", "그냥", "그대로", "유지", "안간", "안한다", "안판다", "안바꾼", "안바꾸", "안마신", "안마셔", "마시지마", "말자", "보류", "쉬", "쉰", "기다", "관망", "패스", "보유", "홀딩"])) return "skip";
+  if (includesAny(text, ["만다", "그냥", "그대로", "유지", "안간", "안한다", "안판다", "안바꾼", "안바꾸", "안마신", "안마셔", "마시지마", "말자", "보류", "쉬", "쉰", "기다", "관망", "패스", "보유", "홀딩", "버틴", "버티", "참", "더쓴", "그냥쓴"])) return "skip";
   if (includesAny(text, ["간다", "가기", "간", "한다", "먹", "마신", "마셔", "산다", "살래", "바꾼", "바꾸", "교체", "매수", "매도", "판다", "연락", "고백", "출근"])) return "go";
   return "specific";
 }
@@ -1033,6 +1043,23 @@ function findScenario(question, category) {
 
 function skipFeaturesForScenario(option, scenario, category) {
   const scenarioName = scenario.name;
+  const highValue = category === "shopping" ? highValuePurchaseProfile(scenarioName) : null;
+  if (highValue) {
+    return {
+      name: option,
+      category,
+      subjectName: highValue.label,
+      intent: "skip",
+      features: [
+        `${highValue.label} 구매를 미뤄서 큰돈 나가는 타이밍을 늦추는 점`,
+        "신제품이나 할인 타이밍을 한 번 더 볼 수 있는 점",
+        "지름신이 시끄러울 때 바로 결제하지 않는 점",
+        `대신 ${highValue.label}를 쓸 때마다 답답함이 다시 올라올 수 있는 점`
+      ],
+      caution: `${highValue.label}가 이미 고장, 렉, 배터리, 더위처럼 매일 불편을 만들고 있다면 버티는 쪽도 오래 편하진 않아요.`,
+      vibe: `${highValue.label} 버티기`
+    };
+  }
   if (category === "shopping" && includesAny(String(scenarioName).toLowerCase(), ["tv", "티비", "텔레비전", "테레비"])) {
     return {
       name: option,
@@ -1727,6 +1754,232 @@ function gameRealityReason(winner, loser, question) {
   return playfulRealityReason("game", winner, loser, question);
 }
 
+function culturalMeaningProfile(optionName) {
+  const name = String(optionName || "").toLowerCase();
+  const bank = [
+    {
+      keys: ["홍대"],
+      lines: [
+        "홍대는 조용히 끝나는 선택이 아닙니다. 술집 간판, 사람 많은 골목, 갑자기 바뀌는 2차 코스가 같이 따라옵니다.",
+        "홍대는 약속이 아니라 작은 소동에 가깝습니다. 나가면 뭐라도 생기고, 집에 갈 타이밍은 살짝 밀립니다.",
+        "홍대는 '잠깐만' 하고 들어갔다가 시간이 사라지는 쪽입니다. 즉흥성이 장점이자 함정입니다.",
+        "홍대는 오늘 에너지를 밖으로 던지는 선택입니다. 조용함보다 사람 냄새와 소음 쪽에 가깝습니다."
+      ],
+      future: [
+        "집에 오는 길에 '왜 이렇게 늦었지'가 나올 수 있습니다.",
+        "2차까지는 아니었다고 말하지만 발은 이미 알고 있습니다.",
+        "사진첩보다 결제 내역이 더 솔직할 수 있습니다."
+      ]
+    },
+    {
+      keys: ["합정"],
+      lines: [
+        "합정은 홍대처럼 뛰쳐나가기보다 카페와 맛집 사이를 천천히 걷는 쪽입니다.",
+        "합정은 대화가 조금 더 오래 살아남는 동네입니다. 시끄럽게 놀기보다 앉아서 얘기하기 좋습니다.",
+        "합정은 약속을 덜 소란스럽게 끝내는 선택입니다. 카페, 밥집, 산책이 한 줄로 이어집니다.",
+        "합정은 힘을 빼고 만나는 쪽입니다. 놀긴 노는데 귀가 후 체력이 완전히 파산하진 않습니다."
+      ],
+      future: [
+        "집에 와서 '오늘은 적당했다'가 나올 수 있습니다.",
+        "카페 영수증은 남고 체력은 조금 살아남습니다.",
+        "대화가 길어졌는데 이상하게 덜 피곤할 수 있습니다."
+      ]
+    },
+    {
+      keys: ["영화"],
+      lines: [
+        "영화는 그냥 보는 게 아니라 티켓 끊고 밖으로 나가는 작은 이벤트입니다.",
+        "영화는 두 시간 동안 폰을 내려놓게 만드는 선택입니다. 끝나고 나면 괜히 감상평도 생깁니다.",
+        "영화는 외출 준비와 상영 시간표까지 끌고 옵니다. 대신 보고 나면 하루가 조금 행사 같아집니다.",
+        "영화는 몰입을 돈 주고 사는 쪽입니다. 침대보다 번거롭지만 끝나고 남는 말이 있습니다."
+      ],
+      future: [
+        "엔딩 크레딧 올라갈 때 괜히 하루가 정리될 수 있습니다.",
+        "팝콘은 핑계였고 사실은 외출이 필요했을 수 있습니다.",
+        "보고 나와서 별점 주는 척 전문가가 됩니다."
+      ]
+    },
+    {
+      keys: ["드라마"],
+      lines: [
+        "드라마는 침대가 리모컨을 쥐는 선택입니다. 한 편만 보겠다는 말은 일단 의심해야 합니다.",
+        "드라마는 외출 없이 몰입하는 쪽입니다. 문제는 다음 화 버튼이 너무 가까이 있다는 겁니다.",
+        "드라마는 귀찮음을 이기는 게 아니라 귀찮음과 손잡는 선택입니다. 소파가 가장 강한 조연입니다.",
+        "드라마는 조용히 시작해서 새벽을 살짝 훔쳐갈 수 있습니다. 한 편만 볼 자신이 핵심입니다."
+      ],
+      future: [
+        "다음 화 버튼 앞에서 자제력 면접이 시작됩니다.",
+        "침대가 오늘의 상영관이 될 예정입니다.",
+        "한 편만 본다는 약속은 증인이 필요합니다."
+      ]
+    }
+  ];
+  return bank.find((item) => item.keys.some((key) => name.includes(key))) || null;
+}
+
+function culturalRealityReason(winner, loser, question) {
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const winnerProfile = culturalMeaningProfile(winner.name);
+  const loserProfile = culturalMeaningProfile(loser.name);
+  if (!winnerProfile && !loserProfile) return null;
+  const winnerLine = winnerProfile
+    ? optionCharacterLine(winnerProfile, winner.name, question, "culture-winner")
+    : `${winnerName}도 나쁘진 않은데, 오늘 머릿속에 바로 뜨는 그림은 조금 약합니다.`;
+  const loserLine = loserProfile
+    ? optionCharacterLine(loserProfile, loser.name, question, "culture-loser")
+    : `${loserName}도 후보지만, 오늘은 ${winnerName} 쪽 장면이 더 먼저 떠오릅니다.`;
+  const closer = pick([
+    `그래서 오늘은 ${winnerName}. 뜻보다 장면으로 보면 이쪽이 더 살아 있습니다.`,
+    `${loserName}도 말은 되는데, 오늘 하루가 원하는 톤은 ${winnerName} 쪽에 더 가깝습니다.`,
+    `야 그냥 ${winnerName} 가자. 머릿속 예고편이 이쪽이 더 빨리 틀어졌습니다.`,
+    `결론은 ${winnerName}. 설명보다 그 선택 뒤에 따라오는 하루가 더 잘 보입니다.`
+  ], hashText(`${question}-${winner.name}-${loser.name}-culture-close`));
+  return cleanPlayTone(`${winnerLine} ${loserLine} ${closer}`);
+}
+
+function highValuePurchaseProfile(value) {
+  const text = String(value || "").toLowerCase();
+  const bank = [
+    {
+      keys: ["컴퓨터", "pc", "피씨", "노트북"],
+      label: "컴퓨터",
+      buy: [
+        "컴퓨터는 사는 순간 성능 체감이 바로 옵니다. 버벅이던 창이 조용해지면 지름신이 자기가 맞았다고 우깁니다.",
+        "컴퓨터 구매는 단순 소비가 아니라 답답함을 돈으로 끄는 버튼입니다. 문제는 결제 후 신제품 소식이 제일 얄밉다는 겁니다.",
+        "새 컴퓨터는 게임이든 작업이든 기다리는 시간을 줄여줍니다. 대신 통장은 팬 소리보다 크게 울 수 있습니다."
+      ],
+      hold: [
+        "버티기는 통장을 지키지만, 렉 걸릴 때마다 마음이 조금씩 닳습니다.",
+        "컴퓨터를 더 버티면 신제품이나 가격 안정은 볼 수 있습니다. 대신 오늘의 답답함은 그대로 출근합니다.",
+        "지금 컴퓨터가 아직 켜지고 돌아간다면 버티기도 말은 됩니다. 다만 로딩 화면 볼 때마다 지름신이 다시 문을 두드립니다."
+      ],
+      futureGo: [
+        "새 컴퓨터 켜는 순간 팬 소리보다 기분이 먼저 조용해질 수 있습니다.",
+        "결제 문자는 아픈데 부팅 속도는 위로가 됩니다.",
+        "신제품 뉴스만 당분간 안 보면 행복합니다."
+      ],
+      futureSkip: [
+        "통장은 웃고, 로딩 화면은 계속 눈치 봅니다.",
+        "오늘은 버텼지만 장바구니는 아직 살아 있습니다.",
+        "다음 렉에서 이 결정이 다시 재판받을 수 있습니다."
+      ]
+    },
+    {
+      keys: ["게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "xbox", "엑스박스"],
+      label: "게임기",
+      buy: [
+        "게임기는 사는 순간 박스 뜯는 재미가 먼저 옵니다. 문제는 진짜 할 게임이 있느냐입니다.",
+        "게임기 구매는 지름신이 가장 말 잘하는 분야입니다. 독점작 하나만 보여줘도 마음이 흔들립니다.",
+        "새 게임기는 퇴근 후 시간을 바꾸는 물건입니다. 대신 안 켜는 날이 많아지면 장식품이 됩니다."
+      ],
+      hold: [
+        "버티면 할인이나 새 모델을 기다릴 수 있습니다. 대신 유튜브 게임 영상 볼 때마다 마음이 다시 흔들립니다.",
+        "게임기를 안 사면 시간과 돈은 지킵니다. 하지만 하고 싶은 게임이 확실하면 참는 시간이 더 길게 느껴집니다.",
+        "지금 당장 할 게임이 애매하면 버티기가 꽤 강합니다. 박스만 모셔두는 미래는 피하는 게 좋습니다."
+      ],
+      futureGo: [
+        "박스 뜯는 순간 이미 절반은 이긴 기분입니다.",
+        "설치 업데이트 시간까지 설레면 진짜 사고 싶었던 겁니다.",
+        "첫 실행 화면에서 지름신이 박수칠 수 있습니다."
+      ],
+      futureSkip: [
+        "할인 알림 뜨면 다시 흔들릴 예정입니다.",
+        "오늘은 참았지만 게임 영상은 당분간 조심해야 합니다.",
+        "장식품 될 미래 하나는 피했습니다."
+      ]
+    },
+    {
+      keys: ["자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약"],
+      label: "차",
+      buy: [
+        "차는 사는 순간 이동이 편해지지만, 보험료와 유지비가 같이 조수석에 탑니다.",
+        "차 구매는 설렘이 큽니다. 대신 매달 빠져나가는 돈도 성실합니다.",
+        "새 차는 생활 동선을 바꿉니다. 문제는 감가와 유지비가 생각보다 현실적이라는 겁니다."
+      ],
+      hold: [
+        "버티면 큰돈 나가는 타이밍을 늦출 수 있습니다. 대신 이동 스트레스도 같이 연장됩니다.",
+        "차를 안 사면 통장은 크게 안 흔들립니다. 하지만 매번 이동이 불편했다면 불만도 계속 누적됩니다.",
+        "지금 차 없이도 버틸 수 있으면 관망이 강합니다. 차는 사는 날보다 유지하는 달이 더 깁니다."
+      ],
+      futureGo: [
+        "첫 드라이브는 좋고, 첫 보험료는 현실적입니다.",
+        "차 키 잡는 순간 기분은 오르지만 고정비도 같이 탑승합니다.",
+        "이동은 편해지고 통장은 어른스러워집니다."
+      ],
+      futureSkip: [
+        "오늘 큰돈은 막았고, 이동 불편은 조금 더 남았습니다.",
+        "통장은 살았지만 택시 앱은 아직 친구입니다.",
+        "다음 비 오는 날 이 결정이 다시 소환될 수 있습니다."
+      ]
+    },
+    {
+      keys: ["휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시"],
+      label: "휴대폰",
+      buy: [
+        "휴대폰은 매일 손에 쥐는 물건이라 체감이 빠릅니다. 배터리와 카메라가 좋아지면 변명도 좋아집니다.",
+        "새 폰은 박스 여는 순간 기분이 올라갑니다. 대신 할부는 조용히 오래 따라옵니다.",
+        "폰 교체는 지름신이 가장 합리적인 척하는 분야입니다. '어차피 매일 쓰잖아'가 꽤 강합니다."
+      ],
+      hold: [
+        "버티면 새 모델과 가격 변화를 볼 수 있습니다. 대신 배터리 20%부터 마음이 급해집니다.",
+        "지금 폰이 느리지만 쓸 만하다면 버티기도 가능합니다. 문제는 사진 찍을 때마다 새 폰 생각이 난다는 겁니다.",
+        "휴대폰을 더 쓰면 통신비와 할부 부담은 늦출 수 있습니다. 대신 하루에도 몇 번씩 답답함을 만납니다."
+      ],
+      futureGo: [
+        "새 폰 켜는 순간 케이스부터 검색할 수 있습니다.",
+        "사진 한 장 찍고 바로 합리화가 시작됩니다.",
+        "할부는 길지만 화면은 예쁩니다."
+      ],
+      futureSkip: [
+        "배터리 숫자가 다시 이 결정을 흔들 수 있습니다.",
+        "오늘은 참았지만 새 폰 광고는 피해야 합니다.",
+        "통장은 웃고 충전기는 계속 바쁩니다."
+      ]
+    },
+    {
+      keys: ["에어컨"],
+      label: "에어컨",
+      buy: [
+        "에어컨은 지름신이라기보다 생존 장비에 가깝습니다. 더운 밤 잠이 깨면 결제 논리가 강해집니다.",
+        "에어컨 구매는 여름 체감이 바로 옵니다. 대신 설치비와 전기요금이 뒤에서 손을 듭니다.",
+        "에어컨은 사면 매일 쓰는 계절이 옵니다. 문제는 성수기엔 가격과 설치 대기가 같이 뜨거워진다는 겁니다."
+      ],
+      hold: [
+        "버티면 돈은 지키지만 더운 밤마다 인내심이 시험을 봅니다.",
+        "아직 참을 만하면 버티기도 됩니다. 다만 한여름 설치 대기는 생각보다 사람을 급하게 만듭니다.",
+        "에어컨을 미루면 지출은 늦어집니다. 대신 더위가 오면 판단력이 같이 녹을 수 있습니다."
+      ],
+      futureGo: [
+        "시원한 바람 한 번에 결제 이유가 생길 수 있습니다.",
+        "설치 끝난 날 방 온도보다 표정이 먼저 내려갑니다.",
+        "전기요금은 나중 문제고 오늘 밤은 살았습니다."
+      ],
+      futureSkip: [
+        "오늘은 버텼지만 다음 열대야가 다시 투표를 열 겁니다.",
+        "통장은 시원하고 방은 아직 덥습니다.",
+        "선풍기가 갑자기 책임감을 느낄 예정입니다."
+      ]
+    }
+  ];
+  return bank.find((item) => item.keys.some((key) => text.includes(key))) || null;
+}
+
+function highValuePurchaseReason(winner, loser, question) {
+  const source = `${question} ${winner.subjectName || ""} ${loser.subjectName || ""} ${winner.name} ${loser.name}`;
+  const profile = highValuePurchaseProfile(source);
+  if (!profile) return null;
+  const winnerName = escapeHtml(optionDisplayName(winner, "shopping"));
+  const loserName = escapeHtml(optionDisplayName(loser, "shopping"));
+  const winnerIsBuy = winner.intent !== "skip";
+  const mainLine = pick(winnerIsBuy ? profile.buy : profile.hold, hashText(`${source}-${winner.name}-high-buy`));
+  const counterLine = pick(winnerIsBuy ? profile.hold : profile.buy, hashText(`${source}-${loser.name}-high-hold`));
+  const closer = winnerIsBuy
+    ? `그래서 오늘은 ${winnerName}. 가격은 아픈데, 답답함을 줄이는 값이 더 크게 보입니다.`
+    : `그래서 오늘은 ${winnerName}. 지름신은 시끄럽지만, 지금은 후회 방지턱이 조금 더 높습니다.`;
+  return cleanPlayTone(`${mainLine} ${counterLine} ${closer}`);
+}
+
 function playfulRealityReason(category, winner, loser, question) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
@@ -1839,6 +2092,12 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   const opening = realityOpeningLine(category, winner, loser, question);
   if (category === "food") return foodRealityReason(winner, loser, question);
   if (category === "game") return gameRealityReason(winner, loser, question);
+  if (category === "shopping") {
+    const highValueReason = highValuePurchaseReason(winner, loser, question);
+    if (highValueReason) return highValueReason;
+  }
+  const culturalReason = culturalRealityReason(winner, loser, question);
+  if (culturalReason) return culturalReason;
   return playfulRealityReason(category, winner, loser, question);
 }
 
@@ -2963,6 +3222,17 @@ function futureComment(category, winner, question, seed, sign) {
       return cleanPlayTone(pick(character.future, seed + raw.length + question.length + variationSeed));
     }
   }
+  if (category === "shopping") {
+    const highValue = highValuePurchaseProfile(`${winner.name} ${winner.subjectName || ""} ${question}`);
+    if (highValue) {
+      const pool = winner.intent === "skip" ? highValue.futureSkip : highValue.futureGo;
+      return cleanPlayTone(pick(pool, seed + raw.length + question.length + variationSeed));
+    }
+  }
+  const cultural = culturalMeaningProfile(winner.name);
+  if (cultural && cultural.future) {
+    return cleanPlayTone(pick(cultural.future, seed + raw.length + question.length + variationSeed));
+  }
   const endings = [
     `미래의 내가 조용히 고개를 끄덕였습니다.`,
     `적어도 오늘 밤 변명거리는 하나 줄었습니다.`,
@@ -3295,6 +3565,19 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
     if (analysis.intent === "skip" && includesAny(question, ["돈", "비싸", "피곤", "시간없", "일정"])) score += 12;
   }
   const questionText = String(question).toLowerCase();
+  const highValueShopping = category === "shopping" ? highValuePurchaseProfile(`${questionText} ${analysis.name} ${analysis.subjectName || ""}`) : null;
+  if (highValueShopping) {
+    const urgentNeed = includesAny(questionText, ["고장", "느려", "느림", "느린", "렉", "버벅", "배터리", "발열", "더워", "더운", "덥", "열대야", "땀", "작업", "게임", "필요", "힘들", "답답", "안켜", "안 켜", "꺼져", "부족", "오래"]);
+    const waitReason = includesAny(questionText, ["비싸", "가격", "돈", "할부", "신제품", "새모델", "새 모델", "할인", "세일", "아직", "멀쩡", "다음", "출시", "기다"]);
+    const impulse = includesAny(questionText, ["지름", "사고싶", "사고 싶", "끌려", "갖고싶", "갖고 싶", "바꾸고싶", "바꾸고 싶"]);
+    if (analysis.intent === "go" && urgentNeed) score += 24;
+    if (analysis.intent === "skip" && waitReason) score += 14;
+    if (analysis.intent === "skip" && urgentNeed) score -= 16;
+    if (analysis.intent === "go" && waitReason && !urgentNeed) score -= 5;
+    if (analysis.intent === "go" && impulse) score += 6;
+    if (analysis.intent === "skip" && impulse && waitReason) score += 4;
+    if (analysis.intent === "skip" && !urgentNeed) score += 3;
+  }
   if (category === "shopping" && includesAny(questionText, ["tv", "티비", "텔레비전", "테레비"])) {
     const tvProblem = includesAny(questionText, ["오래", "고장", "화질", "작", "불편", "눈아", "안보", "안 보", "안좋", "안 좋", "큰 화면"]);
     if (analysis.intent === "go" && tvProblem) score += 24;

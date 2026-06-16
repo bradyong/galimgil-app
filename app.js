@@ -881,7 +881,7 @@ const optionFeatureBank = [
 function inferCategory(question, choiceA, choiceB, profile) {
   const text = `${question} ${choiceA} ${choiceB}`.toLowerCase();
   if (profile.type !== "general") return profile.type;
-  if (includesAny(text, ["찌개", "라면", "밥", "국밥", "순대국", "순댓국", "뼈해장", "감자탕", "치킨", "피자", "햄버거", "버거", "배달", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "곱창", "삼겹살", "메뉴", "먹을"])) return "food";
+  if (includesAny(text, ["점심", "저녁", "아침", "야식", "메뉴", "먹을", "뭐먹", "뭐 먹", "식사", "찌개", "라면", "밥", "국밥", "순대국", "순댓국", "뼈해장", "감자탕", "치킨", "피자", "햄버거", "버거", "배달", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "곱창", "삼겹살"])) return "food";
   if (includesAny(text, ["아메리카노", "아이스", "아아", "뜨아", "커피", "라떼", "카페라떼", "콜드브루", "콜라", "코카콜라", "펩시", "사이다", "스프라이트", "칠성"])) return "beverage";
   if (includesAny(text, ["술", "소주", "맥주", "와인", "막걸리", "마실까", "한잔", "한 잔"])) return "drink";
   if (includesAny(text, ["샤워", "씻", "목욕", "머리감", "세수", "양치"])) return "hygiene";
@@ -889,11 +889,11 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["공부", "시험", "숙제", "과제", "강의", "복습", "예습"])) return "study";
   if (includesAny(text, ["게임", "롤", "리그오브레전드", "리그 오브 레전드", "스타", "스타크래프트", "배그", "플스", "스팀", "모바일게임"])) return "game";
   if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
-  if (includesAny(text, ["여행", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑", "일본", "도쿄", "오사카", "후쿠오카", "교토", "태국", "방콕", "푸켓", "치앙마이", "파타야", "제주도", "제주", "부산"])) return "travel";
+  if (includesAny(text, ["여행", "휴가", "여름휴가", "겨울휴가", "해외", "국내", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑", "일본", "도쿄", "오사카", "후쿠오카", "교토", "태국", "방콕", "푸켓", "치앙마이", "파타야", "제주도", "제주", "부산"])) return "travel";
   if (hasChildcareContext(text)) return "childcare";
   if (includesAny(text, ["친구", "만난다", "만날까", "약속"])) return "relationship";
   if (includesAny(text, ["홍대", "합정", "카페", "공원", "영화", "드라마", "넷플릭스", "마트", "백화점", "여행", "놀러", "어디", "캠핑"])) return "place";
-  if (includesAny(text, ["살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "버틴", "버티", "컴퓨터", "pc", "피씨", "노트북", "게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약", "휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시", "에어컨", "tv", "티비", "텔레비전", "가전"])) return "shopping";
+  if (includesAny(text, ["소비", "살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "버틴", "버티", "컴퓨터", "pc", "피씨", "노트북", "게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약", "휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시", "에어컨", "tv", "티비", "텔레비전", "가전"])) return "shopping";
   return "daily";
 }
 
@@ -903,6 +903,7 @@ function findFeatureEntry(text, preferredCategory = null) {
   let best = null;
   optionFeatureBank.forEach((item) => {
     item.keys.forEach((key) => {
+      if (key === "책" && includesAny(normalized, ["책상", "책장", "책꽂이", "책받침"])) return;
       if (normalized.includes(key.toLowerCase())) {
         matches.push({ item, key });
       }
@@ -916,7 +917,114 @@ function findFeatureEntry(text, preferredCategory = null) {
   return best;
 }
 
-function analyzeOption(option, category) {
+function inferredOptionProfile(option, category, question = "") {
+  const name = String(option || "");
+  const optionRaw = name.toLowerCase();
+  const optionCompact = optionRaw.replace(/\s/g, "");
+  const questionCompact = String(question || "").toLowerCase().replace(/\s/g, "");
+  const make = (features, caution, vibe) => ({ name, category, features, caution, vibe, inferred: true });
+  const has = (words) => includesAny(optionCompact, words);
+  const contextHas = (words) => includesAny(questionCompact, words);
+
+  if (category === "travel" || category === "place") {
+    if (has(["바다", "해변", "비치", "섬", "제주", "푸켓", "코타", "몰디브", "괌", "휴양"])) {
+      return make(
+        [`${name}에서 바다나 자연을 보며 쉬는 시간`, "카페나 산책처럼 느슨하게 흐르는 일정", "날씨에 따라 만족도가 크게 갈리는 점", "이동보다 머무는 시간이 더 중요해지는 점"],
+        "날씨와 이동 동선이 안 맞으면 쉬러 갔다가 생각보다 피곤해질 수 있어요.",
+        "휴양/자연"
+      );
+    }
+    if (has(["도쿄", "오사카", "서울", "부산", "홍콩", "대만", "방콕", "싱가포르", "시내", "도시", "역", "쇼핑", "시장"])) {
+      return make(
+        [`${name}에서 걷고 구경하는 도시 여행`, "맛집과 쇼핑을 촘촘히 도는 재미", "교통과 동선을 짜는 맛", "많이 걸으면 체력이 빨리 빠지는 점"],
+        "쉬는 여행을 원하면 일정이 빽빽하게 느껴질 수 있어요.",
+        "도시 구경"
+      );
+    }
+    if (has(["산", "오름", "숲", "계곡", "공원", "호수", "드라이브"])) {
+      return make(
+        [`${name}에서 바람 쐬고 몸을 움직이는 시간`, "사진 남기기 좋은 자연감", "복잡한 실내보다 머리가 환기되는 점", "날씨와 체력 영향을 크게 받는 점"],
+        "비가 오거나 너무 덥고 추우면 만족도가 확 떨어질 수 있어요.",
+        "자연 환기"
+      );
+    }
+    return make(
+      contextHas(["휴가", "여름휴가", "여행", "해외", "국내"])
+        ? [`${name}에서 휴가 느낌이 어떻게 살아나는지`, "숙소와 이동 동선이 만드는 피로도", "가서 쉬는지 돌아다니는지에 따라 달라지는 만족도", "돌아왔을 때 사진과 이야깃거리가 남는 정도"]
+        : [`${name}에서 하루 공기가 바뀌는 점`, "도착하기까지의 이동과 비용", "가서 무엇을 할지에 따라 만족도가 달라지는 점", "돌아올 때 체력이 남는지가 중요한 점"],
+      "이름만 보고 고르기보다 이동 시간, 날씨, 같이 가는 사람을 같이 봐야 해요.",
+      category === "travel" ? "여행 후보" : "장소 후보"
+    );
+  }
+
+  if (category === "food") {
+    if (has(["국", "탕", "찌개", "해장", "면", "라면", "우동"])) {
+      return make(
+        [`${name}에서 뜨거운 한 숟갈로 시작되는 느낌`, "먹는 동안 속이 천천히 풀리는 점", "국물까지 보면 시간이 조금 더 걸리는 점", "날씨나 속 상태에 따라 만족도가 갈리는 점"],
+        "가볍고 빨리 끝내고 싶은 날엔 생각보다 무겁게 느껴질 수 있어요.",
+        "뜨끈한 한 끼"
+      );
+    }
+    if (has(["고기", "삼겹", "갈비", "스테이크", "곱창", "치킨", "튀김", "돈까스"])) {
+      return make(
+        [`${name}에서 냄새와 식감이 먼저 치고 들어오는 점`, "먹기 시작하면 말수가 잠깐 줄어드는 장면", "확실히 먹었다는 느낌이 남는 점", "끝나고 살짝 무거울 수 있는 점"],
+        "속이 예민하거나 가볍게 끝내고 싶은 날엔 후반부가 부담될 수 있어요.",
+        "확실한 식사"
+      );
+    }
+    if (has(["커피", "라떼", "콜라", "사이다", "주스", "음료"])) {
+      return make(
+        [`${name} 한 모금으로 입안이 바뀌는 점`, "음식 옆에서 역할이 달라지는 점", "마시고 난 뒤 깔끔함이나 단맛이 남는 점", "얼음이나 온도에 따라 기분이 달라지는 점"],
+        "음료는 같이 먹는 음식이 무엇인지에 따라 답이 바뀔 수 있어요.",
+        "마시는 선택"
+      );
+    }
+    return make(
+      [`${name}을 골랐을 때 바로 떠오르는 식사 장면`, "먹고 난 뒤 배부름과 후회 정도", "지금 입맛과 귀찮음에 맞는지", "같이 먹는 메뉴나 상황에 따라 달라지는 점"],
+      "맛만 보지 말고 먹고 난 뒤 몸이 어떨지도 같이 보면 좋아요.",
+      "메뉴 후보"
+    );
+  }
+
+  if (category === "shopping") {
+    return make(
+      [`${name}을 샀을 때 바로 쓰는 장면`, "가격과 실제 사용 빈도", "지름신이 지나간 뒤에도 필요할지", "신제품이나 할인 타이밍 때문에 생기는 후회 가능성"],
+      "오늘 사고 싶은 마음과 한 달 뒤에도 잘 쓸 장면을 따로 봐야 해요.",
+      "소비 판단"
+    );
+  }
+
+  if (category === "relationship") {
+    return make(
+      [`${name}을 했을 때 상대 반응을 기다리는 시간`, "말하고 나서 마음속 소음이 줄어드는 점", "타이밍이 어긋나면 어색해질 수 있는 점", "혼자 상상만 키우지 않아도 되는 점"],
+      "관계 선택은 내용보다 타이밍과 말투가 더 크게 작동할 수 있어요.",
+      "관계 선택"
+    );
+  }
+
+  if (category === "daily") {
+    if (has(["버스", "지하철", "택시", "차", "걸어", "걷", "자전거"])) {
+      return make(
+        [`${name}로 이동했을 때 드는 시간과 돈`, "몸이 덜 피곤한지 혹은 돈을 아끼는지", "기다리는 시간과 도착 시간 변수", "퇴근길이면 사람 많음까지 같이 따라오는 점"],
+        "이동 선택은 편함과 비용 중 오늘 무엇을 더 아낄지로 보면 좋아요.",
+        "이동 수단"
+      );
+    }
+    return make(
+      [`${name}을 골랐을 때 바로 달라지는 오늘 장면`, "끝나고 남는 피로감이나 개운함", "미루면 남는 찝찝함", "지금 시간과 몸 상태로 감당 가능한지"],
+      "큰 의미를 붙이기보다 끝나고 내가 덜 투덜댈 쪽을 보면 좋아요.",
+      "일상 판단"
+    );
+  }
+
+  return make(
+    [`${name}을 선택했을 때 바로 생기는 변화`, "끝나고 남는 기분", "비용이나 시간처럼 따라오는 현실 변수", "나중에 다시 떠올렸을 때 후회할 가능성"],
+    "단어 자체보다 이 선택 뒤에 오는 하루를 같이 봐야 해요.",
+    "추론 후보"
+  );
+}
+
+function analyzeOption(option, category, question = "") {
   const text = option.toLowerCase();
   const match = findFeatureEntry(text, category);
   const found = match && match.item;
@@ -929,6 +1037,8 @@ function analyzeOption(option, category) {
       vibe: found.vibe
     };
   }
+  const inferred = inferredOptionProfile(option, category, question);
+  if (inferred) return inferred;
   const fallbackByCategory = {
     food: { features: [`${option}만의 맛 포인트`, "한 입 먹었을 때 바로 오는 반응", "오늘 입맛에 따라 만족도가 달라짐", "같이 먹는 사람이나 컨디션 영향을 받음"], caution: "속 상태와 자극 정도는 한 번 보고 고르는 게 좋아요.", vibe: "한 끼 만족" },
     childcare: { features: [`${option}에서 생기는 아이 반응`, "보호자가 봐야 하는 안전 변수", "아이 체력 소모", "돌아오는 길 컨디션"], caution: "아이가 지치기 전에 나올 수 있는지가 중요해요.", vibe: "아이 리듬" },
@@ -1162,7 +1272,7 @@ function skipFeaturesForScenario(option, scenario, category) {
 function contextualizeOption(option, category, question) {
   const scenario = findScenario(question, category);
   const intent = optionIntent(option);
-  const base = analyzeOption(option, category);
+  const base = analyzeOption(option, category, question);
   if (category === "money" && base.category === "money") {
     return { ...base, subjectName: base.name, intent };
   }
@@ -2232,6 +2342,38 @@ function playfulRealityReason(category, winner, loser, question) {
   return cleanPlayTone(pick(pool, hashText(`${question}-${winner.name}-${loser.name}-${category}-play`)));
 }
 
+function inferredRealityReason(category, winner, loser, question) {
+  if (!winner.inferred && !loser.inferred) return null;
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const winnerTopic = escapeHtml(withParticle(winner.name, "은", "는"));
+  const first = escapeHtml(winner.features[0] || "바로 달라지는 장면");
+  const second = escapeHtml(winner.features[1] || "끝나고 남는 느낌");
+  const loserFirst = escapeHtml(loser.features[0] || "반대쪽 장점");
+  const pools = {
+    travel: [
+      `${winnerTopic} 이름보다 여행 방식으로 봐야 합니다. ${first}이 먼저 보이고, ${second}도 같이 따라옵니다. ${loserName}도 후보지만 오늘은 ${winnerName} 쪽 휴가 장면이 조금 더 잘 붙습니다.`,
+      `${winnerName}을 고르면 핵심은 "가서 뭘 하느냐"입니다. ${first}, 그리고 ${second} 쪽이라 그냥 장소 이름보다 하루 쓰는 방식이 더 중요해집니다. ${loserName}은 다음 후보로 남겨도 됩니다.`
+    ],
+    shopping: [
+      `${winnerTopic} 물건 이름보다 사고 난 뒤 쓰는 장면을 봐야 합니다. ${first}, ${second}가 바로 따라오니까 지름신만 보고 고르면 안 됩니다. ${loserName}도 좋지만 오늘은 ${winnerName} 쪽 사용 장면이 더 먼저 보입니다.`,
+      `${winnerTopic} 결제 버튼보다 한 달 뒤를 봐야 하는 선택입니다. ${first}, ${second} 쪽이라 지금 사고 싶은 마음이 실제 생활에 붙는지가 핵심입니다.`
+    ],
+    food: [
+      `${winnerTopic} 메뉴 이름보다 먹고 난 뒤가 중요합니다. ${first}, ${second}가 먼저 보이고, ${loserName}은 ${loserFirst} 쪽으로 따라옵니다. 오늘은 ${winnerName}으로 닫아도 덜 궁시렁댈 날입니다.`,
+      `${winnerName}을 고르면 식탁에서 바로 달라지는 건 ${first}입니다. ${loserName}도 괜찮지만, 지금은 ${second} 쪽이 더 크게 들어옵니다.`
+    ],
+    daily: [
+      `${winnerTopic} 선택 뒤에 오는 시간과 피로를 같이 봐야 합니다. ${first}, ${second}가 있어서 오늘은 ${loserName}보다 덜 꼬일 가능성이 있습니다.`,
+      `${winnerTopic} 단어보다 끝나고 남는 상태가 핵심입니다. ${first}이 먼저 보이고, ${loserName}은 ${loserFirst} 쪽으로 버팁니다.`
+    ]
+  };
+  const pool = pools[category] || [
+    `${winnerTopic} 이름보다 선택 뒤의 상황을 봐야 합니다. ${first}, ${second}가 오늘 판단의 핵심입니다. ${loserName}도 후보지만 지금은 ${winnerName} 쪽이 더 말이 됩니다.`
+  ];
+  return cleanPlayTone(pick(pool, hashText(`${question}-${winner.name}-${loser.name}-${category}-inferred`)));
+}
+
 function categoryRealityReason(category, winner, loser, question, cards = []) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
@@ -2251,6 +2393,8 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   }
   const culturalReason = culturalRealityReason(winner, loser, question);
   if (culturalReason) return culturalReason;
+  const inferredReason = inferredRealityReason(category, winner, loser, question);
+  if (inferredReason) return inferredReason;
   return playfulRealityReason(category, winner, loser, question);
 }
 

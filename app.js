@@ -1965,10 +1965,10 @@ function culturalMeaningProfile(optionName) {
     {
       keys: ["일본", "도쿄", "오사카", "후쿠오카", "교토"],
       lines: [
-        "일본은 쉬러 간다기보다 걷고, 보고, 사고, 또 걷는 여행에 가깝습니다. 편의점 하나도 코스가 됩니다.",
-        "일본은 도시여행 쪽입니다. 쇼핑백이 늘고, 발바닥은 항의하지만 구경거리는 계속 나옵니다.",
-        "일본은 동선 짜는 재미가 있습니다. 지하철 타고 맛집 찍고, 마지막엔 돈키호테 봉투가 손에 들릴 수 있습니다.",
-        "일본은 조용히 쉬는 휴양보다 골목을 걷는 여행입니다. 하루가 끝나면 다리는 피곤하고 사진은 꽤 남습니다."
+        "일본은 쉬러 간다기보다 하루를 꽉 채우고 싶은 날에 끌립니다. 편의점 하나 들어가도 괜히 여행 온 티가 납니다.",
+        "일본은 회사 생각을 잊는다기보다, 걷고 구경하느라 생각할 틈을 없애는 쪽입니다. 발은 힘들어도 눈은 바쁩니다.",
+        "일본은 통장이 살짝 울어도 쇼핑백과 사진이 변명해주는 선택입니다. 돌아오면 '많이 봤다'는 느낌은 확실히 남습니다.",
+        "일본은 누워 쉬는 여행보다 골목을 계속 넘기는 여행입니다. 오늘 마음이 심심함을 싫어하면 이쪽이 당깁니다."
       ],
       future: [
         "편의점 디저트 하나로 하루가 이상하게 만족스러워질 수 있습니다.",
@@ -1980,10 +1980,10 @@ function culturalMeaningProfile(optionName) {
     {
       keys: ["태국", "방콕", "푸켓", "치앙마이", "파타야"],
       lines: [
-        "태국은 빡빡하게 걷는 여행보다 몸을 풀어주는 쪽입니다. 마사지, 수영장, 야시장이 하루를 느슨하게 만듭니다.",
-        "태국은 계획표보다 슬리퍼가 먼저 떠오릅니다. 낮엔 더위, 밤엔 야시장, 중간엔 마사지가 들어옵니다.",
-        "태국은 쇼핑백보다 수영장 물소리가 먼저 나오는 여행입니다. 급하게 움직이면 태국 맛이 조금 줄어듭니다.",
-        "태국은 쉬는 척하다가 밤에 야시장으로 다시 살아나는 쪽입니다. 여행이 아니라 몸의 긴장을 푸는 느낌에 가깝습니다."
+        "태국은 회사 생각이 덜 나는 쪽입니다. 낮에는 몸을 풀고, 밤에는 야시장 냄새 따라 걷는 그림이 먼저 옵니다.",
+        "태국은 계획표를 꽉 채우기보다 슬리퍼 신고 느슨해지고 싶은 날에 끌립니다. 마사지 받고 나오면 마음도 같이 풀립니다.",
+        "태국은 무언가를 많이 해냈다는 여행보다 '아, 좀 쉬었다'가 남는 선택입니다. 오늘 지친 마음이면 이쪽이 더 솔직합니다.",
+        "태국은 낮엔 늘어지고 밤엔 다시 살아나는 여행입니다. 몸이 쉬고 싶다고 말하면 이쪽이 꽤 설득력 있습니다."
       ],
       future: [
         "마사지 받고 나오면 어깨가 여행을 먼저 인정할 수 있습니다.",
@@ -2025,10 +2025,10 @@ function culturalMeaningProfile(optionName) {
     {
       keys: ["경주"],
       lines: [
-        "경주는 먹고 노는 여행보다 천천히 걷고 보는 여행에 가깝습니다. 유적, 한옥, 야경 사진이 조용히 점수를 쌓습니다.",
-        "경주는 역사책 느낌으로 시작하지만 밤에 조명 켜지면 사진 욕심이 슬쩍 올라옵니다.",
-        "경주는 시끄럽게 노는 곳이라기보다 걷다 보면 여행 온 티가 나는 쪽입니다. 분위기는 차분한데 남는 사진은 꽤 좋습니다.",
-        "경주는 속도를 늦춰야 맛이 납니다. 유적지와 골목을 천천히 보면 하루가 조용히 채워집니다."
+        "경주는 크게 떠들기보다 천천히 걷고 싶은 날에 끌립니다. 말수는 줄어도 사진첩은 은근히 차는 쪽입니다.",
+        "경주는 역사책처럼 시작하지만 밤에 조명 켜지면 갑자기 사진 욕심이 올라옵니다. 조용한데 기억은 남습니다.",
+        "경주는 많이 먹고 많이 노는 쪽보다, 걷다 보니 여행 온 티가 나는 선택입니다. 마음이 복잡한 날엔 이 차분함이 꽤 좋습니다.",
+        "경주는 속도를 늦추면 좋아지는 여행입니다. 오늘 너무 시끄러운 선택이 싫다면 이쪽이 편하게 들어옵니다."
       ],
       future: [
         "야경 사진 한 장은 건질 가능성이 높습니다.",
@@ -2040,10 +2040,10 @@ function culturalMeaningProfile(optionName) {
     {
       keys: ["전주"],
       lines: [
-        "전주는 역사보다 먹거리 쪽이 먼저 손을 듭니다. 한옥마을 걷다가 길거리 음식이 자꾸 말을 겁니다.",
-        "전주는 사진도 찍고 먹기도 하는 여행입니다. 비빔밥, 막걸리, 길거리 음식이 동선을 자꾸 흔듭니다.",
-        "전주는 걷는 속도가 느려도 입은 바쁠 수 있습니다. 한옥마을은 배고플 때 특히 설득력이 강합니다.",
-        "전주는 여행 계획표보다 먹거리 리스트가 먼저 커지는 곳입니다. 사진 찍고 한입 먹고 다시 걷는 리듬입니다."
+        "전주는 배가 먼저 여행을 허락하는 쪽입니다. 한옥마을 걷다가도 길거리 음식 앞에서 계획이 자꾸 멈춥니다.",
+        "전주는 사진도 찍지만 결국 뭐 먹었는지가 더 또렷하게 남을 수 있습니다. 오늘 마음이 먹는 재미를 원하면 이쪽입니다.",
+        "전주는 걷는 속도가 느려도 입은 바쁜 여행입니다. 심심한 하루에 작은 맛들을 계속 넣고 싶을 때 끌립니다.",
+        "전주는 계획표보다 먹거리 리스트가 먼저 커지는 선택입니다. 오늘은 얌전한 구경보다 한입씩 즐기는 쪽이 더 살아납니다."
       ],
       future: [
         "결국 뭘 먹었는지가 제일 또렷하게 남을 수 있습니다.",
@@ -2279,22 +2279,20 @@ function highValuePurchaseReason(winner, loser, question) {
 
 function categoryDecisionFrame(category, winner, loser, question) {
   const raw = `${question} ${winner.name} ${loser.name} ${winner.subjectName || ""} ${loser.subjectName || ""}`.toLowerCase();
-  const winnerName = escapeHtml(winner.name);
-  const loserName = escapeHtml(loser.name);
   if (category === "travel") {
     if (includesAny(raw, ["일본", "태국", "해외", "비행"])) {
-      return `이건 나라 이름 싸움이 아니라 여행 방식 싸움입니다. 먼저 비용, 휴가 기간, 비행시간, 먹거리, 휴양인지 관광인지부터 봐야 합니다. `;
+      return "";
     }
     if (includesAny(raw, ["경주", "전주", "부산", "제주"])) {
-      return `이건 지역 이름보다 여행의 톤을 먼저 봐야 합니다. 역사, 먹거리, 사진, 걷는 분위기, 밤에 할 일이 기준입니다. `;
+      return "";
     }
-    return `여행지는 이름보다 일정이 먼저입니다. 비용, 이동시간, 숙소, 먹거리, 쉬는 여행인지 돌아다니는 여행인지부터 봐야 합니다. `;
+    return "";
   }
   if (category === "shopping" && includesAny(raw, ["플스", "플레이스테이션", "닌텐도", "스위치", "게임기", "ps5"])) {
-    return `게임기는 그냥 사고 싶다고 고르면 금방 장식품 됩니다. 독점작, 휴대성, 성능, 같이 할 사람, 실제 플레이 시간을 먼저 봐야 합니다. `;
+    return "";
   }
   if (category === "shopping") {
-    return `소비는 물건 이름보다 사용 장면이 먼저입니다. 가격, 사용 빈도, 대체 가능성, 사고 난 뒤 후회 가능성을 같이 봐야 합니다. `;
+    return "";
   }
   return "";
 }
@@ -2306,23 +2304,22 @@ function gameConsoleReason(winner, loser, question) {
   const loserName = escapeHtml(loser.name);
   const winnerRaw = String(winner.name).toLowerCase();
   const loserRaw = String(loser.name).toLowerCase();
-  const frame = categoryDecisionFrame("shopping", winner, loser, question);
   const winnerLine = includesAny(winnerRaw, ["플스", "플레이스테이션", "ps5", "ps4"])
-    ? `${winnerName}는 큰 화면에 앉아서 제대로 몰입하는 쪽입니다. 그래픽, 성능, 묵직한 독점작이 강점이고 대신 들고 다니는 재미는 약합니다.`
+    ? `${winnerName}는 밤에 불 끄고 TV 앞에 앉는 그림이 먼저 옵니다. 한 번 켜면 "제대로 한다"는 느낌이 강한 쪽입니다.`
     : includesAny(winnerRaw, ["닌텐도", "스위치"])
-      ? `${winnerName}는 가볍게 켜고 들고 다니는 쪽입니다. 마리오·젤다·동숲 같은 독점작과 같이 하는 재미가 강하고, 성능 싸움은 플스보다 약합니다.`
+      ? `${winnerName}는 각 잡고 앉기보다 소파, 침대, 이동 중에 슬쩍 켜는 그림이 먼저 옵니다. 혼자 해도 되고 같이 해도 덜 부담스러운 쪽입니다.`
       : `${winnerName}는 하고 싶은 게임이 확실할 때 힘을 받는 선택입니다.`;
   const loserLine = includesAny(loserRaw, ["플스", "플레이스테이션", "ps5", "ps4"])
-    ? `${loserName}는 성능과 몰입감은 좋은데 TV 앞에 앉을 시간이 있어야 빛납니다.`
+    ? `${loserName}는 제대로 몰입하는 맛은 있는데, TV 앞에 앉을 시간이 없으면 괜히 눈치 보는 물건이 됩니다.`
     : includesAny(loserRaw, ["닌텐도", "스위치"])
-      ? `${loserName}는 휴대성과 가벼움은 좋은데 고사양 게임 욕심이 있으면 아쉬울 수 있습니다.`
+      ? `${loserName}는 자주 켜기엔 좋은데, 묵직하게 빠져들 게임을 원하면 살짝 가볍게 느껴질 수 있습니다.`
       : `${loserName}도 후보지만 실제로 켤 시간이 핵심입니다.`;
   const closer = includesAny(winnerRaw, ["플스", "플레이스테이션", "ps5", "ps4"])
-    ? `그래서 오늘은 ${winnerName}. 혼자 진득하게 할 게임이 떠오르면 이쪽이 더 오래 갑니다.`
+    ? `그래서 오늘은 ${winnerName}. 오늘의 나는 짧게 자주 켜는 쪽보다, 한 번 앉으면 제대로 빠지는 쪽에 더 끌립니다.`
     : includesAny(winnerRaw, ["닌텐도", "스위치"])
-      ? `그래서 오늘은 ${winnerName}. 자주 켜고 가볍게 즐길 그림이면 이쪽이 덜 방치됩니다.`
+      ? `그래서 오늘은 ${winnerName}. 게임을 숙제처럼 켜기보다, 생각날 때 툭 켜는 쪽이 더 오래 갈 것 같습니다.`
       : `그래서 오늘은 ${winnerName}. 게임기는 스펙보다 실제로 켜는 시간이 이깁니다.`;
-  return cleanPlayTone(`${frame}${winnerLine} ${loserLine} ${closer}`);
+  return cleanPlayTone(`${winnerLine} ${loserLine} ${closer}`);
 }
 
 function playfulRealityReason(category, winner, loser, question) {
@@ -2434,24 +2431,24 @@ function inferredRealityReason(category, winner, loser, question) {
   const loserFirst = escapeHtml(loser.features[0] || "반대쪽 장점");
   const pools = {
     travel: [
-      `${winnerTopic} 이름보다 여행 방식으로 봐야 합니다. ${first}이 먼저 보이고, ${second}도 같이 따라옵니다. ${loserName}도 후보지만 오늘은 ${winnerName} 쪽 휴가 장면이 조금 더 잘 붙습니다.`,
-      `${winnerName}을 고르면 핵심은 "가서 뭘 하느냐"입니다. ${first}, 그리고 ${second} 쪽이라 그냥 장소 이름보다 하루 쓰는 방식이 더 중요해집니다. ${loserName}은 다음 후보로 남겨도 됩니다.`
+      `${winnerTopic} 오늘 머릿속에서 먼저 쉬거나 움직이는 장면이 잡힙니다. ${first}이 떠오르고, ${second}도 같이 따라옵니다. ${loserName}도 괜찮지만 오늘 마음은 ${winnerName} 쪽 하루를 더 빨리 상상합니다.`,
+      `${winnerName}을 고르면 여행이 조금 더 쉽게 시작되는 느낌입니다. ${first}, 그리고 ${second} 쪽이라 오늘의 나는 ${loserName}보다 이쪽을 더 편하게 떠올립니다.`
     ],
     shopping: [
-      `${winnerTopic} 물건 이름보다 사고 난 뒤 쓰는 장면을 봐야 합니다. ${first}, ${second}가 바로 따라오니까 지름신만 보고 고르면 안 됩니다. ${loserName}도 좋지만 오늘은 ${winnerName} 쪽 사용 장면이 더 먼저 보입니다.`,
-      `${winnerTopic} 결제 버튼보다 한 달 뒤를 봐야 하는 선택입니다. ${first}, ${second} 쪽이라 지금 사고 싶은 마음이 실제 생활에 붙는지가 핵심입니다.`
+      `${winnerTopic} 사고 나서 바로 쓰는 내가 먼저 떠오릅니다. ${first}, ${second}가 붙어서 지름신이 그냥 헛소리만 하는 건 아닌 듯합니다. ${loserName}도 좋지만 오늘은 ${winnerName} 쪽이 더 손에 잡힙니다.`,
+      `${winnerTopic} 결제 직후보다 며칠 뒤의 내가 더 중요합니다. ${first}, ${second} 쪽이라 지금 마음이 실제 생활까지 따라갈 가능성이 있어 보입니다.`
     ],
     food: [
-      `${winnerTopic} 메뉴 이름보다 먹고 난 뒤가 중요합니다. ${first}, ${second}가 먼저 보이고, ${loserName}은 ${loserFirst} 쪽으로 따라옵니다. 오늘은 ${winnerName}으로 닫아도 덜 궁시렁댈 날입니다.`,
-      `${winnerName}을 고르면 식탁에서 바로 달라지는 건 ${first}입니다. ${loserName}도 괜찮지만, 지금은 ${second} 쪽이 더 크게 들어옵니다.`
+      `${winnerTopic} 먹고 난 뒤 표정이 먼저 떠오릅니다. ${first}, ${second}가 보이고, ${loserName}은 ${loserFirst} 쪽으로 따라옵니다. 오늘은 ${winnerName}으로 닫아도 덜 궁시렁댈 날입니다.`,
+      `${winnerName}을 고르면 식탁에서 바로 달라지는 건 ${first}입니다. ${loserName}도 괜찮지만, 지금은 ${second} 쪽이 더 당깁니다.`
     ],
     daily: [
-      `${winnerTopic} 선택 뒤에 오는 시간과 피로를 같이 봐야 합니다. ${first}, ${second}가 있어서 오늘은 ${loserName}보다 덜 꼬일 가능성이 있습니다.`,
-      `${winnerTopic} 단어보다 끝나고 남는 상태가 핵심입니다. ${first}이 먼저 보이고, ${loserName}은 ${loserFirst} 쪽으로 버팁니다.`
+      `${winnerTopic} 끝나고 난 내 표정이 먼저 보입니다. ${first}, ${second}가 있어서 오늘은 ${loserName}보다 덜 꼬일 가능성이 있습니다.`,
+      `${winnerTopic} 지금보다 끝나고 남는 상태가 더 크게 보입니다. ${first}이 먼저 보이고, ${loserName}은 ${loserFirst} 쪽으로 버팁니다.`
     ]
   };
   const pool = pools[category] || [
-    `${winnerTopic} 이름보다 선택 뒤의 상황을 봐야 합니다. ${first}, ${second}가 오늘 판단의 핵심입니다. ${loserName}도 후보지만 지금은 ${winnerName} 쪽이 더 말이 됩니다.`
+    `${winnerTopic} 선택 뒤의 내 모습이 먼저 떠오릅니다. ${first}, ${second}가 오늘 마음을 끌고 갑니다. ${loserName}도 후보지만 지금은 ${winnerName} 쪽이 더 말이 됩니다.`
   ];
   return cleanPlayTone(pick(pool, hashText(`${question}-${winner.name}-${loser.name}-${category}-inferred`)));
 }

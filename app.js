@@ -1789,12 +1789,132 @@ function optionCharacterLine(entry, optionName, question, salt = "") {
   return pick(entry.lines, hashText(`${question}-${optionName}-${salt}-character-line`));
 }
 
-function foodComparisonLine(winner, loser, question) {
+function zodiacSceneTone(sign) {
+  const name = Array.isArray(sign) ? sign[0] : String(sign || "황소자리");
+  const bank = {
+    "양자리": {
+      food: ["양자리는 오래 재지 않습니다. 배보다 손이 먼저 움직이는 날입니다.", "일단 먹고 생각하자는 쪽입니다. 오늘은 메뉴판보다 주문 버튼이 빠릅니다.", "고민이 길어지기 전에 이미 앞접시가 준비됐습니다."],
+      travel: ["양자리는 일단 나가고 봅니다. 계획은 길 위에서 대충 맞추는 쪽입니다.", "가만히 앉아서 비교하기보다 발이 먼저 움직이는 날입니다.", "생각보다 출발이 빠릅니다. 티켓보다 몸이 먼저 반응합니다."],
+      shopping: ["양자리는 손가락이 결제 버튼 근처까지 먼저 갑니다.", "생각은 아직인데 이미 상세 페이지를 세 번 봤습니다.", "일단 질러보고 이유는 나중에 찾으려는 기운이 있습니다."],
+      default: ["양자리는 결론보다 출발이 빠릅니다.", "오늘은 몸이 먼저 움직이고 머리가 뒤따라오는 날입니다.", "가만히 있으면 답답해서 결국 한쪽을 누르게 됩니다."]
+    },
+    "황소자리": {
+      food: ["황소자리는 편하게 앉아서 맛있는 쪽에 오래 머뭅니다.", "오늘은 굳이 복잡하게 가기보다 먹고 나서 몸이 덜 투덜대는 쪽입니다.", "배부르고 편하면 이미 절반은 이긴 날입니다."],
+      travel: ["황소자리는 여행도 결국 몸이 편해야 오래 웃습니다.", "오늘은 새 모험보다 돌아와서도 덜 지치는 그림을 먼저 봅니다.", "편한 동선과 확실한 만족이 같이 오는 쪽에 마음이 갑니다."],
+      shopping: ["황소자리는 사고 나서 오래 편하게 쓸 물건인지 먼저 봅니다.", "굳이? 라고 하다가도 생활이 편해지면 바로 설득됩니다.", "오늘은 화려한 지름보다 실속 있는 만족에 점수가 붙습니다."],
+      default: ["황소자리는 편한 게 최고라는 표정입니다.", "오늘은 몸이 덜 귀찮아하는 쪽이 꽤 강합니다.", "새로운 척보다 오래 편한 쪽에 마음이 눕습니다."]
+    },
+    "쌍둥이자리": {
+      food: ["쌍둥이자리는 먹으면서 할 말이 생기는 쪽을 좋아합니다.", "찬성도 나고 반대도 나지만, 결국 더 떠들 거리 있는 쪽으로 갑니다.", "메뉴 하나 고르는데 머릿속 채팅방이 너무 시끄럽습니다."],
+      travel: ["쌍둥이자리는 돌아와서 할 얘기가 많은 쪽에 약합니다.", "이쪽도 궁금하고 저쪽도 궁금한데, 오늘은 이야깃거리가 더 많은 쪽입니다.", "검색 탭을 여러 개 열어놓고도 결국 더 수다스러운 여행에 끌립니다."],
+      shopping: ["쌍둥이자리는 리뷰를 보다가 다른 리뷰까지 다 읽는 타입입니다.", "궁금해서 찾아본 게 이미 반쯤 마음을 흔들었습니다.", "장바구니보다 검색 기록이 먼저 길어지는 날입니다."],
+      default: ["쌍둥이자리는 아직도 내부 회의 중입니다.", "잠깐, 이것도 재밌는데? 하는 쪽이 튀어나옵니다.", "찬성 의견도 본인이고 반대 의견도 본인입니다."]
+    },
+    "게자리": {
+      food: ["게자리는 먹고 나서 마음이 편한 쪽을 먼저 봅니다.", "오늘은 입보다 속마음이 덜 서운한 메뉴에 끌립니다.", "누구랑 먹든 끝나고 따뜻하게 남는 쪽이 강합니다."],
+      travel: ["게자리는 장소보다 같이 갔을 때의 표정을 먼저 떠올립니다.", "오늘은 돌아와서 마음이 덜 허전한 쪽이 이깁니다.", "사진보다 그날의 기분이 오래 남는 여행에 점수가 붙습니다."],
+      shopping: ["게자리는 물건보다 사고 난 뒤 마음이 편한지를 먼저 봅니다.", "괜히 마음 쓰이는 소비면 오래 갑니다. 오늘은 그 찝찝함을 피하는 쪽입니다.", "내가 진짜 좋아할지, 괜히 신경 쓰일지부터 확인하는 날입니다."],
+      default: ["게자리는 결과보다 마음의 뒷정리를 먼저 봅니다.", "나중에 마음 쓰이면 그게 답입니다.", "오늘은 덜 미안하고 덜 서운한 쪽이 앞섭니다."]
+    },
+    "사자자리": {
+      food: ["사자자리는 밥도 살짝 주인공처럼 먹고 싶어 합니다.", "오늘은 테이블 위에서 존재감 있는 쪽이 눈에 들어옵니다.", "이왕 먹을 거면 기억에 남는 한 판을 고르는 날입니다."],
+      travel: ["사자자리는 여행에서도 오늘의 컷이 멋있어야 합니다.", "나중에 말했을 때 더 폼 나는 쪽이 살짝 앞섭니다.", "오늘은 배경도 중요합니다. 주인공 컷이 사는 쪽입니다."],
+      shopping: ["사자자리는 쓰는 순간 티가 나는 물건에 약합니다.", "조용한 만족보다 딱 봐도 기분 올라오는 쪽이 보입니다.", "오늘은 내 기분을 조금 크게 대접하고 싶은 날입니다."],
+      default: ["사자자리는 이왕이면 멋있게 가고 싶어 합니다.", "눈치보다가 장면 놓치기 싫은 날입니다.", "오늘은 내가 주인공이라는 쪽에 살짝 힘이 들어갑니다."]
+    },
+    "처녀자리": {
+      food: ["처녀자리는 먹고 난 뒤 정리까지 계산합니다.", "오늘은 배보다 뒤처리가 덜 귀찮은 쪽도 꽤 중요합니다.", "괜히 과하게 먹고 후회하는 루트는 체크리스트에서 빠졌습니다."],
+      travel: ["처녀자리는 이동, 비용, 피로를 머릿속에서 이미 줄 세웠습니다.", "오늘은 다녀와서 일정이 덜 꼬이는 쪽에 마음이 갑니다.", "즉흥도 좋지만 준비 없이 피곤해지는 건 싫은 날입니다."],
+      shopping: ["처녀자리는 사고 나서 실제로 몇 번 쓸지부터 셉니다.", "리뷰, 가격, 사용 빈도가 머릿속에서 이미 회의 중입니다.", "오늘은 예쁜 말보다 실사용 장면이 더 센 날입니다."],
+      default: ["처녀자리는 잠깐 계산 좀 하고 갑니다.", "체크리스트가 조용히 켜졌습니다.", "오차 범위 안이면 가고, 찝찝하면 멈춥니다."]
+    },
+    "천칭자리": {
+      food: ["천칭자리는 맛도 보지만 같이 놓였을 때 그림도 봅니다.", "둘 다 괜찮아서 저울이 흔들렸는데, 오늘 테이블은 이쪽으로 기웁니다.", "오늘은 과하지 않고 보기 좋은 선택이 조금 더 앞섭니다."],
+      travel: ["천칭자리는 여행의 분위기와 동선을 같이 봅니다.", "너무 빡세지도 너무 심심하지도 않은 쪽을 찾는 날입니다.", "사진, 기분, 피로가 적당히 맞는 쪽에 저울이 멈춥니다."],
+      shopping: ["천칭자리는 필요와 예쁨 사이에서 오래 흔들립니다.", "오늘은 사고 나서 보기에도, 쓰기에도 어색하지 않은 쪽입니다.", "균형이 무너지면 바로 후회가 옵니다. 그래서 이쪽입니다."],
+      default: ["천칭자리는 둘 다 괜찮아서 더 어렵습니다.", "저울이 한참 흔들리다 오늘은 이쪽에 멈췄습니다.", "분위기상 이쪽입니다."]
+    },
+    "전갈자리": {
+      food: ["전갈자리는 대충 배만 채우는 걸 싫어합니다.", "오늘은 한 번 꽂히면 끝까지 가는 쪽입니다.", "어중간한 선택보다 먹는 동안 몰입되는 쪽이 셉니다."],
+      travel: ["전갈자리는 겉핥기보다 깊게 빠질 수 있는 쪽을 봅니다.", "오늘은 사진 몇 장보다 오래 생각나는 경험 쪽입니다.", "대충 다녀오는 여행보다 마음에 남는 쪽에 힘이 실립니다."],
+      shopping: ["전갈자리는 살 거면 제대로 빠질 물건인지 봅니다.", "괜히 애매한 만족은 싫습니다. 오늘은 확실히 꽂히는 쪽입니다.", "한 번 마음에 걸리면 계속 생각나는 쪽이 있습니다."],
+      default: ["전갈자리는 그래서 본질이 뭔데? 하고 묻습니다.", "대충은 싫고 끝까지 파보는 날입니다.", "오늘은 애매함보다 확실한 쪽이 이깁니다."]
+    },
+    "사수자리": {
+      food: ["사수자리는 먹는 것도 작은 이벤트처럼 가고 싶어 합니다.", "오늘은 평소처럼 끝내기보다 기분이 움직이는 쪽입니다.", "먹고 나서 얘깃거리 하나 남는 쪽이 더 재밌습니다."],
+      travel: ["사수자리는 답답하면 일단 멀어지는 쪽입니다.", "오늘은 피곤해도 경험치가 남는 선택에 끌립니다.", "지도보다 기분이 먼저 펼쳐지는 날입니다."],
+      shopping: ["사수자리는 써보고 나서 생길 재미를 먼저 봅니다.", "지금은 안전한 선택보다 새 경험 쪽이 더 크게 보입니다.", "인생 뭐 있어요, 라는 말이 장바구니 옆에서 맴돕니다."],
+      default: ["사수자리는 가보자 쪽입니다.", "경험치가 남으면 그걸로 됐다는 표정입니다.", "답답하면 움직이는 쪽이 강합니다."]
+    },
+    "염소자리": {
+      food: ["염소자리는 먹고 나서 하루가 망가지지 않는 쪽을 봅니다.", "오늘은 만족도 좋지만 내일의 리듬도 같이 챙깁니다.", "괜히 과한 선택보다 오래 봐도 괜찮은 쪽입니다."],
+      travel: ["염소자리는 다녀온 뒤 일정과 지갑까지 같이 봅니다.", "오늘은 즐거움만큼 돌아온 뒤의 현실도 중요한 날입니다.", "나중에 봐도 잘 골랐다 싶은 쪽으로 기웁니다."],
+      shopping: ["염소자리는 사고 난 뒤 오래 남는 값을 봅니다.", "결국 결과입니다. 오늘은 쓴 돈이 변명 가능한 쪽입니다.", "미래의 내가 덜 혼나는 선택이 꽤 세게 올라옵니다."],
+      default: ["염소자리는 결국 결과를 봅니다.", "미래의 내가 덜 혼나는 쪽이 강합니다.", "할 건 해야 하고, 남는 건 남아야 합니다."]
+    },
+    "물병자리": {
+      food: ["물병자리는 남들이 다 고르는 답보다 살짝 다른 맛에 끌립니다.", "오늘은 뻔한 결론을 피하고 싶은 기운이 있습니다.", "왜 꼭 평범하게 골라야 하냐는 표정입니다."],
+      travel: ["물병자리는 정석 코스보다 내 방식대로 움직이는 여행을 봅니다.", "오늘은 남들이 추천한 곳보다 내가 이상하게 끌리는 쪽입니다.", "계획표보다 반전 있는 하루에 마음이 갑니다."],
+      shopping: ["물병자리는 남들과 똑같은 소비보다 내 취향이 보이는 쪽입니다.", "오늘은 기능보다 '이거 좀 나답다'가 먼저 올라옵니다.", "왜 꼭 그걸 사야 하냐고 묻다가, 이상하게 이쪽에 꽂힙니다."],
+      default: ["물병자리는 왜 꼭 그래야 하지? 하고 시작합니다.", "남들 다 가는 길은 재미없다는 표정입니다.", "오늘은 살짝 다른 답이 더 살아 있습니다."]
+    },
+    "물고기자리": {
+      food: ["물고기자리는 먹고 난 뒤 기분이 어떻게 남을지 먼저 봅니다.", "오늘은 배보다 마음이 덜 출렁이는 메뉴가 강합니다.", "한 끼가 위로처럼 느껴지는 쪽에 마음이 갑니다."],
+      travel: ["물고기자리는 여행지를 고를 때 그날의 기분까지 같이 챙깁니다.", "오늘은 다녀와서 마음에 잔잔하게 남는 쪽입니다.", "사진보다 여운이 오래 갈 선택에 점수가 붙습니다."],
+      shopping: ["물고기자리는 물건보다 그걸 쓰는 내 기분을 먼저 상상합니다.", "오늘은 논리보다 마음이 덜 흔들리는 쪽입니다.", "잠들기 전에 괜히 떠오르는 쪽이 답일 수 있습니다."],
+      default: ["물고기자리는 마음이 먼저입니다.", "오늘 기분은 이쪽으로 조용히 흐릅니다.", "잠들기 전에 덜 출렁이는 쪽이 강합니다."]
+    }
+  };
+  return bank[name] || bank["황소자리"];
+}
+
+function zodiacSceneLine(category, sign, winner, loser, question, seed, salt = "scene") {
+  const tone = zodiacSceneTone(sign);
+  const pool = tone[category] || tone.default || [];
+  if (!pool.length) return "";
+  return pick(pool, hashText(`${question}-${winner.name}-${loser.name}-${Array.isArray(sign) ? sign[0] : sign}-${seed}-${category}-${salt}`));
+}
+
+function optionSceneVariant(category, winner, loser, question, sign, seed) {
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const raw = `${question} ${winner.name} ${loser.name}`.toLowerCase();
+  const winnerRaw = String(winner.name || "").toLowerCase();
+  const pools = [];
+  if (category === "food") {
+    if (includesAny(winnerRaw, ["삼겹살"])) pools.push("고기 냄새 배는 건 싫은데, 한 점 더 먹는 손은 이미 배신했습니다.", "굽는 사람은 따로 있는데 젓가락은 이상하게 내 앞으로 옵니다.", "쌈 싸는 순간 오늘의 다짐은 잠깐 외출합니다.", "불판 앞에 앉으면 대화보다 뒤집는 타이밍이 먼저 중요해집니다.", "집 가서 옷 냄새 맡고도 방금 한 점은 인정하게 됩니다.");
+    if (includesAny(winnerRaw, ["한우", "소고기"])) pools.push("계산할 때는 비싸다 싶은데 집 가서 사진을 다시 보게 되는 쪽입니다.", "한우는 말이 줄어드는 음식입니다. 가격 생각은 잠깐 뒤로 밀립니다.", "오늘은 배보다 기분을 대접하는 쪽이 더 세게 올라옵니다.", "한 점 올리는 순간부터 식사가 아니라 작은 행사처럼 변합니다.", "통장은 살짝 눈치 보지만 입은 이미 편을 정했습니다.");
+    if (includesAny(winnerRaw, ["곱창"])) pools.push("곱창은 한 잔이 두 잔 되는 위험구역입니다.", "불판 위에서 기름이 올라오면 오늘 대화도 같이 길어집니다.", "추가 주문 확률이 조용히 올라가는 선택입니다.");
+    if (includesAny(winnerRaw, ["피자"])) pools.push("피자는 한 조각만 먹겠다는 말을 잘 안 믿습니다.", "상자 열리는 순간 나눠 먹을 핑계가 생깁니다.", "치즈 늘어나는 동안 오늘 고민은 잠깐 조용해집니다.");
+    if (includesAny(winnerRaw, ["햄버거", "버거"])) pools.push("햄버거는 포장지 여는 순간 손이 바빠지는 쪽입니다.", "감튀 하나 집는 순간 이미 세트가 본론이 됩니다.", "소스 묻은 손가락 보고도 만족하면 이긴 겁니다.");
+    if (includesAny(winnerRaw, ["라면"])) pools.push("물 올리는 순간 마음은 이미 반쯤 넘어갑니다.", "먹고 나면 물 한 컵 더 찾을 미래까지 같이 옵니다.", "간단히 먹자는 말로 시작해서 냄비 바닥까지 확인할 수 있습니다.");
+    if (!pools.length) pools.push(`${winnerName} 고르면 먹고 난 뒤 변명보다 표정이 먼저 나옵니다.`, `${loserName}도 좋지만 오늘은 ${winnerName} 쪽으로 주문하고 나서 덜 흔들릴 듯합니다.`, `${winnerName} 쪽은 끝나고 "괜히 고민했네"가 나오기 쉽습니다.`, `오늘은 ${winnerName} 먹고 나서 다음 선택지를 굳이 다시 떠올리지 않을 쪽입니다.`);
+  }
+  if (category === "travel") {
+    if (includesAny(winnerRaw, ["일본"])) pools.push("일본은 회사 생각을 잊는다기보다, 걷고 구경하느라 생각할 틈을 줄이는 쪽입니다.", "편의점 한 바퀴만 돌아도 괜히 여행 온 티가 나는 선택입니다.", "많이 걷는 건 각오해야 하지만, 골목마다 오늘의 핑계가 생깁니다.");
+    if (includesAny(winnerRaw, ["태국"])) pools.push("태국은 회사 생각이 덜 나는 쪽입니다. 슬리퍼 신고 느슨해지는 그림이 먼저 옵니다.", "마사지 받고 야시장 걷는 순간 휴가가 빨리 시작됩니다.", "계획표보다 몸이 먼저 풀리는 여행에 가깝습니다.");
+    if (includesAny(winnerRaw, ["제주"])) pools.push("제주는 차 타고 창밖 보는 시간까지 여행처럼 느껴지는 쪽입니다.", "카페, 바람, 드라이브가 한 세트로 따라옵니다.", "크게 뭘 안 해도 사진첩이 조금 넓어지는 선택입니다.");
+    if (includesAny(winnerRaw, ["부산"])) pools.push("부산은 바다 보고 회 한 점 먹는 순간 말이 쉬워집니다.", "밤바다 앞에서는 피곤해도 괜히 한 번 더 걷게 됩니다.", "도착하면 여행보다 놀러 온 느낌이 먼저 납니다.");
+    if (!pools.length) pools.push(`${winnerName}은 다녀온 뒤 말할 거리가 조금 더 남는 쪽입니다.`, `${winnerName} 고르면 피곤해도 오늘 하루가 덜 평범해집니다.`, `${loserName}도 좋지만, 지금 머릿속 예고편은 ${winnerName} 쪽이 먼저 틀어집니다.`);
+  }
+  if (category === "shopping") {
+    if (includesAny(raw, ["컴퓨터", "pc", "노트북"])) pools.push("렉 걸릴 때마다 참던 마음이 오늘은 조금 크게 말합니다.", "새 컴퓨터는 비싸지만 기다리는 시간을 줄여주는 변명이 꽤 셉니다.", "장바구니는 이미 조용히 견적서를 흔들고 있습니다.");
+    if (includesAny(raw, ["tv", "티비", "텔레비전", "테레비"])) pools.push("TV는 바꾸는 순간 거실이 먼저 알아봅니다.", "화질 욕심은 조용히 오지만 한 번 보면 계속 신경 쓰입니다.", "리모컨 누르는 기분까지 바뀔 수 있는 선택입니다.");
+    if (includesAny(raw, ["플스", "플레이스테이션", "닌텐도", "스위치", "게임기"])) pools.push("게임기는 사는 순간보다 실제로 켜는 밤이 더 중요합니다.", "박스 뜯는 설렘은 강한데, 오래 켜게 될 그림까지 보여야 이깁니다.", "오늘은 장식품이 될지 퇴근 후 루틴이 될지 싸움입니다.");
+    if (!pools.length) pools.push(`결제 버튼은 반짝이지만, ${winnerName}은 사고 난 뒤 실제로 쓰는 장면이 먼저 보여야 합니다.`, `${winnerName} 쪽은 갖고 싶은 마음보다 며칠 뒤에도 손이 갈지가 핵심입니다.`, `${loserName}도 후보지만 오늘 지름신은 ${winnerName} 쪽에서 목소리가 큽니다.`);
+  }
+  if (!pools.length) return "";
+  return pick(pools, hashText(`${question}-${winner.name}-${loser.name}-${Array.isArray(sign) ? sign[0] : sign}-${seed}-${category}-option-scene`));
+}
+
+function foodComparisonLine(winner, loser, question, sign, seed = 0) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
   const winnerCharacter = foodCharacterLines(winner.name);
   const loserCharacter = foodCharacterLines(loser.name);
   if (winnerCharacter && loserCharacter) {
+    const sceneTone = zodiacSceneLine("food", sign, winner, loser, question, seed, "food-comparison-tone");
+    const sceneVariant = optionSceneVariant("food", winner, loser, question, sign, seed);
     const winnerLine = optionCharacterLine(winnerCharacter, winner.name, question, "winner");
     const loserLine = optionCharacterLine(loserCharacter, loser.name, question, "loser");
     const closer = pick([
@@ -1802,33 +1922,35 @@ function foodComparisonLine(winner, loser, question) {
       `${loserName}도 좋은데, 오늘 끝나고 "괜히 골랐다" 덜 나올 쪽은 ${winnerName}입니다.`,
       `둘 다 배신은 안 하는데, 오늘은 ${winnerName} 쪽이 식탁 엔딩이 더 깔끔합니다.`,
       `결론만 말하면 ${winnerName}. 길게 따지면 더 배고파집니다.`
-    ], hashText(`${question}-${winner.name}-${loser.name}-food-comparison-close`));
-    return cleanPlayTone(`${winnerLine} ${loserLine} ${closer}`);
+    ], hashText(`${question}-${winner.name}-${loser.name}-${Array.isArray(sign) ? sign[0] : sign}-${seed}-food-comparison-close`));
+    return cleanPlayTone(`${sceneTone} ${sceneVariant} ${winnerLine} ${loserLine} ${closer}`);
   }
   return null;
 }
 
-function foodRealityReason(winner, loser, question) {
+function foodRealityReason(winner, loser, question, sign, seed = 0) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
   const winnerTopic = withParticle(winner.name, "은", "는");
   const winnerObject = withParticle(winner.name, "을", "를");
   const opening = foodSceneOpening(winner, loser, question);
-  const comparison = foodComparisonLine(winner, loser, question);
+  const comparison = foodComparisonLine(winner, loser, question, sign, seed);
   if (comparison) return comparison;
-  const culturalComparison = culturalRealityReason(winner, loser, question);
+  const culturalComparison = culturalRealityReason(winner, loser, question, sign, seed);
   if (culturalComparison) return culturalComparison;
   const character = foodCharacterLines(winner.name);
   if (character) {
-    const line = pick(character.lines, hashText(`${question}-${winner.name}-food-character`));
+    const sceneTone = zodiacSceneLine("food", sign, winner, loser, question, seed, "food-character-tone");
+    const sceneVariant = optionSceneVariant("food", winner, loser, question, sign, seed);
+    const line = pick(character.lines, hashText(`${question}-${winner.name}-${Array.isArray(sign) ? sign[0] : sign}-${seed}-food-character`));
     const loserTopic = withParticle(loser.name, "은", "는");
     const detail = pick([
       `${loserName}도 버티지만, 오늘은 ${winnerName} 쪽으로 손이 먼저 갑니다.`,
       `이건 분석하면 더 배고파집니다. 오늘은 ${winnerName}으로 빨리 끝내는 쪽입니다.`,
       `먹고 나서 "괜히 골랐다"가 덜 나올 쪽입니다.`,
       `${winnerName} 쪽은 먹고 난 뒤 표정이 바로 정리됩니다. ${loserTopic} 다음 라운드로 보내도 됩니다.`
-    ], hashText(`${question}-${winner.name}-food-character-detail`));
-    return cleanPlayTone(`${line} ${detail}`);
+    ], hashText(`${question}-${winner.name}-${Array.isArray(sign) ? sign[0] : sign}-${seed}-food-character-detail`));
+    return cleanPlayTone(`${sceneTone} ${sceneVariant} ${line} ${detail}`);
   }
   const first = winner.features[0] || "먹고 난 뒤 표정";
   const second = winner.features[1] || "후회가 덜 남는 쪽";
@@ -1839,9 +1961,13 @@ function foodRealityReason(winner, loser, question) {
     `지금은 설명보다 주문입니다. ${winnerName} 쪽이 끝나고 덜 궁시렁댈 선택이에요.`,
     `${winnerName}은 먹고 난 뒤 표정이 바로 옵니다. ${loserName}은 오늘 후보석에 잠깐 앉혀둡시다.`
   ];
+  const sceneTone = zodiacSceneLine("food", sign, winner, loser, question, seed, "food-generic-tone");
+  const sceneVariant = optionSceneVariant("food", winner, loser, question, sign, seed);
   return cleanPlayTone([
+    sceneTone,
+    sceneVariant,
     opening,
-    pick(detailPool, hashText(`${question}-${winner.name}-${loser.name}-food-detail`))
+    pick(detailPool, hashText(`${question}-${winner.name}-${loser.name}-${Array.isArray(sign) ? sign[0] : sign}-${seed}-food-detail`))
   ].join(" "));
 }
 
@@ -2114,25 +2240,28 @@ function culturalMeaningProfile(optionName) {
   return bank.find((item) => item.keys.some((key) => name.includes(key))) || null;
 }
 
-function culturalRealityReason(winner, loser, question) {
+function culturalRealityReason(winner, loser, question, sign, seed = 0) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
   const winnerProfile = culturalMeaningProfile(winner.name);
   const loserProfile = culturalMeaningProfile(loser.name);
   if (!winnerProfile && !loserProfile) return null;
+  const category = inferCategory(question, winner.name, loser.name, {});
+  const sceneTone = zodiacSceneLine(category, sign, winner, loser, question, seed, "culture-tone");
+  const sceneVariant = optionSceneVariant(category, winner, loser, question, sign, seed);
   const winnerLine = winnerProfile
-    ? optionCharacterLine(winnerProfile, winner.name, question, "culture-winner")
+    ? optionCharacterLine(winnerProfile, winner.name, question, `${Array.isArray(sign) ? sign[0] : sign}-${seed}-culture-winner`)
     : `${winnerName}도 나쁘진 않은데, 오늘 머릿속에 바로 뜨는 그림은 조금 약합니다.`;
   const loserLine = loserProfile
-    ? optionCharacterLine(loserProfile, loser.name, question, "culture-loser")
+    ? optionCharacterLine(loserProfile, loser.name, question, `${Array.isArray(sign) ? sign[0] : sign}-${seed}-culture-loser`)
     : `${loserName}도 후보지만, 오늘은 ${winnerName} 쪽 장면이 더 먼저 떠오릅니다.`;
   const closer = pick([
     `그래서 오늘은 ${winnerName}. 뜻보다 장면으로 보면 이쪽이 더 살아 있습니다.`,
     `${loserName}도 말은 되는데, 오늘 하루가 원하는 톤은 ${winnerName} 쪽에 더 가깝습니다.`,
     `야 그냥 ${winnerName} 가자. 머릿속 예고편이 이쪽이 더 빨리 틀어졌습니다.`,
     `결론은 ${winnerName}. 설명보다 그 선택 뒤에 따라오는 하루가 더 잘 보입니다.`
-  ], hashText(`${question}-${winner.name}-${loser.name}-culture-close`));
-  return cleanPlayTone(`${winnerLine} ${loserLine} ${closer}`);
+  ], hashText(`${question}-${winner.name}-${loser.name}-${Array.isArray(sign) ? sign[0] : sign}-${seed}-culture-close`));
+  return cleanPlayTone(`${sceneTone} ${sceneVariant} ${winnerLine} ${loserLine} ${closer}`);
 }
 
 function highValuePurchaseProfile(value) {
@@ -2297,29 +2426,58 @@ function categoryDecisionFrame(category, winner, loser, question) {
   return "";
 }
 
-function gameConsoleReason(winner, loser, question) {
+function gameConsoleReason(winner, loser, question, sign, seed = 0) {
   const raw = `${question} ${winner.name} ${loser.name}`.toLowerCase();
   if (!includesAny(raw, ["플스", "플레이스테이션", "닌텐도", "스위치", "게임기", "ps5"])) return null;
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
   const winnerRaw = String(winner.name).toLowerCase();
   const loserRaw = String(loser.name).toLowerCase();
+  const sceneTone = zodiacSceneLine("shopping", sign, winner, loser, question, seed, "console-tone");
+  const sceneVariant = optionSceneVariant("shopping", winner, loser, question, sign, seed);
+  const signKey = Array.isArray(sign) ? sign[0] : sign;
   const winnerLine = includesAny(winnerRaw, ["플스", "플레이스테이션", "ps5", "ps4"])
-    ? `${winnerName}는 밤에 불 끄고 TV 앞에 앉는 그림이 먼저 옵니다. 한 번 켜면 "제대로 한다"는 느낌이 강한 쪽입니다.`
+    ? pick([
+      `${winnerName}는 밤에 불 끄고 TV 앞에 앉는 느낌이 먼저 옵니다. 한 번 켜면 "제대로 한다"는 쪽입니다.`,
+      `${winnerName}는 퇴근 후 방 불 낮추고 오래 앉을 자신이 있을 때 힘을 받습니다.`,
+      `${winnerName}는 짧게 켜는 장난감보다, 각 잡고 빠지는 밤에 가까운 선택입니다.`,
+      `${winnerName} 쪽은 화면 앞에 앉는 순간 오늘 시간이 통째로 넘어갈 수 있습니다.`
+    ], hashText(`${question}-${winner.name}-${signKey}-${seed}-console-winner-ps`))
     : includesAny(winnerRaw, ["닌텐도", "스위치"])
-      ? `${winnerName}는 각 잡고 앉기보다 소파, 침대, 이동 중에 슬쩍 켜는 그림이 먼저 옵니다. 혼자 해도 되고 같이 해도 덜 부담스러운 쪽입니다.`
+      ? pick([
+        `${winnerName}는 소파, 침대, 이동 중에 슬쩍 켜는 그림이 먼저 옵니다.`,
+        `${winnerName}는 큰 결심 없이 켜도 되는 쪽입니다. 혼자 해도, 같이 해도 덜 뻣뻣합니다.`,
+        `${winnerName}는 게임을 숙제처럼 잡지 않아도 되는 편한 맛이 있습니다.`,
+        `${winnerName}는 잠깐 켰다가도 웃을 구석이 생기는 쪽입니다.`
+      ], hashText(`${question}-${winner.name}-${signKey}-${seed}-console-winner-nintendo`))
       : `${winnerName}는 하고 싶은 게임이 확실할 때 힘을 받는 선택입니다.`;
   const loserLine = includesAny(loserRaw, ["플스", "플레이스테이션", "ps5", "ps4"])
-    ? `${loserName}는 제대로 몰입하는 맛은 있는데, TV 앞에 앉을 시간이 없으면 괜히 눈치 보는 물건이 됩니다.`
+    ? pick([
+      `${loserName}는 몰입감은 센데, TV 앞에 앉을 시간이 없으면 괜히 눈치 보는 물건이 됩니다.`,
+      `${loserName}는 마음먹고 켜야 맛이 납니다. 자주 못 켜면 박스가 조금 억울합니다.`,
+      `${loserName}는 제대로 빠질 수 있으면 강하지만, 대충 켜기엔 살짝 무겁습니다.`
+    ], hashText(`${question}-${loser.name}-${signKey}-${seed}-console-loser-ps`))
     : includesAny(loserRaw, ["닌텐도", "스위치"])
-      ? `${loserName}는 자주 켜기엔 좋은데, 묵직하게 빠져들 게임을 원하면 살짝 가볍게 느껴질 수 있습니다.`
+      ? pick([
+        `${loserName}는 자주 켜기엔 좋은데, 묵직하게 빠져들 밤을 원하면 살짝 가볍게 느껴질 수 있습니다.`,
+        `${loserName}는 편하지만 오늘 원하는 게 큰 몰입이면 한 걸음 물러납니다.`,
+        `${loserName}는 부담은 적은데, 지금 마음이 원하는 무게와는 조금 다를 수 있습니다.`
+      ], hashText(`${question}-${loser.name}-${signKey}-${seed}-console-loser-nintendo`))
       : `${loserName}도 후보지만 실제로 켤 시간이 핵심입니다.`;
   const closer = includesAny(winnerRaw, ["플스", "플레이스테이션", "ps5", "ps4"])
-    ? `그래서 오늘은 ${winnerName}. 오늘의 나는 짧게 자주 켜는 쪽보다, 한 번 앉으면 제대로 빠지는 쪽에 더 끌립니다.`
+    ? pick([
+      `그래서 오늘은 ${winnerName}. 오늘의 나는 짧게 자주보다 한 번 앉아 제대로 빠지는 쪽입니다.`,
+      `결론은 ${winnerName}. 켤 때마다 "그래 이 맛이지"가 나와야 돈 쓴 티가 납니다.`,
+      `오늘은 ${winnerName} 쪽입니다. 문제는 살까 말까보다 진짜 켤 밤이 있냐입니다.`
+    ], hashText(`${question}-${winner.name}-${signKey}-${seed}-console-close-ps`))
     : includesAny(winnerRaw, ["닌텐도", "스위치"])
-      ? `그래서 오늘은 ${winnerName}. 게임을 숙제처럼 켜기보다, 생각날 때 툭 켜는 쪽이 더 오래 갈 것 같습니다.`
+      ? pick([
+        `그래서 오늘은 ${winnerName}. 생각날 때 툭 켜는 쪽이 오래 갈 것 같습니다.`,
+        `결론은 ${winnerName}. 게임을 큰 행사로 만들지 않아도 되는 쪽입니다.`,
+        `오늘은 ${winnerName} 쪽입니다. 자주 손이 가면 그게 결국 이기는 게임기입니다.`
+      ], hashText(`${question}-${winner.name}-${signKey}-${seed}-console-close-nintendo`))
       : `그래서 오늘은 ${winnerName}. 게임기는 스펙보다 실제로 켜는 시간이 이깁니다.`;
-  return cleanPlayTone(`${winnerLine} ${loserLine} ${closer}`);
+  return cleanPlayTone(`${sceneTone} ${sceneVariant} ${winnerLine} ${loserLine} ${closer}`);
 }
 
 function playfulRealityReason(category, winner, loser, question) {
@@ -2453,7 +2611,7 @@ function inferredRealityReason(category, winner, loser, question) {
   return cleanPlayTone(pick(pool, hashText(`${question}-${winner.name}-${loser.name}-${category}-inferred`)));
 }
 
-function categoryRealityReason(category, winner, loser, question, cards = []) {
+function categoryRealityReason(category, winner, loser, question, cards = [], sign = ["황소자리", "♉"], seed = 0) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
   const subject = escapeHtml(optionDisplayName(winner, category));
@@ -2464,15 +2622,19 @@ function categoryRealityReason(category, winner, loser, question, cards = []) {
   const loserFirstTopic = withParticle(loser.features[0] || "반대 선택의 장점", "은", "는");
   const pair = featurePairText(winner.features[0] || "바로 체감되는 장점", winner.features[1] || "끝나고 남는 느낌");
   const opening = realityOpeningLine(category, winner, loser, question);
-  if (category === "food") return foodRealityReason(winner, loser, question);
+  if (category === "food") return foodRealityReason(winner, loser, question, sign, seed);
   if (category === "game") return gameRealityReason(winner, loser, question);
   if (category === "shopping") {
-    const consoleReason = gameConsoleReason(winner, loser, question);
+    const consoleReason = gameConsoleReason(winner, loser, question, sign, seed);
     if (consoleReason) return consoleReason;
     const highValueReason = highValuePurchaseReason(winner, loser, question);
-    if (highValueReason) return highValueReason;
+    if (highValueReason) {
+      const sceneTone = zodiacSceneLine("shopping", sign, winner, loser, question, seed, "high-value-tone");
+      const sceneVariant = optionSceneVariant("shopping", winner, loser, question, sign, seed);
+      return cleanPlayTone(`${sceneTone} ${sceneVariant} ${highValueReason}`);
+    }
   }
-  const culturalReason = culturalRealityReason(winner, loser, question);
+  const culturalReason = culturalRealityReason(winner, loser, question, sign, seed);
   if (culturalReason) return cleanPlayTone(`${categoryDecisionFrame(category, winner, loser, question)}${culturalReason}`);
   const inferredReason = inferredRealityReason(category, winner, loser, question);
   if (inferredReason) return cleanPlayTone(`${categoryDecisionFrame(category, winner, loser, question)}${inferredReason}`);
@@ -4041,22 +4203,22 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     `${escapeHtml(loser.name)}도 나쁘진 않은데, 지금은 ${escapeHtml(winner.name)} 쪽이 끝나고 더 설명이 됩니다.`
   ].join(" ");
   const whyByCategory = {
-    food: categoryRealityReason("food", winner, loser, question, cardLabels),
-    beverage: categoryRealityReason("beverage", winner, loser, question, cardLabels),
-    drink: categoryRealityReason("drink", winner, loser, question, cardLabels),
-    childcare: categoryRealityReason("childcare", winner, loser, question, cardLabels),
-    gift: categoryRealityReason("gift", winner, loser, question, cardLabels),
-    relationship: categoryRealityReason("relationship", winner, loser, question, cardLabels),
-    shopping: categoryRealityReason("shopping", winner, loser, question, cardLabels),
-    attendance: categoryRealityReason("attendance", winner, loser, question, cardLabels),
-    money: categoryRealityReason("money", winner, loser, question, cardLabels),
-    hygiene: categoryRealityReason("hygiene", winner, loser, question, cardLabels),
-    exercise: categoryRealityReason("exercise", winner, loser, question, cardLabels),
-    study: categoryRealityReason("study", winner, loser, question, cardLabels),
-    game: categoryRealityReason("game", winner, loser, question, cardLabels),
-    travel: categoryRealityReason("travel", winner, loser, question, cardLabels),
-    place: categoryRealityReason("place", winner, loser, question, cardLabels),
-    daily: categoryRealityReason("daily", winner, loser, question, cardLabels)
+    food: categoryRealityReason("food", winner, loser, question, cardLabels, sign, seed),
+    beverage: categoryRealityReason("beverage", winner, loser, question, cardLabels, sign, seed),
+    drink: categoryRealityReason("drink", winner, loser, question, cardLabels, sign, seed),
+    childcare: categoryRealityReason("childcare", winner, loser, question, cardLabels, sign, seed),
+    gift: categoryRealityReason("gift", winner, loser, question, cardLabels, sign, seed),
+    relationship: categoryRealityReason("relationship", winner, loser, question, cardLabels, sign, seed),
+    shopping: categoryRealityReason("shopping", winner, loser, question, cardLabels, sign, seed),
+    attendance: categoryRealityReason("attendance", winner, loser, question, cardLabels, sign, seed),
+    money: categoryRealityReason("money", winner, loser, question, cardLabels, sign, seed),
+    hygiene: categoryRealityReason("hygiene", winner, loser, question, cardLabels, sign, seed),
+    exercise: categoryRealityReason("exercise", winner, loser, question, cardLabels, sign, seed),
+    study: categoryRealityReason("study", winner, loser, question, cardLabels, sign, seed),
+    game: categoryRealityReason("game", winner, loser, question, cardLabels, sign, seed),
+    travel: categoryRealityReason("travel", winner, loser, question, cardLabels, sign, seed),
+    place: categoryRealityReason("place", winner, loser, question, cardLabels, sign, seed),
+    daily: categoryRealityReason("daily", winner, loser, question, cardLabels, sign, seed)
   };
   const adviceByCategory = {
     food: `오늘의 메뉴는 위장이 아니라 표정이 고르게 두세요.`,

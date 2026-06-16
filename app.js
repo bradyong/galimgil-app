@@ -804,6 +804,7 @@ const optionFeatureBank = [
   { keys: ["돈까스"], category: "food", features: ["바삭한 튀김", "든든한 양", "소스의 달큰함", "실패 확률이 낮은 메뉴"], caution: "느끼한 음식이 부담되면 끝까지 먹기 무거울 수 있어요.", vibe: "든든함" },
   { keys: ["국밥"], category: "food", features: ["뜨끈한 국물", "든든한 포만감", "속을 채워주는 느낌", "혼밥에도 편한 안정감"], caution: "가볍게 먹고 싶은 날엔 무겁게 느껴질 수 있어요.", vibe: "회복감" },
   { keys: ["순대국", "순댓국"], category: "food", features: ["익숙한 국밥 느낌", "뜨끈한 국물", "혼밥에도 편한 분위기", "부담 없이 든든한 한 그릇"], caution: "강한 해장감이나 푸짐한 한 상을 원하면 조금 얌전하게 느껴질 수 있어요.", vibe: "편안한 든든함" },
+  { keys: ["뼈해장국", "뼈 해장국"], category: "food", features: ["뼈를 뜯는 재미", "국물과 고기를 오래 붙잡는 식사", "순대국보다 푸짐한 한 그릇", "먹는 시간이 길어지는 묵직함"], caution: "빨리 먹고 움직여야 하는 날엔 뼈 발라먹는 시간이 살짝 부담될 수 있어요.", vibe: "뜯는 해장" },
   { keys: ["감자탕"], category: "food", features: ["푸짐한 뼈고기", "묵직한 국물", "사람들과 먹기 좋은 양", "해장 느낌이 강한 에너지"], caution: "가볍게 먹고 싶거나 혼자 조용히 먹고 싶으면 살짝 과할 수 있어요.", vibe: "푸짐한 에너지" },
   { keys: ["치킨"], category: "food", features: ["바삭한 튀김", "짭짤한 양념", "기분 전환 느낌", "나눠 먹기 좋은 재미"], caution: "가볍게 끝내고 싶은 날엔 과해질 수 있어요.", vibe: "기분 전환" },
   { keys: ["치킨에 맥주", "치맥"], category: "food", features: ["바삭한 치킨 껍질", "맥주 한 모금의 시원함", "배달 상자를 여는 편한 맛", "소파 앞에서 바로 시작되는 가벼운 분위기"], caution: "느끼함이 빨리 오거나 배달 기다림이 길면 흥이 살짝 꺼질 수 있어요.", vibe: "바삭한 즉시 만족" },
@@ -819,6 +820,8 @@ const optionFeatureBank = [
   { keys: ["아이스아메리카노", "아아", "차가운 아메리카노"], category: "beverage", features: ["차갑게 바로 깨는 느낌", "입안이 가벼워지는 쓴맛", "더울 때 시원하게 들어가는 점", "속이 예민하면 차가움이 부담될 수 있는 점"], caution: "속이 비었거나 몸이 차가운 날엔 천천히 마시는 게 좋아요.", vibe: "시원한 각성" },
   { keys: ["따뜻한 아메리카노", "뜨아", "핫아메리카노", "아메리카노"], category: "beverage", features: ["따뜻하게 손에 감기는 느낌", "천천히 마시기 좋은 온도", "속이 덜 놀라는 점", "더운 날엔 답답하게 느껴질 수 있는 점"], caution: "이미 덥거나 갈증이 크면 시원한 쪽이 더 당길 수 있어요.", vibe: "따뜻한 정리" },
   { keys: ["라떼", "카페라떼"], category: "beverage", features: ["우유의 부드러움", "쓴맛이 덜한 편안함", "출출할 때 살짝 채워지는 느낌", "깔끔한 커피를 원하면 무겁게 느껴질 수 있는 점"], caution: "가볍게 마시고 싶으면 아메리카노 쪽이 더 나을 수 있어요.", vibe: "부드러운 커피" },
+  { keys: ["콜라", "코카콜라", "펩시"], category: "beverage", features: ["첫 모금에 바로 오는 탄산 임팩트", "치킨이나 햄버거 옆에서 강해지는 존재감", "단맛이 확 올라오는 시원함", "마시고 나면 입안이 조금 끈적할 수 있는 점"], caution: "깔끔하게 마무리하고 싶거나 느끼함만 정리하고 싶으면 사이다가 더 가벼울 수 있어요.", vibe: "첫 모금 폭발" },
+  { keys: ["사이다", "스프라이트", "칠성사이다"], category: "beverage", features: ["깔끔하게 빠지는 탄산", "느끼함을 씻어내는 후반전 역할", "콜라보다 가볍게 넘어가는 단맛", "강한 첫 모금 임팩트는 덜할 수 있는 점"], caution: "햄버거나 치킨처럼 진한 메뉴 옆에서 첫 임팩트를 원하면 콜라가 더 세게 느껴질 수 있어요.", vibe: "깔끔한 마무리" },
   { keys: ["술", "소주", "맥주", "와인", "막걸리"], category: "drink", features: ["기분이 확 풀리는 느낌", "사람들과 말이 조금 더 쉬워지는 분위기", "내일 아침 컨디션을 담보로 잡는 점", "한 잔이 두 잔으로 변신하기 쉬운 점"], caution: "내일 일정이 있거나 이미 피곤하면 내일의 내가 강하게 항의할 수 있어요.", vibe: "오늘의 유혹" },
   { keys: ["키즈카페"], category: "childcare", features: ["실내라 날씨 영향을 덜 받는 점", "장난감과 시설이 많은 점", "큰 아이들과 동선이 겹치면 부딪힐 수 있는 점", "소리와 자극이 많아 아이가 금방 흥분할 수 있는 점"], caution: "사람이 많으면 보호자가 계속 따라다니며 봐야 해요.", vibe: "실내 자극" },
   { keys: ["놀이터"], category: "childcare", features: ["공간이 넓은 점", "아이가 자기 속도로 뛰어놀 수 있는 점", "돈이 거의 들지 않는 점", "날씨와 미끄럼틀·그네 주변 안전을 봐야 하는 점"], caution: "비, 추위, 미세먼지가 있으면 만족도가 확 떨어질 수 있어요.", vibe: "자유로운 몸놀이" },
@@ -872,8 +875,8 @@ const optionFeatureBank = [
 function inferCategory(question, choiceA, choiceB, profile) {
   const text = `${question} ${choiceA} ${choiceB}`.toLowerCase();
   if (profile.type !== "general") return profile.type;
-  if (includesAny(text, ["찌개", "라면", "밥", "국밥", "순대국", "순댓국", "감자탕", "치킨", "피자", "햄버거", "버거", "배달", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "곱창", "삼겹살", "메뉴", "먹을"])) return "food";
-  if (includesAny(text, ["아메리카노", "아이스", "아아", "뜨아", "커피", "라떼", "카페라떼", "콜드브루"])) return "beverage";
+  if (includesAny(text, ["찌개", "라면", "밥", "국밥", "순대국", "순댓국", "뼈해장", "감자탕", "치킨", "피자", "햄버거", "버거", "배달", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "곱창", "삼겹살", "메뉴", "먹을"])) return "food";
+  if (includesAny(text, ["아메리카노", "아이스", "아아", "뜨아", "커피", "라떼", "카페라떼", "콜드브루", "콜라", "코카콜라", "펩시", "사이다", "스프라이트", "칠성"])) return "beverage";
   if (includesAny(text, ["술", "소주", "맥주", "와인", "막걸리", "마실까", "한잔", "한 잔"])) return "drink";
   if (includesAny(text, ["샤워", "씻", "목욕", "머리감", "세수", "양치"])) return "hygiene";
   if (includesAny(text, ["운동", "헬스", "러닝", "뛸까", "뛰", "요가", "필라테스", "산책"])) return "exercise";
@@ -1572,6 +1575,28 @@ function foodCharacterLines(foodName) {
       "한 줄 끝이 생각보다 빨리 옵니다.",
       "단무지랑 같이 가면 속도가 붙습니다."
     ] },
+    { keys: ["순대국", "순댓국"], lines: [
+      "순대국은 말이 길어지기 전에 숟가락부터 들어가는 쪽입니다. 혼자 가도 어색하지 않고, 뜨끈하게 빨리 정리됩니다.",
+      "순대국은 편하게 앉아서 한 그릇 비우는 음식입니다. 깍두기 하나 올리면 고민이 갑자기 작아집니다.",
+      "순대국은 해장도 되고 식사도 되는 중간 지점입니다. 요란하진 않은데 먹고 나면 몸이 조용히 고개를 끄덕입니다.",
+      "순대국은 오래 뜯고 싸우는 음식이 아닙니다. 국물 한 숟갈, 밥 한 번 말고, 빠르게 살아나는 쪽입니다."
+    ], future: [
+      "깍두기 한 번 더 집는 순간 이미 만족 쪽입니다.",
+      "혼밥이어도 별로 외롭지 않은 한 그릇입니다.",
+      "먹고 나서 몸이 조용히 데워질 수 있습니다.",
+      "국물까지 보면 오늘은 꽤 잘 끝난 겁니다."
+    ] },
+    { keys: ["뼈해장국", "뼈 해장국"], lines: [
+      "뼈해장국은 빨리 끝낼 생각으로 들어가면 안 됩니다. 뼈 하나 잡는 순간 식사가 아니라 작업이 시작됩니다.",
+      "뼈해장국은 뜯는 재미가 있습니다. 국물도 국물인데, 결국 손이 바빠지는 쪽입니다.",
+      "뼈해장국은 푸짐하게 앉아서 오래 먹는 음식입니다. 순대국보다 한 단계 더 큰 결심이 필요합니다.",
+      "뼈해장국은 해장이라는 이름으로 들어와서 뼈 뜯는 재미까지 챙겨갑니다. 급한 식사보단 제대로 먹는 쪽입니다."
+    ], future: [
+      "뼈 하나 더 집다가 시간이 슬쩍 사라집니다.",
+      "먹고 나면 손은 바빴고 배는 조용해질 겁니다.",
+      "국물보다 뼈 뜯은 기억이 더 오래 남을 수 있습니다.",
+      "급하게 먹긴 글렀고, 대신 든든함은 남습니다."
+    ] },
     { keys: ["햄버거", "버거"], lines: [
       "햄버거는 생각보다 행동이 먼저 나오는 음식입니다. 포장지 열면 이미 늦었습니다.",
       "햄버거는 포장지 안에서 결론을 냅니다. 소스 삐져나오면 더 이상 회의 없습니다.",
@@ -1671,6 +1696,8 @@ function foodRealityReason(winner, loser, question) {
   const opening = foodSceneOpening(winner, loser, question);
   const comparison = foodComparisonLine(winner, loser, question);
   if (comparison) return comparison;
+  const culturalComparison = culturalRealityReason(winner, loser, question);
+  if (culturalComparison) return culturalComparison;
   const character = foodCharacterLines(winner.name);
   if (character) {
     const line = pick(character.lines, hashText(`${question}-${winner.name}-food-character`));
@@ -1757,6 +1784,36 @@ function gameRealityReason(winner, loser, question) {
 function culturalMeaningProfile(optionName) {
   const name = String(optionName || "").toLowerCase();
   const bank = [
+    {
+      keys: ["콜라", "코카콜라", "펩시"],
+      lines: [
+        "콜라는 첫 모금부터 크게 들어옵니다. 치킨이나 햄버거 옆에서는 거의 등장 음악처럼 따라붙습니다.",
+        "콜라는 조용히 마시는 음료가 아닙니다. 캔 따는 소리부터 이미 입안이 준비합니다.",
+        "콜라는 첫 탄산이 세게 치고 들어오는 쪽입니다. 느끼한 메뉴 옆에 있으면 괜히 더 당당합니다.",
+        "콜라는 햄버거 한입 뒤에 가장 말이 잘 통합니다. 단맛과 탄산이 바로 치고 올라오는 쪽입니다."
+      ],
+      future: [
+        "첫 모금에 목이 바로 대답할 수 있습니다.",
+        "치킨 상자 옆이면 콜라가 괜히 더 당당해집니다.",
+        "얼음컵까지 있으면 이미 분위기는 끝났습니다.",
+        "마시고 나서 트림 한 번까지 세트일 수 있습니다."
+      ]
+    },
+    {
+      keys: ["사이다", "스프라이트", "칠성사이다"],
+      lines: [
+        "사이다는 후반전에 강합니다. 느끼함이 올라올 때 깔끔하게 정리하는 쪽입니다.",
+        "사이다는 콜라처럼 먼저 소리치진 않는데, 입안 정리는 더 깔끔하게 합니다.",
+        "사이다는 기름진 음식 뒤에서 빛납니다. 한 모금 마시면 입안이 새로고침되는 느낌입니다.",
+        "사이다는 끝맛을 가볍게 가져갑니다. 강한 첫방보다 마무리 능력이 좋은 쪽입니다."
+      ],
+      future: [
+        "느끼함이 올라올 때 사이다가 뒤에서 수습합니다.",
+        "한 모금 뒤에 입안이 다시 시작 버튼을 누를 수 있습니다.",
+        "깔끔하게 넘어가서 다음 젓가락이 덜 부담스럽습니다.",
+        "콜라보다 덜 요란하지만 끝은 더 가볍게 남습니다."
+      ]
+    },
     {
       keys: ["홍대"],
       lines: [
@@ -3513,11 +3570,14 @@ function futureComment(category, winner, question, seed, sign) {
 
 function scoreOption(analysis, category, question, mood, seed, sign, cards = []) {
   const text = `${analysis.name} ${analysis.subjectName || ""} ${question}`.toLowerCase();
+  const optionText = `${analysis.name} ${analysis.subjectName || ""}`.toLowerCase();
   let score = 50 + (hashText(`${analysis.name}-${seed}`) % 9) - 4;
   if (category === "food") {
     if (includesAny(text, ["김치", "라면", "짬뽕", "떡볶이", "치킨"]) && mood >= 5 && includesAny(question, ["매콤", "얼큰", "자극", "스트레스"])) score += 6;
     if (includesAny(text, ["된장", "국밥", "순대국", "담백", "속 편", "짜장"]) && (mood <= 4 || includesAny(question, ["속", "편", "부담", "무난", "간단"]))) score += 10;
     if (includesAny(text, ["삼겹살", "감자탕", "고기", "돈까스"]) && includesAny(question, ["가볍", "속", "부담", "다이어트", "느끼"])) score -= 8;
+    if (includesAny(optionText, ["콜라", "코카콜라", "펩시"]) && includesAny(question, ["치킨", "햄버거", "버거", "피자"])) score += 18;
+    if (includesAny(optionText, ["사이다", "스프라이트", "칠성"]) && includesAny(question, ["느끼", "깔끔", "정리", "후반", "가볍"])) score += 9;
     if (analysis.intent === "go" && !includesAny(question, ["속", "부담", "다이어트", "아프"])) score += 3;
     if (analysis.intent === "skip" && includesAny(question, ["속", "부담", "다이어트", "아프"])) score += 9;
   }

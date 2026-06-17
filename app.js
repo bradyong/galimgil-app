@@ -885,6 +885,8 @@ const optionFeatureBank = [
   { keys: ["전화", "통화"], category: "relationship", features: ["목소리로 오해를 줄일 수 있는 점", "답을 바로 확인하는 점", "문자보다 감정이 빨리 전달되는 점", "상대가 바쁘면 부담이 될 수 있는 점"], caution: "늦은 시간이거나 상대가 예민한 상황이면 짧게 시작하는 게 좋아요.", vibe: "직접 확인" },
   { keys: ["문자", "카톡", "연락"], category: "relationship", features: ["부담을 덜 주고 말을 꺼낼 수 있는 점", "상대가 답할 시간을 가질 수 있는 점", "말을 고쳐 쓸 수 있는 점", "기다리는 시간이 길어질 수 있는 점"], caution: "길게 쓰기보다 핵심만 짧게 보내는 게 좋아요.", vibe: "말풍선" },
   { keys: ["고백", "연락", "사과"], category: "relationship", features: ["마음을 직접 전함", "오해를 줄일 수 있음", "상대 반응을 확인할 수 있음", "말투가 세면 부담을 줄 수 있음"], caution: "긴 문장보다 짧고 정확한 말이 좋아요.", vibe: "직접 확인" },
+  { keys: ["우리집앞", "우리 집 앞", "내집앞", "내 집 앞"], category: "relationship", features: ["내가 덜 움직이는 만남", "상대가 더 다가오는 거리감", "편한 구역에서 만나는 안정감", "상대에게 부담이 갈 수 있는 점"], caution: "상대가 계속 움직이는 그림이면 배려가 부족해 보일 수 있어요.", vibe: "내 구역" },
+  { keys: ["친구집앞", "친구 집 앞", "상대집앞", "상대 집 앞"], category: "relationship", features: ["내가 먼저 움직이는 용기", "상대에게 부담을 덜 주는 거리감", "만남의 의지를 보여주는 행동", "내 이동 피로가 생기는 점"], caution: "너무 늦은 시간이나 갑작스러운 방문이면 부담이 될 수 있어요.", vibe: "다가가는 쪽" },
   { keys: ["차단"], category: "relationship", features: ["프로필 확인 횟수를 줄이는 점", "상대 반응을 기다리는 시간을 끊는 점", "마음속 소음을 강제로 줄이는 점", "나중에 풀지 말지 다시 고민할 수 있는 점"], caution: "화난 순간의 차단이면 하루 정도 지나 다시 봐도 늦지 않아요.", vibe: "버튼 한 번" },
   { keys: ["둔다", "냅둔다", "냅둘", "그냥둔다", "그냥 둔다"], category: "relationship", features: ["상황을 크게 만들지 않는 점", "나중에 다시 말할 여지를 남기는 점", "상대 반응을 계속 보게 되는 점", "혼자 상상하는 시간이 길어질 수 있는 점"], caution: "그냥 두기로 했다면 프로필 확인을 줄이는 기준도 같이 잡아야 해요.", vibe: "상상력 연장" },
   { keys: ["보류", "안 한다", "안한다"], category: "general", features: ["당장 부딪히지 않음", "생각할 시간이 생김", "너무 길어지면 답답함이 남음", "결정 피로가 줄어듦"], caution: "언제 다시 볼지 정하지 않으면 흐지부지될 수 있어요.", vibe: "보류" }
@@ -906,7 +908,7 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
   if (includesAny(text, ["여행", "휴가", "여름휴가", "겨울휴가", "해외", "국내", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑", "일본", "도쿄", "오사카", "후쿠오카", "교토", "태국", "방콕", "푸켓", "치앙마이", "파타야", "제주도", "제주", "부산", "경주", "전주"])) return "travel";
   if (hasChildcareContext(text)) return "childcare";
-  if (includesAny(text, ["친구", "만난다", "만날까", "약속", "차단", "둔다", "냅둔다", "냅둘", "연락처", "프로필", "읽씹", "카톡"])) return "relationship";
+  if (includesAny(text, ["친구", "만난다", "만날까", "약속", "우리집앞", "우리 집 앞", "내집앞", "내 집 앞", "친구집앞", "친구 집 앞", "상대집앞", "상대 집 앞", "차단", "둔다", "냅둔다", "냅둘", "연락처", "프로필", "읽씹", "카톡"])) return "relationship";
   if (includesAny(text, ["홍대", "합정", "카페", "공원", "영화", "드라마", "넷플릭스", "마트", "백화점", "여행", "놀러", "어디", "캠핑"])) return "place";
   if (includesAny(text, ["소비", "살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "버틴", "버티", "컴퓨터", "pc", "피씨", "노트북", "게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약", "휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시", "에어컨", "tv", "티비", "텔레비전", "가전"])) return "shopping";
   return "daily";
@@ -1893,6 +1895,8 @@ function optionSceneVariant(category, winner, loser, question, sign, seed) {
   const winnerRaw = String(winner.name || "").toLowerCase();
   const pools = [];
   if (category === "food") {
+    if (includesAny(winnerRaw, ["회", "사시미"])) pools.push("회는 불판 대신 대화 속도를 늦춥니다.", "초장 뚜껑 열리는 순간 오늘 식사는 조금 차분해집니다.", "회는 배를 꽉 누르기보다 시간을 천천히 잡아주는 쪽입니다.");
+    if (includesAny(winnerRaw, ["고기"])) pools.push("고기는 옷에 냄새까지 남기고 가는 선택입니다.", "불판 위에 올라가는 순간 오늘 대화도 같이 익습니다.", "고기는 배만 채우는 게 아니라 자리의 온도까지 올립니다.");
     if (includesAny(winnerRaw, ["삼겹살"])) pools.push("고기 냄새 배는 건 싫은데, 한 점 더 먹는 손은 이미 배신했습니다.", "굽는 사람은 따로 있는데 젓가락은 이상하게 내 앞으로 옵니다.", "쌈 싸는 순간 오늘의 다짐은 잠깐 외출합니다.", "불판 앞에 앉으면 대화보다 뒤집는 타이밍이 먼저 중요해집니다.", "집 가서 옷 냄새 맡고도 방금 한 점은 인정하게 됩니다.");
     if (includesAny(winnerRaw, ["한우", "소고기"])) pools.push("계산할 때는 비싸다 싶은데 집 가서 사진을 다시 보게 되는 쪽입니다.", "한우는 말이 줄어드는 음식입니다. 가격 생각은 잠깐 뒤로 밀립니다.", "오늘은 배보다 기분을 대접하는 쪽이 더 세게 올라옵니다.", "한 점 올리는 순간부터 식사가 아니라 작은 행사처럼 변합니다.", "통장은 살짝 눈치 보지만 입은 이미 편을 정했습니다.");
     if (includesAny(winnerRaw, ["곱창"])) pools.push("곱창은 한 잔이 두 잔 되는 위험구역입니다.", "불판 위에서 기름이 올라오면 오늘 대화도 같이 길어집니다.", "추가 주문 확률이 조용히 올라가는 선택입니다.");
@@ -2491,6 +2495,99 @@ function gameConsoleReason(winner, loser, question, sign, seed = 0) {
   return cleanPlayTone(`${sceneTone} ${sceneVariant} ${winnerLine} ${loserLine} ${closer}`);
 }
 
+function sameResultDifferentReason(category, winner, loser, question, cards = [], sign = ["황소자리", "♉"], seed = 0) {
+  const signName = sign && sign[0] ? sign[0] : "황소자리";
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const raw = `${question} ${winner.name} ${loser.name} ${winner.subjectName || ""} ${loser.subjectName || ""}`.replace(/\s/g, "").toLowerCase();
+  const winnerRaw = `${winner.name} ${winner.subjectName || ""}`.replace(/\s/g, "").toLowerCase();
+  const cardText = cards && cards.length ? cards.slice(0, 2).join(" + ") : "오늘 카드";
+  const style = {
+    "양자리": {
+      pet: [`양자리는 오래 고민하기 전에 이미 리드줄부터 봅니다. ${winnerName} 쪽은 반응이 바로 오고, 같이 움직이는 하루가 먼저 떠오릅니다. ${loserName}도 좋지만 오늘은 조용한 관찰보다 직접 부딪히는 애착이 더 셉니다.`],
+      amusement: [`양자리는 줄 서는 시간보다 타는 순간을 먼저 봅니다. ${winnerName} 쪽은 "일단 가자"가 빨리 나오는 선택입니다. ${loserName}도 후보지만 오늘은 몸이 먼저 출발하는 쪽입니다.`],
+      hobby: [`양자리는 고민보다 시작 버튼이 빠릅니다. ${winnerName} 쪽은 들어가자마자 바로 놀 수 있는 그림이 큽니다. ${loserName}도 좋지만 오늘은 일단 터뜨리는 재미가 앞섭니다.`],
+      relationship: [`양자리는 기다리다가 속 터지는 걸 싫어합니다. ${winnerName} 쪽은 마음을 행동으로 바꾸는 느낌이 큽니다. ${loserName}도 안전하지만 오늘은 움직여서 확인하는 쪽입니다.`]
+    },
+    "황소자리": {
+      pet: [`황소자리는 예쁜 순간보다 같이 살 때의 편안함을 봅니다. ${winnerName} 쪽은 매일 반복되는 루틴이 덜 거칠게 느껴집니다. ${loserName}도 좋지만 오늘은 오래 편하게 맞출 수 있는 쪽입니다.`],
+      amusement: [`황소자리는 신나는 것보다 돌아와서 덜 넉다운 되는지를 봅니다. ${winnerName} 쪽은 하루를 너무 몰아붙이지 않는 그림이 있습니다. ${loserName}도 재밌지만 오늘은 체력이 덜 삐지는 쪽입니다.`],
+      hobby: [`황소자리는 편하게 앉아 오래 즐길 수 있는 쪽을 좋아합니다. ${winnerName} 쪽은 시작부터 몸이 덜 귀찮아합니다. ${loserName}도 좋지만 오늘은 부담 적은 재미가 앞섭니다.`],
+      relationship: [`황소자리는 관계에서도 편한 거리감을 봅니다. ${winnerName} 쪽은 무리해서 분위기를 키우기보다 안정적으로 만나는 그림입니다. ${loserName}도 가능하지만 오늘은 마음이 덜 지치는 쪽입니다.`]
+    },
+    "쌍둥이자리": {
+      pet: [`쌍둥이자리는 반려동물도 대화가 생기는 쪽에 끌립니다. ${winnerName} 쪽은 매일 새로운 반응을 관찰하는 재미가 있습니다. ${loserName}도 매력 있지만 오늘은 더 궁금한 쪽입니다.`],
+      amusement: [`쌍둥이자리는 놀이공원에서도 할 말이 많은 코스를 고릅니다. ${winnerName} 쪽은 기다리는 동안에도 얘깃거리가 생길 가능성이 큽니다. ${loserName}도 좋지만 오늘은 더 수다스러운 하루입니다.`],
+      hobby: [`쌍둥이자리는 한 가지 재미보다 중간중간 말이 터지는 쪽에 약합니다. ${winnerName} 쪽은 끝나고도 할 얘기가 남습니다. ${loserName}도 좋지만 오늘 호기심은 이쪽입니다.`],
+      relationship: [`쌍둥이자리는 거리를 고르면서도 대화를 먼저 상상합니다. ${winnerName} 쪽은 만나기 전부터 할 말이 생기는 선택입니다. ${loserName}도 괜찮지만 오늘은 궁금증이 더 큰 쪽입니다.`]
+    },
+    "게자리": {
+      pet: [`게자리는 귀여움보다 마음이 붙는 방식을 봅니다. ${winnerName} 쪽은 돌봄과 애착의 온도가 더 잘 맞아 보입니다. ${loserName}도 좋지만 오늘은 같이 있을 때 마음이 덜 허전한 쪽입니다.`],
+      amusement: [`게자리는 놀이기구보다 같이 간 사람의 표정을 먼저 봅니다. ${winnerName} 쪽은 하루 끝에 마음이 더 따뜻하게 남을 가능성이 있습니다. ${loserName}도 좋지만 오늘은 추억의 온도입니다.`],
+      hobby: [`게자리는 노는 방식에서도 같이 있는 사람의 기분을 봅니다. ${winnerName} 쪽은 끝나고 마음이 덜 비는 선택입니다. ${loserName}도 좋지만 오늘은 감정이 덜 튀는 쪽입니다.`],
+      relationship: [`게자리는 장소보다 마음의 부담을 먼저 봅니다. ${winnerName} 쪽은 상대와 나 사이의 온도를 덜 거칠게 만듭니다. ${loserName}도 가능하지만 오늘은 덜 서운한 쪽입니다.`]
+    },
+    "사자자리": {
+      pet: [`사자자리는 반려동물도 존재감 있는 그림을 봅니다. ${winnerName} 쪽은 집 안 분위기를 확 바꾸는 힘이 있습니다. ${loserName}도 좋지만 오늘은 더 주인공 같은 동거입니다.`],
+      amusement: [`사자자리는 오늘 하루가 좀 폼 나야 합니다. ${winnerName} 쪽은 사진과 리액션이 더 크게 남는 선택입니다. ${loserName}도 좋지만 오늘의 컷은 이쪽입니다.`],
+      hobby: [`사자자리는 조용히 사라지는 재미보다 한 방 있는 재미를 봅니다. ${winnerName} 쪽은 끝나고 "오늘 좀 놀았다"가 나옵니다. ${loserName}도 좋지만 오늘은 존재감입니다.`],
+      relationship: [`사자자리는 애매하게 눈치 보는 그림을 싫어합니다. ${winnerName} 쪽은 내가 어떤 태도인지 더 분명하게 보입니다. ${loserName}도 가능하지만 오늘은 당당한 쪽입니다.`]
+    },
+    "처녀자리": {
+      pet: [`처녀자리는 귀여움보다 관리표를 먼저 봅니다. ${winnerName} 쪽은 산책, 털, 생활패턴까지 계산했을 때 더 정리가 됩니다. ${loserName}도 좋지만 오늘은 감당 가능한 루틴이 중요합니다.`],
+      amusement: [`처녀자리는 놀이공원도 동선과 대기시간부터 계산합니다. ${winnerName} 쪽은 하루 계획이 덜 꼬이는 선택입니다. ${loserName}도 좋지만 오늘은 피로 관리가 먼저입니다.`],
+      hobby: [`처녀자리는 재미도 시간표 안에 들어와야 편합니다. ${winnerName} 쪽은 시작과 끝이 더 관리될 것 같습니다. ${loserName}도 좋지만 오늘은 뒤처리가 덜 복잡한 쪽입니다.`],
+      relationship: [`처녀자리는 만남도 동선과 부담을 같이 봅니다. ${winnerName} 쪽은 누가 얼마나 움직이는지 계산했을 때 덜 찝찝합니다. ${loserName}도 가능하지만 오늘은 기준이 있는 쪽입니다.`]
+    },
+    "천칭자리": {
+      pet: [`천칭자리는 애착과 생활 균형을 같이 봅니다. ${winnerName} 쪽은 예쁨과 부담 사이의 저울이 덜 흔들립니다. ${loserName}도 좋지만 오늘 균형은 이쪽입니다.`],
+      amusement: [`천칭자리는 놀이기구, 사진, 피로의 균형을 봅니다. ${winnerName} 쪽은 과하게 지치지 않으면서 하루가 예쁘게 남습니다. ${loserName}도 좋지만 오늘 그림은 이쪽입니다.`],
+      hobby: [`천칭자리는 재미와 분위기가 둘 다 맞아야 움직입니다. ${winnerName} 쪽은 같이 있어도 혼자 있어도 덜 어색한 선택입니다. ${loserName}도 좋지만 오늘 저울은 이쪽입니다.`],
+      relationship: [`천칭자리는 누가 더 움직이는지보다 관계의 균형을 봅니다. ${winnerName} 쪽은 부담이 한쪽으로 덜 쏠립니다. ${loserName}도 가능하지만 오늘은 모양이 덜 삐뚤어지는 쪽입니다.`]
+    },
+    "전갈자리": {
+      pet: [`전갈자리는 귀여움보다 깊게 붙는 애착을 봅니다. ${winnerName} 쪽은 한 번 마음이 가면 오래 몰입할 그림입니다. ${loserName}도 좋지만 오늘은 더 진하게 남는 쪽입니다.`],
+      amusement: [`전갈자리는 대충 즐기는 하루보다 제대로 꽂히는 하루를 원합니다. ${winnerName} 쪽은 지치더라도 몰입도가 더 큽니다. ${loserName}도 좋지만 오늘은 깊게 파고드는 재미입니다.`],
+      hobby: [`전갈자리는 시간 가는 줄 모르는 몰입을 봅니다. ${winnerName} 쪽은 시작하면 끝까지 붙잡을 가능성이 큽니다. ${loserName}도 좋지만 오늘은 대충 놀기 싫은 날입니다.`],
+      relationship: [`전갈자리는 애매한 거리감을 싫어합니다. ${winnerName} 쪽은 내가 어디까지 움직일지 더 확실히 보여줍니다. ${loserName}도 가능하지만 오늘은 결론이 진한 쪽입니다.`]
+    },
+    "사수자리": {
+      pet: [`사수자리는 같이 움직일 수 있는 에너지를 봅니다. ${winnerName} 쪽은 일상에 작은 모험이 더 자주 생길 수 있습니다. ${loserName}도 좋지만 오늘은 경험치가 남는 쪽입니다.`],
+      amusement: [`사수자리는 피곤해도 놀 거리 많은 쪽을 그냥 못 지나칩니다. ${winnerName} 쪽은 하루가 더 크게 열립니다. ${loserName}도 좋지만 오늘은 가보자 쪽입니다.`],
+      hobby: [`사수자리는 재미있으면 일단 들어갑니다. ${winnerName} 쪽은 끝나고 할 말이 더 남을 선택입니다. ${loserName}도 좋지만 오늘은 경험치입니다.`],
+      relationship: [`사수자리는 거리를 핑계로 멈추기보다 한 번 움직여봅니다. ${winnerName} 쪽은 나중에 이야기라도 남습니다. ${loserName}도 가능하지만 오늘은 가보는 쪽입니다.`]
+    },
+    "염소자리": {
+      pet: [`염소자리는 반려동물을 책임의 단위로 봅니다. ${winnerName} 쪽은 오래 감당할 수 있는 루틴인지가 먼저입니다. ${loserName}도 좋지만 오늘은 현실적인 지속성이 중요합니다.`],
+      amusement: [`염소자리는 재미 뒤에 남는 피로와 비용도 봅니다. ${winnerName} 쪽은 다녀온 뒤에도 덜 후회할 선택입니다. ${loserName}도 좋지만 오늘은 결과가 남는 쪽입니다.`],
+      hobby: [`염소자리는 놀아도 다음 날을 망치지 않는지를 봅니다. ${winnerName} 쪽은 재미와 시간 관리 사이가 조금 더 낫습니다. ${loserName}도 좋지만 오늘은 덜 무너지는 쪽입니다.`],
+      relationship: [`염소자리는 만남도 책임과 배려를 같이 봅니다. ${winnerName} 쪽은 나중에 봐도 덜 민망한 선택입니다. ${loserName}도 가능하지만 오늘은 오래 갈 기준입니다.`]
+    },
+    "물병자리": {
+      pet: [`물병자리는 남들이 말하는 정답보다 나랑 맞는 리듬을 봅니다. ${winnerName} 쪽은 조금 더 독특한 동거 그림이 있습니다. ${loserName}도 좋지만 오늘은 내 방식입니다.`],
+      amusement: [`물병자리는 뻔한 코스보다 다르게 노는 하루를 봅니다. ${winnerName} 쪽은 예상 밖으로 재밌을 가능성이 있습니다. ${loserName}도 좋지만 오늘은 반전입니다.`],
+      hobby: [`물병자리는 남들 다 하는 재미보다 내 취향에 꽂히는 쪽을 봅니다. ${winnerName} 쪽은 조금 더 내 방식으로 놀 수 있습니다. ${loserName}도 좋지만 오늘은 개성입니다.`],
+      relationship: [`물병자리는 관계도 정석대로만 움직이지 않습니다. ${winnerName} 쪽은 남들이 보기엔 애매해도 나한텐 말이 됩니다. ${loserName}도 가능하지만 오늘은 다른 각도입니다.`]
+    },
+    "물고기자리": {
+      pet: [`물고기자리는 반려동물과의 감정선을 먼저 봅니다. ${winnerName} 쪽은 마음이 더 부드럽게 붙는 그림입니다. ${loserName}도 좋지만 오늘은 덜 외로운 쪽입니다.`],
+      amusement: [`물고기자리는 놀이기구보다 하루가 끝난 뒤의 여운을 봅니다. ${winnerName} 쪽은 피곤해도 마음에 남는 장면이 있습니다. ${loserName}도 좋지만 오늘은 감정의 잔상입니다.`],
+      hobby: [`물고기자리는 취미도 기분을 달래주는 쪽을 고릅니다. ${winnerName} 쪽은 끝나고 마음이 덜 출렁입니다. ${loserName}도 좋지만 오늘은 위로가 되는 재미입니다.`],
+      relationship: [`물고기자리는 장소보다 잠들기 전 마음을 봅니다. ${winnerName} 쪽은 오늘 밤 덜 출렁일 선택입니다. ${loserName}도 가능하지만 오늘은 마음이 덜 무거운 쪽입니다.`]
+    }
+  };
+  const categoryPool = style[signName] && style[signName][category];
+  if (categoryPool && categoryPool.length) {
+    return cleanPlayTone(pick(categoryPool, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-${cardText}-same-result`)));
+  }
+  if (category === "food") {
+    const line = zodiacSceneLine("food", sign, winner, loser, question, seed, "same-food");
+    const scene = optionSceneVariant("food", winner, loser, question, sign, seed);
+    if (line || scene) return cleanPlayTone(`${line} ${scene}`);
+  }
+  return null;
+}
+
 function playfulRealityReason(category, winner, loser, question) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
@@ -2645,7 +2742,12 @@ function categoryRealityReason(category, winner, loser, question, cards = [], si
   const loserFirstTopic = withParticle(loser.features[0] || "반대 선택의 장점", "은", "는");
   const pair = featurePairText(winner.features[0] || "바로 체감되는 장점", winner.features[1] || "끝나고 남는 느낌");
   const opening = realityOpeningLine(category, winner, loser, question);
-  if (category === "food") return foodRealityReason(winner, loser, question, sign, seed);
+  const variedReason = sameResultDifferentReason(category, winner, loser, question, cards, sign, seed);
+  if (variedReason && ["pet", "amusement", "hobby", "relationship"].includes(category)) return variedReason;
+  if (category === "food") {
+    const foodReason = foodRealityReason(winner, loser, question, sign, seed);
+    return variedReason || foodReason;
+  }
   if (category === "game") return gameRealityReason(winner, loser, question);
   if (category === "shopping") {
     const consoleReason = gameConsoleReason(winner, loser, question, sign, seed);
@@ -4081,7 +4183,7 @@ function futureComment(category, winner, question, seed, sign) {
   };
   const starts = startsByCategory[category] || startsByCategory.daily;
   if (category !== "daily") {
-    return pick(starts, seed + raw.length + name.length + question.length + variationSeed);
+    return pick(starts, seed + raw.length + name.length + question.length + variationSeed + hashText(`${signName}-${category}`));
   }
   const zodiacStarts = {
     "양자리": [`어차피 할 거였잖아?`, `그래도 질렀네.`, `멈췄으면 더 답답했을 듯.`, `출발이 결론보다 빨랐습니다.`, `후회는 나중 부서로 넘겼습니다.`],

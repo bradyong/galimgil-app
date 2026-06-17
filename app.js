@@ -977,7 +977,165 @@ function semanticOptionTraits(option, category, subCategory = "") {
     if (includesAny(text, ["pc방", "피시방", "피씨방"])) return make(["게임", "집중", "시간 삭제", "간식", "편한 몰입"], "시간 삭제 구역");
     return make(["재미", "시간", "비용", "같이 하는 사람", "끝낼 타이밍"], "취미 선택");
   }
+  if (category === "chore") {
+    if (includesAny(text, ["세차", "차닦", "차청소"])) return make(["차", "먼지", "광택", "주차장", "창문 얼룩"], "차가 반짝이는 일");
+    if (includesAny(text, ["화장실", "욕실", "변기", "물때"])) return make(["욕실", "물때", "찝찝함", "변기", "바닥 물기"], "욕실 리셋");
+    if (includesAny(text, ["설거지", "그릇", "싱크대", "접시"])) return make(["싱크대", "그릇", "물소리", "음식 냄새", "쌓인 접시"], "싱크대 정리");
+    if (includesAny(text, ["빨래", "세탁", "널기"])) return make(["세탁기", "빨래 냄새", "건조대", "쌓인 옷", "뽀송함"], "빨래 정리");
+    if (includesAny(text, ["청소", "정리", "닦기", "치우기"])) return make(["바닥", "먼지", "눈에 밟히는 물건", "정리된 공간", "미루면 커지는 귀찮음"], "집안일");
+    return make(["눈에 보이는 찝찝함", "미루면 커지는 귀찮음", "끝나면 바로 보이는 변화", "손에 물 묻히는 순간"], "집안일");
+  }
   return make(["선택 뒤 장면", "시간", "비용", "마음의 부담"], "일상 선택");
+}
+
+function choreScenario(question, choiceA = "", choiceB = "") {
+  const text = `${question || ""} ${choiceA || ""} ${choiceB || ""}`.replace(/\s/g, "").toLowerCase();
+  const make = (name, features, caution, vibe) => ({ name, category: "chore", features, caution, vibe });
+  if (includesAny(text, ["세차", "차닦", "차청소", "차씻"])) {
+    return make("세차", ["차에 앉은 먼지", "유리창 얼룩", "주차장에서 보이는 광택", "비 오면 살짝 억울한 점"], "비 예보가 있으면 광택보다 타이밍을 먼저 봐야 해요.", "차 광택");
+  }
+  if (includesAny(text, ["화장실청소", "욕실청소", "변기청소", "물때", "욕실"])) {
+    return make("화장실 청소", ["욕실 물때", "변기 주변 찝찝함", "바닥 물기", "청소 후 냄새가 가벼워지는 점"], "너무 크게 잡으면 미루기 쉬우니 세면대나 변기 하나만 잡아도 시작돼요.", "욕실 리셋");
+  }
+  if (includesAny(text, ["설거지", "싱크대", "그릇", "접시", "수저"])) {
+    return make("설거지", ["싱크대에 쌓인 그릇", "물소리와 세제 냄새", "음식 냄새가 빠지는 점", "아침에 보면 더 커지는 접시 산"], "한 번에 다 하려다 미루지 말고 컵과 접시부터 밀어도 돼요.", "싱크대 리셋");
+  }
+  if (includesAny(text, ["빨래", "세탁", "빨랫감", "건조대"])) {
+    return make("빨래", ["세탁기 버튼", "쌓인 옷 더미", "건조대 자리", "마른 옷의 뽀송함"], "널거나 개는 시간까지 같이 생각해야 덜 미뤄져요.", "빨래 리셋");
+  }
+  if (includesAny(text, ["청소", "정리", "치우", "닦"])) {
+    return make("청소", ["바닥 먼지", "눈에 밟히는 물건", "정리된 공간", "끝나면 바로 보이는 차이"], "전부 하려 하지 말고 보이는 한 구역만 잡아도 흐름이 생겨요.", "공간 리셋");
+  }
+  return null;
+}
+
+function compactText(value) {
+  return String(value || "").replace(/\s/g, "").toLowerCase();
+}
+
+function stripDecisionWords(value) {
+  return String(value || "")
+    .replace(/\b(vs|VS|Vs|or)\b/g, " ")
+    .replace(/또는|아니면|할까|말까|한다|안한다|오늘|내일|지금|나중에|미룰까|미루기|가기|간다|갈까|먹을까|마실까|살까|산다|버틴다|바꾼다|고민|선택/g, " ")
+    .replace(/[?？!！.,，/]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function subjectCueProfile(text) {
+  const raw = compactText(text);
+  const make = (subject, traits, scene, objectWords = []) => ({ subject, traits, scene, objectWords });
+  const stripped = stripDecisionWords(text);
+  if (includesAny(raw, ["세차", "차닦", "차청소", "차씻"])) {
+    return make("세차", ["차", "먼지", "광택", "주차장", "유리창"], "차에 앉은 먼지와 주차장에서 보이는 광택", ["차", "먼지", "광택"]);
+  }
+  if (includesAny(raw, ["화장실청소", "욕실청소", "변기청소", "물때", "욕실", "화장실"])) {
+    return make("화장실 청소", ["욕실", "물때", "변기", "바닥 물기", "찝찝함"], "욕실 물때와 변기 주변의 찝찝함", ["욕실", "물때", "변기"]);
+  }
+  if (includesAny(raw, ["설거지", "싱크대", "그릇", "접시", "수저"])) {
+    return make("설거지", ["싱크대", "그릇", "물소리", "세제 냄새", "쌓인 접시"], "싱크대에 쌓인 그릇과 물소리", ["싱크대", "그릇", "물소리"]);
+  }
+  if (includesAny(raw, ["본가", "처가", "처가댁", "시댁", "친정", "외가", "큰집", "친척"])) {
+    return make("가족 방문", ["부모님", "예의", "눈치", "편안함", "관계 관리"], "문 열고 들어갔을 때의 가족 공기와 표정 관리", ["가족", "부모님", "눈치"]);
+  }
+  if (includesAny(raw, ["pc방", "피시방", "피씨방", "노래방", "코노"])) {
+    return make("놀이 선택", ["게임", "노래", "시간 사용", "친구", "몰입"], "마이크를 잡을지 키보드 앞에 앉을지 갈리는 시간", ["게임", "노래", "시간"]);
+  }
+  if (includesAny(raw, ["여행", "휴가", "해외", "국내", "제주", "강릉", "삼척", "부산", "일본", "태국", "유럽", "동남아"])) {
+    return make("여행지", ["거리", "비용", "피로", "먹거리", "사진"], "다녀온 뒤 사진첩과 돌아오는 길 피로", ["여행", "사진", "비용"]);
+  }
+  if (includesAny(raw, ["컴퓨터", "노트북", "휴대폰", "핸드폰", "tv", "티비", "가전", "차살", "차바꿀"])) {
+    return make("구매 고민", ["가격", "성능", "지름신", "후회", "사용 빈도"], "결제 버튼과 며칠 뒤 실제로 쓰는 장면", ["가격", "성능", "지름신"]);
+  }
+  if (includesAny(raw, ["청소", "정리", "치우", "닦", "버릴"])) {
+    if (includesAny(raw, ["냉장고"])) {
+      return make("냉장고 정리", ["냉장고", "반찬통", "유통기한", "빈 공간", "문 열 때 보이는 찝찝함"], "냉장고 문을 열었을 때 보이는 반찬통과 빈 공간", ["냉장고", "반찬통", "유통기한"]);
+    }
+    if (includesAny(raw, ["베란다", "발코니"])) {
+      return make("베란다 청소", ["베란다", "창틀 먼지", "바닥 먼지", "묵은 물건", "문 열 때 보이는 공간"], "베란다 문을 열었을 때 보이는 창틀 먼지와 묵은 물건", ["베란다", "창틀", "먼지"]);
+    }
+    const subject = stripped && stripped.length <= 18 ? stripped : "정리할 일";
+    return make(subject, ["먼지", "눈에 밟히는 물건", "정리된 공간", "미루면 커지는 귀찮음"], "눈에 밟히는 물건과 정리된 뒤의 공간", ["먼지", "정리", "공간"]);
+  }
+  return null;
+}
+
+function inferOptionSubjectProfile(option, category, question) {
+  const entry = findFeatureEntry(option, category);
+  if (entry && entry.item) {
+    return {
+      subject: entry.key || option,
+      traits: entry.item.features || [],
+      scene: `${entry.key || option}의 ${entry.item.vibe || "장면"}`,
+      vibe: entry.item.vibe || ""
+    };
+  }
+  const inferred = inferredOptionProfile(option, category, question);
+  if (inferred && inferred.features) {
+    return {
+      subject: option,
+      traits: inferred.features,
+      scene: `${option}을 고른 뒤 바로 생기는 장면`,
+      vibe: inferred.vibe || ""
+    };
+  }
+  return {
+    subject: option,
+    traits: semanticOptionTraits(option, category).traits,
+    scene: `${option}을 고른 뒤 바뀌는 장면`,
+    vibe: ""
+  };
+}
+
+function extractSubjectProfile(question, optionA, optionB, category) {
+  const combined = `${question || ""} ${optionA || ""} ${optionB || ""}`;
+  const cue = subjectCueProfile(combined);
+  const aProfile = inferOptionSubjectProfile(optionA, category, question);
+  const bProfile = inferOptionSubjectProfile(optionB, category, question);
+  const strippedQuestion = stripDecisionWords(question);
+  const actionLikeOptions = [optionA, optionB].some((option) => includesAny(compactText(option), ["한다", "안한다", "오늘한다", "내일한다", "지금한다", "나중에", "간다", "안간다", "산다", "버틴다"]));
+  const subject = cue ? cue.subject : actionLikeOptions && strippedQuestion ? strippedQuestion : `${optionA} / ${optionB}`;
+  const traits = uniqueList([
+    ...(cue ? cue.traits : []),
+    ...(actionLikeOptions ? [] : (aProfile.traits || []).slice(0, 2)),
+    ...(actionLikeOptions ? [] : (bProfile.traits || []).slice(0, 2))
+  ]).slice(0, 6);
+  return {
+    subject,
+    traits: traits.length ? traits : ["선택 뒤 장면", "시간", "비용", "마음의 부담"],
+    scene: cue ? cue.scene : actionLikeOptions ? `${subject}을 고른 뒤 실제로 달라지는 장면` : `${optionA}와 ${optionB}를 골랐을 때 생기는 서로 다른 장면`,
+    optionA_profile: aProfile,
+    optionB_profile: bProfile,
+    confidence: cue ? 0.82 : actionLikeOptions ? 0.58 : 0.5
+  };
+}
+
+function subjectAnchorLine(subjectProfile, winner, loser, question, seed) {
+  if (!subjectProfile || !subjectProfile.subject) return "";
+  const subject = subjectProfile.subject;
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const traits = (subjectProfile.traits || []).filter(Boolean);
+  const t0 = traits[0] || "선택 뒤 장면";
+  const t1 = traits[1] || "시간";
+  const scene = escapeHtml(subjectProfile.scene || `${subject}의 실제 장면`);
+  const lines = [
+    `${withParticle(subject, "은", "는")} 결국 ${scene} 쪽 문제입니다. 그래서 ${winnerName} 쪽을 볼 때도 ${escapeHtml(t0)}, ${withParticle(t1, "이", "가")} 같이 따라옵니다.`,
+    `${winnerName} 쪽 답보다 먼저 봐야 할 건 ${escapeHtml(subject)}입니다. ${withParticle(loser.name, "과", "와")} 비교해도 오늘 핵심은 ${escapeHtml(t0)} 쪽에서 갈립니다.`,
+    `이 질문은 단순히 ${winnerName}을 고르는 문제가 아니라 ${withParticle(subject, "을", "를")} 어떻게 처리할지입니다. ${scene}가 오늘 판단의 중심입니다.`,
+    `${withParticle(subject, "이", "가")} 빠지면 답이 너무 뻔해집니다. 오늘은 ${withParticle(t0, "과", "와")} ${withParticle(t1, "이", "가")} 살아있는 쪽으로 보는 게 맞습니다.`
+  ];
+  return cleanPlayTone(pick(lines, hashText(`${question}-${winner.name}-${loser.name}-${subject}-${seed}-subject-anchor`)));
+}
+
+function ensureSubjectInReason(reason, subjectProfile, winner, loser, question, seed) {
+  if (!subjectProfile || !subjectProfile.subject) return reason;
+  const haystack = String(reason || "").replace(/\s/g, "").toLowerCase();
+  const subjectHit = compactText(subjectProfile.subject);
+  const traitHit = (subjectProfile.traits || []).some((trait) => haystack.includes(compactText(trait)));
+  if (traitHit) return reason;
+  if (subjectHit && haystack.includes(subjectHit) && subjectProfile.confidence < 0.7) return reason;
+  return cleanPlayTone(`${subjectAnchorLine(subjectProfile, winner, loser, question, seed)} ${reason}`);
 }
 
 function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
@@ -985,7 +1143,7 @@ function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
   const text = `${question || ""} ${optionA} ${optionB}`.toLowerCase();
   const compact = text.replace(/\s/g, "");
   if (profile.type && profile.type !== "general") {
-    return { optionA, optionB, category: profile.type, subCategory: profile.type, intent: "프로필 기반 선택", optionA_traits: [], optionB_traits: [], confidence: 0.9 };
+    return { optionA, optionB, category: profile.type, subCategory: profile.type, intent: "프로필 기반 선택", optionA_traits: [], optionB_traits: [], subjectProfile: extractSubjectProfile(question, optionA, optionB, profile.type), confidence: 0.9 };
   }
 
   const familyWords = ["본가", "처가", "처가댁", "시댁", "시가", "친정", "외가", "큰집", "작은집", "친척", "명절", "부모님", "장모", "장인", "시부모", "할머니", "할아버지"];
@@ -1002,6 +1160,7 @@ function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
       optionB_traits: b.traits,
       optionA_vibe: a.vibe,
       optionB_vibe: b.vibe,
+      subjectProfile: extractSubjectProfile(question, optionA, optionB, "family"),
       confidence: 0.88
     };
   }
@@ -1020,7 +1179,27 @@ function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
       optionB_traits: b.traits,
       optionA_vibe: a.vibe,
       optionB_vibe: b.vibe,
+      subjectProfile: extractSubjectProfile(question, optionA, optionB, "hobby"),
       confidence: 0.84
+    };
+  }
+
+  const chore = choreScenario(question, optionA, optionB);
+  if (chore || includesAny(compact, ["오늘한다", "지금한다", "내일한다", "나중에한다", "미룰까", "할까말까"])) {
+    const scenario = chore || { name: "집안일", features: ["눈에 보이는 찝찝함", "미루면 커지는 귀찮음", "끝나면 바로 보이는 변화", "손에 물 묻히는 순간"], vibe: "집안일" };
+    return {
+      optionA,
+      optionB,
+      category: "chore",
+      subCategory: "execution_timing",
+      intent: `${withParticle(scenario.name, "을", "를")} 지금 할지 미룰지 고민`,
+      optionA_traits: semanticOptionTraits(`${optionA} ${scenario.name}`, "chore").traits,
+      optionB_traits: semanticOptionTraits(`${optionB} ${scenario.name}`, "chore").traits,
+      optionA_vibe: scenario.vibe,
+      optionB_vibe: scenario.vibe,
+      subject: scenario.name,
+      subjectProfile: extractSubjectProfile(question, optionA, optionB, "chore"),
+      confidence: chore ? 0.86 : 0.6
     };
   }
 
@@ -1039,6 +1218,7 @@ function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
       optionB_traits: b.traits,
       optionA_vibe: a.vibe,
       optionB_vibe: b.vibe,
+      subjectProfile: extractSubjectProfile(question, optionA, optionB, "travel"),
       confidence: includesAny(compact, travelWords) ? 0.82 : 0.62
     };
   }
@@ -1051,6 +1231,7 @@ function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
     intent: "상위 카테고리를 더 추론해야 하는 선택",
     optionA_traits: semanticOptionTraits(optionA, "daily").traits,
     optionB_traits: semanticOptionTraits(optionB, "daily").traits,
+    subjectProfile: extractSubjectProfile(question, optionA, optionB, "daily"),
     confidence: 0.35
   };
 }
@@ -1160,6 +1341,16 @@ function inferredOptionProfile(option, category, question = "") {
     );
   }
 
+  if (category === "chore") {
+    const scenario = choreScenario(question, name, "");
+    const semantic = semanticOptionTraits(`${name} ${(scenario && scenario.name) || ""}`, "chore");
+    return make(
+      scenario ? scenario.features : semantic.traits,
+      (scenario && scenario.caution) || semantic.caution || "전부 하려 하지 말고 눈에 보이는 한 장면부터 잡으면 좋아요.",
+      (scenario && scenario.vibe) || semantic.vibe || "집안일"
+    );
+  }
+
   if (category === "family") {
     const semantic = semanticOptionTraits(name, "family", "family_visit");
     return make(
@@ -1217,6 +1408,7 @@ function analyzeOption(option, category, question = "") {
     hygiene: { features: [`${option} 후 몸이 개운해지는 점`, "찝찝함을 털어내는 점", "잠들기 전 마음이 가벼워지는 점", "시작 전 귀찮음이 큰 점"], caution: "전부 다 하려다 미루지 말고 짧게라도 끝내는 게 좋아요.", vibe: "개운함" },
     study: { features: [`${option}로 진도를 조금이라도 당기는 점`, "마감이나 시험 부담을 줄이는 점", "시작 전 저항감", "끝나고 마음이 덜 쫓기는 점"], caution: "오래 하겠다고 잡으면 시작이 어려우니 작게 끊는 게 좋아요.", vibe: "진도" },
     game: { features: [`${option}로 스트레스를 빨리 푸는 점`, "한 판의 재미", "시간이 빨리 사라지는 점", "끝낼 타이밍이 흔들리는 점"], caution: "시작 전에 종료 시간을 정해두면 내일의 내가 덜 째려봐요.", vibe: "한 판" },
+    chore: { features: [`${option} 뒤 바로 보이는 정리감`, "미루면 더 크게 보이는 찝찝함", "손에 물이나 먼지가 묻는 귀찮음", "끝나면 공간이 바로 가벼워지는 점"], caution: "전부 하려 하지 말고 눈에 보이는 한 장면부터 잡으면 좋아요.", vibe: "집안일" },
     travel: { features: [`${option}로 일상에서 잠깐 빠져나오는 점`, "사진과 추억이 남는 점", "비용과 동선 부담", "체력 소모"], caution: "설렘과 예산을 같이 놓고 보는 게 좋아요.", vibe: "탈출" },
     family: { features: [`${option}에 갔을 때의 가족 분위기`, "편안함과 예의 사이의 긴장", "방문 뒤 남는 마음", "대화 체력과 눈치"], caution: "가족 선택은 거리보다 마음의 부담이 더 크게 작동할 수 있어요.", vibe: "가족 방문" },
     daily: { features: [`${option}을 골랐을 때 달라지는 장면`, "하고 난 뒤의 마음", "미뤘을 때 남는 찝찝함", "오늘 감당 가능한 정도"], caution: "한 번에 크게 결정하기보다 작게 해보는 게 좋아요.", vibe: "일상 선택" }
@@ -1227,7 +1419,7 @@ function analyzeOption(option, category, question = "") {
 
 function optionIntent(option) {
   const text = String(option).replace(/\s/g, "").toLowerCase();
-  if (includesAny(text, ["만다", "그냥", "그대로", "유지", "안간", "안한다", "안판다", "안바꾼", "안바꾸", "안마신", "안마셔", "마시지마", "말자", "보류", "쉬", "쉰", "기다", "관망", "패스", "보유", "홀딩", "버틴", "버티", "참", "더쓴", "그냥쓴"])) return "skip";
+  if (includesAny(text, ["만다", "그냥", "그대로", "유지", "안간", "안한다", "안판다", "안바꾼", "안바꾸", "안마신", "안마셔", "마시지마", "말자", "보류", "나중", "내일", "미룬", "미루", "쉬", "쉰", "기다", "관망", "패스", "보유", "홀딩", "버틴", "버티", "참", "더쓴", "그냥쓴"])) return "skip";
   if (includesAny(text, ["간다", "가기", "간", "한다", "먹", "마신", "마셔", "산다", "살래", "바꾼", "바꾸", "교체", "매수", "매도", "판다", "연락", "고백", "출근"])) return "go";
   return "specific";
 }
@@ -1315,6 +1507,7 @@ function contextZodiacClosing(category, signName, winner, loser, featureA, featu
 function findScenario(question, category) {
   const text = String(question).toLowerCase();
   if (category === "gift") return giftScenario(question);
+  if (category === "chore") return choreScenario(question);
   const match = findFeatureEntry(text, category);
   const found = match && match.item;
   if (!found) return null;
@@ -1408,6 +1601,11 @@ function skipFeaturesForScenario(option, scenario, category) {
       features: [`${scenarioName}를 안 해서 시간을 지키는 점`, "내일 컨디션을 보호하는 점", "한 판이 세 판 되는 사고를 막는 점", "대신 오늘 스트레스 해소감은 줄어드는 점"],
       caution: `정말 하고 싶다면 ${scenarioName}는 종료 시간을 정하고 시작하는 게 좋아요.`,
       vibe: "시간 방어"
+    },
+    chore: {
+      features: [`${scenarioName}를 내일로 넘겨서 당장 귀찮음이 줄어드는 점`, "손에 물이나 먼지를 묻히지 않아도 되는 점", "대신 눈에 보이는 찝찝함이 계속 남는 점", "내일 보면 일이 더 커져 보일 수 있는 점"],
+      caution: `${scenarioName}가 계속 눈에 밟히면 미루는 동안 마음이 더 피곤해질 수 있어요.`,
+      vibe: "집안일 보류"
     },
     travel: {
       features: [`${scenarioName}를 미뤄서 비용과 체력을 아끼는 점`, "동선 계산을 오늘 안 해도 되는 점", "일정을 덜 복잡하게 만드는 점", "대신 기분 전환의 장면은 줄어드는 점"],
@@ -2805,6 +3003,83 @@ function sameResultDifferentReason(category, winner, loser, question, cards = []
     const angle = pick(signFamilyAngles[signName] || [signNudge], hashText(`${question}-${winner.name}-${signName}-${seed}-family-angle`));
     return cleanPlayTone(`${scene} ${angle}`);
   }
+
+  if (category === "chore") {
+    const subject = winner.subjectName || loser.subjectName || (choreScenario(question) || {}).name || "집안일";
+    const subjectName = escapeHtml(subject);
+    const subjectTopic = withParticle(subject, "은", "는");
+    const subjectObject = withParticle(subject, "을", "를");
+    const isDelay = winner.intent === "skip" || includesAny(String(winner.name).replace(/\s/g, "").toLowerCase(), ["안", "내일", "나중", "미루", "말"]);
+    const subjectRaw = String(subject).replace(/\s/g, "").toLowerCase();
+    const material = includesAny(subjectRaw, ["세차"])
+      ? {
+        now: [
+          `세차는 시작 전엔 귀찮은데, 끝나고 차 문 열 때 광택이 먼저 인사합니다. 먼지 낀 유리창을 계속 보는 것보다 오늘 주차장에서 한 번 반짝이는 쪽입니다.`,
+          `차에 앉은 먼지가 이미 꽤 오래 버텼습니다. 오늘 물 한 번 뿌리면 주차장에 세워둘 때 괜히 한 번 더 보게 됩니다.`,
+          `세차는 손은 귀찮고 차는 좋아하는 일입니다. 오늘은 먼지보다 광택이 이기는 날이라 ${winnerName} 쪽입니다.`
+        ],
+        delay: [
+          `세차는 비 예보나 체력까지 같이 봐야 합니다. 오늘 광택 내도 바로 더러워질 그림이면, 차 먼지는 하루 더 주차장에서 버티게 둬도 됩니다.`,
+          `차가 더럽긴 한데 오늘 주차장까지 끌고 가는 귀찮음도 만만치 않습니다. 광택은 내일로 미루고, 오늘은 먼지와 임시 휴전입니다.`,
+          `세차는 하고 나면 좋은데 시작하려면 마음의 시동이 필요합니다. 오늘 시동이 안 걸리면 차 먼지는 내일 한 번에 처리하는 쪽입니다.`
+        ]
+      }
+      : includesAny(subjectRaw, ["화장실", "욕실", "변기", "물때"])
+        ? {
+          now: [
+            `화장실 청소는 하기 전엔 싫은데, 끝나고 욕실 문 열 때 공기가 달라집니다. 물때랑 찝찝함을 내일까지 데려가는 것보다 오늘 끊는 쪽입니다.`,
+            `욕실 물때는 조용한 척하지만 볼 때마다 눈에 밟힙니다. 오늘 변기와 세면대만 잡아도 화장실 공기가 덜 무겁습니다.`,
+            `화장실은 미루면 티가 납니다. 오늘 물 한 번 뿌리고 닦아두면 내일 아침의 내가 욕실 앞에서 덜 째려봅니다.`
+          ],
+          delay: [
+            `화장실 청소는 시작하면 일이 커지는 타입입니다. 오늘 체력이 없으면 욕실 전체 말고 내일 제대로 잡는 쪽이 덜 망가집니다.`,
+            `물때는 도망가지 않습니다. 오늘 너무 지쳤다면 화장실 문을 닫고, 내일 변기와 세면대부터 잡는 게 현실적입니다.`,
+            `욕실이 살짝 찝찝하긴 한데 오늘 몸이 먼저 항의합니다. 대청소 말고 내일 짧게 끝낼 작전으로 넘기는 쪽입니다.`
+          ]
+        }
+        : includesAny(subjectRaw, ["설거지", "싱크대", "그릇", "접시"])
+          ? {
+            now: [
+              `설거지는 싱크대 앞에 서는 순간 반은 끝납니다. 그릇 산을 내일까지 키우는 것보다, 물소리로 오늘 주방을 닫는 쪽입니다.`,
+              `싱크대 그릇은 조용히 쌓이는 척하지만 냄새는 솔직합니다. 오늘 물 틀고 접시부터 밀면 주방 공기가 바로 가벼워집니다.`,
+              `설거지는 하기 싫은데 끝나면 티가 제일 빨리 납니다. 오늘은 세제 냄새 한 번 내고 싱크대를 비워두는 쪽입니다.`
+            ],
+            delay: [
+              `설거지가 보이긴 하는데 오늘 손에 물 묻히는 순간 짜증이 더 클 수 있습니다. 컵만 치우고 그릇 산은 내일로 넘기는 작전도 있습니다.`,
+              `싱크대는 지금도 말이 많지만, 오늘 체력이 없으면 설거지하다가 더 예민해질 수 있습니다. 내일 물소리로 한 번에 닫읍시다.`,
+              `그릇은 쌓였고 마음은 퇴근했습니다. 오늘은 냄새나는 것만 먼저 치우고 나머지는 내일의 나에게 넘기는 쪽입니다.`
+            ]
+          }
+          : {
+            now: [
+              `${subjectTopic} 시작 전엔 귀찮아도 끝나면 바로 티가 납니다. 눈에 밟히는 걸 내일까지 데려가는 것보다 오늘 한 구역만 정리하는 쪽입니다.`,
+              `${subjectTopic} 미루면 마음속에서 계속 알림을 보냅니다. 오늘 손 한 번 대면 공간이 바로 가벼워집니다.`,
+              `${subjectTopic} 큰 결심보다 첫 손이 어렵습니다. 오늘은 완벽 말고 보이는 데부터 치우는 쪽입니다.`
+            ],
+            delay: [
+              `${subjectName}도 중요하지만 오늘 체력이 바닥이면 시작했다가 더 어질러질 수 있습니다. 내일 한 구역으로 작게 잡는 쪽입니다.`,
+              `${subjectTopic} 도망가지 않습니다. 오늘은 미루되, 내일 어디부터 할지 하나만 정해두는 쪽입니다.`,
+              `${subjectObject} 보면 마음은 걸리지만 지금은 억지로 붙잡을 타이밍이 아닙니다. 내일의 나에게 구역을 작게 넘깁시다.`
+            ]
+          };
+    const scene = pick(isDelay ? material.delay : material.now, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-${cardText}-chore-scene`));
+    const signChoreAngles = {
+      "양자리": ["양자리는 시작하면 빨리 끝내는 쪽입니다.", "양자리는 생각보다 손이 먼저 움직이는 날입니다."],
+      "황소자리": ["황소자리는 귀찮음 대비 편안함을 계산합니다.", "황소자리는 끝나고 편해지는 장면에 약합니다."],
+      "쌍둥이자리": ["쌍둥이자리는 하면서 딴생각할 수 있으면 조금 버팁니다.", "쌍둥이자리는 집안일도 짧게 쪼개야 움직입니다."],
+      "게자리": ["게자리는 집 공기가 편해지는 쪽을 봅니다.", "게자리는 찝찝함이 마음에 남는 걸 싫어합니다."],
+      "사자자리": ["사자자리는 끝나고 티 나는 변화를 좋아합니다.", "사자자리는 결과가 눈에 보여야 움직입니다."],
+      "처녀자리": ["처녀자리는 보이는 얼룩을 그냥 못 지나갑니다.", "처녀자리는 체크 표시 하나 생기는 일을 좋아합니다."],
+      "천칭자리": ["천칭자리는 공간의 균형이 무너지는 걸 싫어합니다.", "천칭자리는 보기 좋은 상태를 꽤 중요하게 봅니다."],
+      "전갈자리": ["전갈자리는 한 번 잡으면 끝까지 파는 쪽입니다.", "전갈자리는 찝찝함의 본진을 찾으려 합니다."],
+      "사수자리": ["사수자리는 오래 묶이는 집안일을 싫어해서 짧게 끝내야 합니다.", "사수자리는 끝나고 자유로워지는 쪽을 봅니다."],
+      "염소자리": ["염소자리는 해야 할 일을 미뤘을 때의 비용을 봅니다.", "염소자리는 끝내고 다음 단계로 가는 쪽을 좋아합니다."],
+      "물병자리": ["물병자리는 정석 대청소보다 이상하게 빠른 방법을 찾습니다.", "물병자리는 한 번에 다 말고 다르게 쪼개는 쪽을 봅니다."],
+      "물고기자리": ["물고기자리는 공간이 주는 기분을 먼저 느낍니다.", "물고기자리는 찝찝함이 마음까지 번지는 걸 싫어합니다."]
+    };
+    const angle = pick(signChoreAngles[signName] || [signNudge], hashText(`${question}-${winner.name}-${signName}-${seed}-chore-angle`));
+    return cleanPlayTone(`${scene} ${angle}`);
+  }
   const style = {
     "양자리": {
       pet: [`양자리는 오래 고민하기 전에 이미 리드줄부터 봅니다. ${winnerName} 쪽은 반응이 바로 오고, 같이 움직이는 하루가 먼저 떠오릅니다. ${loserName}도 좋지만 오늘은 조용한 관찰보다 직접 부딪히는 애착이 더 셉니다.`],
@@ -3046,7 +3321,7 @@ function categoryRealityReason(category, winner, loser, question, cards = [], si
   const pair = featurePairText(winner.features[0] || "바로 체감되는 장점", winner.features[1] || "끝나고 남는 느낌");
   const opening = realityOpeningLine(category, winner, loser, question);
   const variedReason = sameResultDifferentReason(category, winner, loser, question, cards, sign, seed);
-  if (variedReason && ["pet", "amusement", "hobby", "relationship", "family", "beverage", "drink", "travel", "daily"].includes(category)) return variedReason;
+  if (variedReason && ["pet", "amusement", "hobby", "relationship", "family", "chore", "beverage", "drink", "travel", "daily"].includes(category)) return variedReason;
   if (category === "food") {
     const foodReason = foodRealityReason(winner, loser, question, sign, seed);
     return variedReason || foodReason;
@@ -4592,6 +4867,27 @@ function shareableAdvice(category, winner, loser, question, seed, sign) {
     ];
     return withZodiacTag(pick(familyLines, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-family-share`)));
   }
+  if (category === "chore") {
+    const subject = escapeHtml(winner.subjectName || winner.name);
+    const choreLines = includesAny(String(subject).replace(/\s/g, "").toLowerCase(), ["세차"]) ? [
+      `차 먼지는 말이 없지만 광택은 티가 납니다.`,
+      `세차는 귀찮고, 깨끗한 차는 은근히 기분 좋습니다.`,
+      `주차장에서 한 번 더 보게 되면 이긴 겁니다.`
+    ] : includesAny(String(subject).replace(/\s/g, "").toLowerCase(), ["화장실", "욕실"]) ? [
+      `욕실 물때는 조용해도 존재감이 큽니다.`,
+      `화장실 청소는 하기 전만 싫고, 끝나면 공기가 다릅니다.`,
+      `변기와 세면대만 잡아도 마음이 덜 찝찝합니다.`
+    ] : includesAny(String(subject).replace(/\s/g, "").toLowerCase(), ["설거지", "싱크대"]) ? [
+      `싱크대는 미루면 접시 산이 됩니다.`,
+      `설거지는 물소리 켜는 순간 반은 끝입니다.`,
+      `그릇은 조용히 쌓이고 냄새는 솔직합니다.`
+    ] : [
+      `${subject}는 시작 전엔 귀찮고 끝나면 바로 티가 납니다.`,
+      `오늘은 완벽한 청소보다 눈에 밟히는 것 하나입니다.`,
+      `미루면 마음에 알림이 계속 뜹니다.`
+    ];
+    return withZodiacTag(pick(choreLines, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-chore-share`)));
+  }
   const pools = {
     food: [
       `${winnerName}은 배를 설득하고, ${loserName}은 미련을 남깁니다.`,
@@ -4790,6 +5086,18 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
     if (analysis.intent === "skip" && includesAny(question, ["너무 피곤", "아파", "감기", "늦었", "시간없", "시간 없어"])) score += 8;
     if (analysis.intent === "skip" && !includesAny(question, ["너무 피곤", "아파", "감기", "늦었", "시간없", "시간 없어"])) score -= 6;
   }
+  if (category === "chore") {
+    const q = String(question).replace(/\s/g, "").toLowerCase();
+    const textCompact = `${analysis.name} ${analysis.subjectName || ""}`.replace(/\s/g, "").toLowerCase();
+    const urgentMess = includesAny(q, ["냄새", "너무더러", "찝찝", "물때", "쌓였", "먼지", "얼룩", "오늘해야", "지금해야", "손님", "내일손님"]);
+    const tiredOrBadTiming = includesAny(q, ["너무피곤", "피곤", "늦었", "시간없", "비온", "비올", "내일비", "귀찮"]);
+    if (analysis.intent === "go" && urgentMess) score += 16;
+    if (analysis.intent === "skip" && tiredOrBadTiming && !urgentMess) score += 10;
+    if (analysis.intent === "skip" && urgentMess) score -= 8;
+    if (analysis.intent === "go" && includesAny(textCompact, ["세차"]) && includesAny(q, ["비온", "비올", "내일비"])) score -= 12;
+    if (analysis.intent === "skip" && includesAny(textCompact, ["세차"]) && includesAny(q, ["비온", "비올", "내일비"])) score += 12;
+    if (analysis.intent === "go" && !tiredOrBadTiming) score += 5;
+  }
   if (category === "exercise") {
     if (analysis.intent === "go" && !includesAny(question, ["아파", "몸살", "다쳤", "너무 피곤", "무리"])) score += 10;
     if (analysis.intent === "skip" && includesAny(question, ["아파", "몸살", "다쳤", "너무 피곤", "무리"])) score += 12;
@@ -4850,11 +5158,22 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
 
 function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed) {
   const questionAnalysis = analyzeQuestion(question, choiceA, choiceB, profile);
+  const subjectProfile = (questionAnalysis && questionAnalysis.subjectProfile)
+    || extractSubjectProfile(question, choiceA, choiceB, questionAnalysis ? questionAnalysis.category : "daily");
   const category = questionAnalysis && questionAnalysis.confidence >= 0.58
     ? questionAnalysis.category
     : inferCategory(question, choiceA, choiceB, profile);
   const a = contextualizeOption(choiceA, category, question);
   const b = contextualizeOption(choiceB, category, question);
+  if (subjectProfile && subjectProfile.subject) {
+    const subjectTraits = subjectProfile.traits || [];
+    if (a.intent !== "specific" && (a.subjectName === a.name || subjectProfile.confidence >= 0.7)) a.subjectName = subjectProfile.subject;
+    if (b.intent !== "specific" && (b.subjectName === b.name || subjectProfile.confidence >= 0.7)) b.subjectName = subjectProfile.subject;
+    if (a.intent !== "specific") a.features = uniqueList(subjectTraits.concat(a.features || [])).slice(0, 5);
+    if (b.intent !== "specific") b.features = uniqueList(subjectTraits.concat(b.features || [])).slice(0, 5);
+    a.subjectProfile = subjectProfile;
+    b.subjectProfile = subjectProfile;
+  }
   if (questionAnalysis && questionAnalysis.category === category) {
     if (Array.isArray(questionAnalysis.optionA_traits) && questionAnalysis.optionA_traits.length) {
       const mergedA = category === "travel"
@@ -4929,7 +5248,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     cardDrivenReason,
     cardReason,
     optionFeatureSentence(winner),
-    `${escapeHtml(loser.name)}도 나쁘진 않은데, 지금은 ${escapeHtml(winner.name)} 쪽이 끝나고 더 설명이 됩니다.`
+    `${escapeHtml(loser.name)}도 나쁘진 않은데, 지금은 ${escapeHtml(winner.name)} 쪽이 끝나고 덜 어색합니다.`
   ].join(" ");
   const whyByCategory = {
     food: categoryRealityReason("food", winner, loser, question, cardLabels, sign, seed),
@@ -4945,6 +5264,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     exercise: categoryRealityReason("exercise", winner, loser, question, cardLabels, sign, seed),
     study: categoryRealityReason("study", winner, loser, question, cardLabels, sign, seed),
     game: categoryRealityReason("game", winner, loser, question, cardLabels, sign, seed),
+    chore: categoryRealityReason("chore", winner, loser, question, cardLabels, sign, seed),
     pet: categoryRealityReason("pet", winner, loser, question, cardLabels, sign, seed),
     amusement: categoryRealityReason("amusement", winner, loser, question, cardLabels, sign, seed),
     hobby: categoryRealityReason("hobby", winner, loser, question, cardLabels, sign, seed),
@@ -4954,6 +5274,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     daily: categoryRealityReason("daily", winner, loser, question, cardLabels, sign, seed)
   };
   const shareLine = shareableAdvice(category, winner, loser, question, seed, sign);
+  const selectedWhy = ensureSubjectInReason(whyByCategory[category] || defaultWhy, subjectProfile, winner, loser, question, seed);
   const oppositeText = hasQuestionContext
     ? `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`
     : `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`;
@@ -4965,7 +5286,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     winnerScore,
     loserScore,
     advice: cleanPlayTone(shareLine),
-    why: cleanPlayTone(whyByCategory[category] || defaultWhy),
+    why: cleanPlayTone(selectedWhy),
     opposite: oppositeText,
     fortune: cleanPlayTone(fortune),
     zodiacCards: cardLabels,

@@ -832,6 +832,8 @@ const optionFeatureBank = [
   { keys: ["공원"], category: "place", features: ["넓은 공간", "걷기 좋은 동선", "답답함이 풀리는 느낌", "날씨 영향을 많이 받음"], caution: "날씨가 나쁘면 금방 피곤해질 수 있어요.", vibe: "환기" },
   { keys: ["동물원"], category: "place", features: ["동물 보는 재미", "천천히 걷는 동선", "구경할 거리가 계속 이어지는 점", "날씨와 걷는 거리에 체력이 많이 쓰이는 점"], caution: "더운 날이나 사람이 많은 날엔 그늘과 쉬는 시간을 꼭 잡아야 해요.", vibe: "구경하는 재미" },
   { keys: ["놀이공원"], category: "place", features: ["놀이기구의 확실한 재미", "하루가 이벤트처럼 느껴지는 점", "대기줄과 사람 많은 변수", "돌아올 때 체력이 크게 빠지는 점"], caution: "대기 시간이 길면 기대감보다 피로가 먼저 올 수 있어요.", vibe: "큰 이벤트" },
+  { keys: ["롯데월드"], category: "amusement", features: ["실내외를 오가는 놀이공원 코스", "인기 놀이기구와 긴 대기줄", "사진 찍기 좋은 공간", "사람 많은 날엔 체력이 빨리 빠지는 점"], caution: "주말이나 방학 시즌엔 대기시간이 하루의 절반을 가져갈 수 있어요.", vibe: "도심 놀이공원" },
+  { keys: ["서울랜드"], category: "amusement", features: ["상대적으로 여유 있는 동선", "가족 단위로 돌기 좋은 분위기", "넓게 걷는 놀이공원 느낌", "강한 임팩트는 롯데월드보다 약할 수 있는 점"], caution: "확실한 스릴과 유명 어트랙션을 원하면 조금 얌전하게 느껴질 수 있어요.", vibe: "여유 놀이공원" },
   { keys: ["카페"], category: "place", features: ["앉아서 쉬기 좋음", "대화하기 편함", "커피나 디저트로 기분 전환 가능", "오래 있으면 비용이 쌓임"], caution: "사람이 많거나 자리가 불편하면 생각보다 정신없을 수 있어요.", vibe: "잠깐의 여유" },
   { keys: ["홍대"], category: "place", features: ["술집과 사람 많은 거리", "즉흥적으로 코스가 바뀌는 분위기", "시끄럽고 에너지 높은 밤", "집에 갈 타이밍을 놓치기 쉬운 점"], caution: "조용히 쉬고 싶은 날이면 사람 많은 공기부터 피곤할 수 있어요.", vibe: "즉흥적인 밤" },
   { keys: ["합정"], category: "place", features: ["카페와 맛집을 천천히 고르는 재미", "홍대보다 한 칸 낮은 소음", "데이트나 대화에 맞는 여유", "너무 조용하면 심심할 수 있는 점"], caution: "확실히 놀고 싶은 날엔 홍대보다 얌전하게 느껴질 수 있어요.", vibe: "여유 있는 약속" },
@@ -853,6 +855,10 @@ const optionFeatureBank = [
   { keys: ["걸어간다", "걷는다", "걷기", "걸어"], category: "daily", features: ["몸을 움직이며 기분 전환이 되는 점", "돈이 들지 않는 점", "생각을 정리할 시간이 생기는 점", "날씨와 체력 영향을 크게 받는 점"], caution: "시간이 촉박하거나 너무 덥고 추우면 도착 전에 지칠 수 있어요.", vibe: "가벼운 움직임" },
   { keys: ["만난다", "만나", "나간다", "외출"], category: "daily", features: ["사람을 만나며 기분이 환기되는 점", "집에 있으면 없을 장면이 생기는 점", "대화와 웃음이 생길 수 있는 점", "체력과 시간이 소모되는 점"], caution: "몸이 많이 피곤하면 약속이 즐거움보다 숙제가 될 수 있어요.", vibe: "밖으로 나가는 장면" },
   { keys: ["잔다", "잠", "잠잔다", "쉰다"], category: "daily", features: ["몸을 바로 회복하는 점", "이불과 베개의 설득력이 강한 점", "내일 컨디션을 챙기는 점", "밖에서 생길 장면은 놓치는 점"], caution: "이미 너무 오래 미뤘던 약속이면 자고 나서 아쉬움이 남을 수 있어요.", vibe: "회복과 휴식" },
+  { keys: ["강아지", "개", "댕댕이"], category: "pet", features: ["매일 산책이 필요한 생활 리듬", "표현이 크고 애착이 바로 보이는 점", "같이 움직이는 시간이 많아지는 점", "털·짖음·외출 책임이 따라오는 점"], caution: "예쁨보다 매일 산책과 돌봄 루틴을 감당할 수 있는지가 먼저예요.", vibe: "같이 사는 에너지" },
+  { keys: ["고양이", "냥이", "猫"], category: "pet", features: ["혼자 있는 시간도 비교적 잘 보내는 성향", "조용히 다가오는 애착", "집 안 생활에 맞는 독립성", "화장실·털·스크래처 관리가 필요한 점"], caution: "혼자 잘 있는 편이어도 방치가 되는 건 아니고, 집 환경 관리가 꽤 중요해요.", vibe: "조용한 동거" },
+  { keys: ["노래방", "코노", "코인노래방"], category: "hobby", features: ["마이크 잡는 순간 스트레스가 빠지는 점", "같이 가면 분위기가 바로 올라가는 점", "목이 먼저 지칠 수 있는 점", "선곡 실패하면 민망함이 생기는 점"], caution: "목 상태가 안 좋거나 조용히 쉬고 싶은 날엔 에너지를 더 뺏길 수 있어요.", vibe: "소리 지르는 해방감" },
+  { keys: ["pc방", "피시방", "피씨방"], category: "hobby", features: ["앉자마자 게임과 간식이 같이 시작되는 점", "시간이 조용히 사라지는 점", "친구와 가면 몰입이 빨라지는 점", "끝낼 타이밍을 놓치기 쉬운 점"], caution: "한 시간만 하겠다는 말이 제일 먼저 배신할 수 있어요.", vibe: "시간 삭제 구역" },
   { keys: ["샤워", "씻", "씻기", "목욕"], category: "hygiene", features: ["몸이 개운하게 리셋되는 점", "땀과 찝찝함을 털어내는 점", "잠들기 전 기분이 가벼워지는 점", "시작 전 귀찮음이 꽤 큰 점"], caution: "너무 늦었거나 몸이 축 처져 있으면 짧게만 씻어도 충분해요.", vibe: "개운함" },
   { keys: ["머리감", "머리 감", "세수", "양치"], category: "hygiene", features: ["찝찝함이 바로 줄어드는 점", "거울 볼 때 마음이 덜 흐트러지는 점", "밖에 나가거나 잠들기 전 부담이 줄어드는 점", "귀찮음이 문앞에서 버티는 점"], caution: "완벽하게 다 하려다 더 미루지 말고 제일 찝찝한 것 하나만 해도 좋아요.", vibe: "정돈" },
   { keys: ["운동", "헬스", "러닝", "뛴다", "뛰기", "요가", "필라테스"], category: "exercise", features: ["몸을 움직이며 기분이 풀리는 점", "하고 나면 뿌듯함이 남는 점", "시작 전까지 귀찮음이 강한 점", "체력과 시간이 필요한 점"], caution: "몸이 진짜 피곤하거나 아프면 무리하지 않는 게 좋아요.", vibe: "몸의 시동" },
@@ -894,6 +900,9 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["운동", "헬스", "러닝", "뛸까", "뛰", "요가", "필라테스", "산책"])) return "exercise";
   if (includesAny(text, ["공부", "시험", "숙제", "과제", "강의", "복습", "예습"])) return "study";
   if (includesAny(text, ["게임", "롤", "리그오브레전드", "리그 오브 레전드", "스타", "스타크래프트", "배그", "스팀", "모바일게임"]) && !includesAny(text, ["플스", "플레이스테이션", "닌텐도", "스위치", "게임기"])) return "game";
+  if (includesAny(text, ["강아지", "고양이", "댕댕이", "냥이", "반려동물", "반려견", "반려묘", "키울까", "입양"])) return "pet";
+  if (includesAny(text, ["롯데월드", "서울랜드", "에버랜드", "놀이공원", "어트랙션", "자이로드롭", "롤러코스터", "대기줄"])) return "amusement";
+  if (includesAny(text, ["노래방", "코노", "코인노래방", "pc방", "피시방", "피씨방", "취미", "놀거리", "뭐하고 놀"])) return "hobby";
   if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
   if (includesAny(text, ["여행", "휴가", "여름휴가", "겨울휴가", "해외", "국내", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑", "일본", "도쿄", "오사카", "후쿠오카", "교토", "태국", "방콕", "푸켓", "치앙마이", "파타야", "제주도", "제주", "부산", "경주", "전주"])) return "travel";
   if (hasChildcareContext(text)) return "childcare";
@@ -2543,6 +2552,18 @@ function playfulRealityReason(category, winner, loser, question) {
       `${winnerName}은 재미 담당이고, ${loserName}은 시간 담당입니다. 오늘은 종료 버튼 누를 자신까지 같이 봐야 합니다.`,
       `${subject} 쪽은 ${feature} 쪽입니다. 한 판이 세 판 되는 마법만 조심하면 됩니다.`
     ],
+    pet: [
+      `${winnerTopic} 귀여움보다 생활 리듬을 먼저 바꾸는 선택입니다. ${loserName}도 좋지만 오늘은 같이 사는 하루를 더 잘 상상해야 합니다.`,
+      `${subject} 쪽은 반려동물의 성격, 애착, 생활패턴을 같이 보는 선택입니다. 예쁜 순간보다 매일 반복되는 루틴이 진짜 본편입니다.`
+    ],
+    amusement: [
+      `${winnerTopic} 놀이기구보다 대기줄과 체력까지 같이 데려오는 선택입니다. ${loserName}도 좋지만 오늘은 다 놀고 난 다리 상태까지 봐야 합니다.`,
+      `${subject} 쪽은 놀이기구, 대기시간, 체력을 같이 보는 선택입니다. 설렘도 크지만 돌아오는 길 표정이 승부를 가릅니다.`
+    ],
+    hobby: [
+      `${winnerName}은 시작하면 시간이 사라지는 쪽입니다. ${loserName}도 좋지만 오늘은 재미와 체력 소모를 같이 봐야 합니다.`,
+      `${subject} 쪽은 재미, 시간, 비용을 같이 보는 선택입니다. 취미 선택은 시작보다 끝낼 타이밍이 더 어렵습니다.`
+    ],
     travel: [
       winner.intent === "skip"
         ? `${winnerTopic} 텐트 대신 집 천장을 고르는 쪽입니다. ${loserTopic} 바람은 좋지만 짐 싸는 순간부터 일이 커집니다.`
@@ -3940,6 +3961,42 @@ function futureComment(category, winner, question, seed, sign) {
       `미래의 내가 플레이 기록을 보며 침묵할 수 있습니다.`,
       `종료 버튼을 누를 수 있으면 오늘은 꽤 어른입니다.`
     ],
+    pet: [
+      `귀여운 사진은 늘고, 책임감도 같이 입주합니다.`,
+      `미래의 내가 산책 시간이나 모래 삽을 들고 있을 수 있습니다.`,
+      `이 선택은 오늘의 설렘보다 매일의 루틴에서 진짜 평가받습니다.`,
+      `털은 남고 애착도 남습니다. 둘 다 꽤 오래 갑니다.`,
+      `귀엽다는 말로 시작했지만 생활표가 같이 따라옵니다.`,
+      `미래의 내가 간식 봉투를 흔들며 이 결정을 다시 떠올립니다.`,
+      `집 안 공기가 조금 달라질 수 있습니다. 귀여움 쪽으로요.`,
+      `반려는 선택보다 동거에 가깝다는 걸 미래의 내가 알게 됩니다.`,
+      `사진첩은 행복하고 청소기는 바빠질 예정입니다.`,
+      `귀여움에 졌다면 이제 루틴으로 갚아야 합니다.`
+    ],
+    amusement: [
+      `사진은 남고 다리는 다음 날 항의할 수 있습니다.`,
+      `대기줄에서 한 번, 놀이기구에서 한 번 오늘 선택이 평가됩니다.`,
+      `돌아오는 길 말수가 줄어도 추억은 꽤 시끄럽게 남습니다.`,
+      `간식값과 체력이 같이 빠져나갈 예정입니다.`,
+      `놀이기구보다 줄 서는 시간이 더 오래 기억날 수도 있습니다.`,
+      `미래의 내가 발바닥을 보며 오늘을 떠올립니다.`,
+      `하루가 이벤트가 되면 피곤함도 약간은 용서됩니다.`,
+      `사진첩은 웃고, 무릎은 조용히 불만 접수합니다.`,
+      `재미는 탔고 체력은 내려놨습니다.`,
+      `집 가는 길에 "그래도 재밌었다"가 나오면 성공입니다.`
+    ],
+    hobby: [
+      `재미는 왔고 시간은 조용히 사라질 준비를 합니다.`,
+      `한 시간만 하자는 말이 오늘도 신뢰를 잃을 수 있습니다.`,
+      `스트레스는 빠지고 목이나 손목이 대신 항의할 수 있습니다.`,
+      `끝낼 타이밍만 잡으면 꽤 괜찮은 선택입니다.`,
+      `미래의 내가 시계를 보고 살짝 놀랄 가능성이 있습니다.`,
+      `오늘의 취미는 기분 전환과 시간 삭제 사이에 있습니다.`,
+      `시작은 가볍고, 끝은 늘 생각보다 늦습니다.`,
+      `재밌으면 이긴 건데 내일 피곤하면 재심이 열립니다.`,
+      `놀고 나서 "딱 좋았다"가 나오면 성공입니다.`,
+      `자제력은 관전 모드, 재미는 선발 출전입니다.`
+    ],
     travel: [
       `지도 앱이 열리자 일상이 살짝 질투했습니다.`,
       `사진첩에 들어갈 장면 하나가 대기 중입니다.`,
@@ -4128,6 +4185,24 @@ function shareableAdvice(category, winner, loser, question, seed, sign) {
       `${winnerName} 켜면 스트레스는 줄고 시계는 배신합니다.`,
       `게임은 켜졌고 자제력은 관전 모드입니다.`
     ],
+    pet: [
+      `${winnerName}은 귀여움이고, ${loserName}은 다른 생활 리듬입니다.`,
+      `반려동물은 예쁨보다 매일 반복되는 루틴이 본편입니다.`,
+      `${winnerName} 고르면 사진첩은 늘고, 책임감도 같이 입주합니다.`,
+      `귀여운 건 1초고 돌봄은 매일입니다.`
+    ],
+    amusement: [
+      `${winnerName}은 설렘을 주고, 대기줄은 인내심을 가져갑니다.`,
+      `놀이공원은 놀이기구보다 돌아오는 다리가 진실을 말합니다.`,
+      `${winnerName} 고르면 사진은 남고 체력은 협상합니다.`,
+      `오늘의 재미는 줄 서는 시간까지 포함 가격입니다.`
+    ],
+    hobby: [
+      `${winnerName}은 재미를 주고, 시간은 몰래 가져갑니다.`,
+      `노는 선택은 시작보다 끝낼 타이밍이 더 어렵습니다.`,
+      `${winnerName} 고르면 스트레스는 줄고 시계는 배신합니다.`,
+      `오늘의 취미는 내일의 피곤함과 조용히 계약합니다.`
+    ],
     hygiene: [
       `씻기 전엔 귀찮고, 씻고 나면 내가 맞습니다.`,
       `물 틀기 전까지만 인생 최대 고민입니다.`,
@@ -4198,6 +4273,18 @@ function shareableAdvice(category, winner, loser, question, seed, sign) {
   if (includesAny(raw, ["택시", "버스"])) {
     if (includesAny(winnerRaw, ["택시"])) return withZodiacTag("택시는 돈을 쓰고, 버스는 인내심을 씁니다.");
     return withZodiacTag("버스는 돈을 아끼고, 자리가 없으면 인격을 시험합니다.");
+  }
+  if (category === "pet" && includesAny(raw, ["강아지", "고양이"])) {
+    if (includesAny(winnerRaw, ["강아지", "댕댕이"])) return withZodiacTag("강아지는 사랑을 크게 주고, 산책 알람도 같이 줍니다.");
+    return withZodiacTag("고양이는 조용히 들어와서 집 주인 자리를 가져갑니다.");
+  }
+  if (category === "amusement" && includesAny(raw, ["롯데월드", "서울랜드"])) {
+    if (includesAny(winnerRaw, ["롯데월드"])) return withZodiacTag("롯데월드는 설렘을 크게 주고, 대기줄도 크게 줍니다.");
+    return withZodiacTag("서울랜드는 덜 화려해도 다리가 덜 화낼 가능성이 있습니다.");
+  }
+  if (category === "hobby" && includesAny(raw, ["노래방", "pc방", "피시방", "피씨방"])) {
+    if (includesAny(winnerRaw, ["노래방", "코노"])) return withZodiacTag("노래방은 목을 쓰고, PC방은 시간을 씁니다.");
+    return withZodiacTag("PC방은 앉는 순간 시간이 삭제되고, 노래방은 목소리가 삭제됩니다.");
   }
   const basePool = pools[category] || pools.daily;
   const zodiacPool = signHooks[signName] || signHooks["황소자리"];
@@ -4370,6 +4457,9 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     exercise: categoryRealityReason("exercise", winner, loser, question, cardLabels, sign, seed),
     study: categoryRealityReason("study", winner, loser, question, cardLabels, sign, seed),
     game: categoryRealityReason("game", winner, loser, question, cardLabels, sign, seed),
+    pet: categoryRealityReason("pet", winner, loser, question, cardLabels, sign, seed),
+    amusement: categoryRealityReason("amusement", winner, loser, question, cardLabels, sign, seed),
+    hobby: categoryRealityReason("hobby", winner, loser, question, cardLabels, sign, seed),
     travel: categoryRealityReason("travel", winner, loser, question, cardLabels, sign, seed),
     place: categoryRealityReason("place", winner, loser, question, cardLabels, sign, seed),
     daily: categoryRealityReason("daily", winner, loser, question, cardLabels, sign, seed)

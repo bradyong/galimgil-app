@@ -37,6 +37,16 @@ const tones = [
   "지금 필요한 건 확신보다 덜 후회할 장면이에요."
 ];
 
+function uniqueList(items) {
+  const seen = new Set();
+  return (items || []).filter((item) => {
+    const key = String(item || "").trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 const aScenes = [
   "A를 고르면 오늘의 장면은 빠르게 열립니다. 머릿속에서 반복되던 생각이 현실의 반응으로 바뀌기 때문에, 답답함은 확실히 줄어들 가능성이 커요. 대신 속도가 빨라진 만큼 말의 온도를 낮추는 게 핵심입니다. 결론을 밀어붙이기보다 '나는 이렇게 느꼈어'처럼 내 상태를 설명하는 방식이 좋아요.",
   "A는 흐름을 앞으로 당기는 선택입니다. 지금 멈춰 있는 상황에 작은 파문을 만들고, 그 파문이 다음 장면을 불러올 수 있어요. 다만 상대나 상황이 바로 따라오지 않을 수도 있으니, 반응이 늦다고 해서 선택이 틀렸다고 단정하지 마세요. 오늘의 A는 정답 확인이 아니라 가능성 확인에 가깝습니다.",
@@ -901,6 +911,8 @@ const optionFeatureBank = [
 function inferCategory(question, choiceA, choiceB, profile) {
   const text = `${question} ${choiceA} ${choiceB}`.toLowerCase();
   if (profile.type !== "general") return profile.type;
+  const semantic = analyzeQuestion(question, choiceA, choiceB, profile);
+  if (semantic && semantic.confidence >= 0.58) return semantic.category;
   if (includesAny(text, ["점심", "저녁", "아침", "야식", "메뉴", "먹을", "뭐먹", "뭐 먹", "식사", "찌개", "라면", "밥", "국밥", "순대국", "순댓국", "뼈해장", "감자탕", "치킨", "피자", "햄버거", "버거", "배달", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "스시", "회", "사시미", "곱창", "삼겹살", "고기", "한우", "소고기"])) return "food";
   if (includesAny(text, ["아메리카노", "아이스", "아아", "뜨아", "커피", "라떼", "카페라떼", "콜드브루", "콜라", "코카콜라", "펩시", "사이다", "스프라이트", "칠성"])) return "beverage";
   if (includesAny(text, ["술", "소주", "맥주", "와인", "막걸리", "마실까", "한잔", "한 잔"])) return "drink";
@@ -918,6 +930,129 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["홍대", "합정", "카페", "공원", "영화", "드라마", "넷플릭스", "마트", "백화점", "여행", "놀러", "어디", "캠핑"])) return "place";
   if (includesAny(text, ["소비", "살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "버틴", "버티", "컴퓨터", "pc", "피씨", "노트북", "게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약", "휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시", "에어컨", "tv", "티비", "텔레비전", "가전"])) return "shopping";
   return "daily";
+}
+
+function splitChoiceText(question, choiceA, choiceB) {
+  const a = String(choiceA || "").trim();
+  const b = String(choiceB || "").trim();
+  if (a && b) return { optionA: a, optionB: b };
+  const raw = String(question || "").trim();
+  const parts = raw.split(/\s*(?:vs|VS|Vs|또는|아니면|or|\/|,|，)\s*/).map((part) => part.trim()).filter(Boolean);
+  if (parts.length >= 2) return { optionA: parts[0], optionB: parts[1] };
+  return { optionA: a, optionB: b };
+}
+
+function semanticOptionTraits(option, category, subCategory = "") {
+  const text = String(option || "").replace(/\s/g, "").toLowerCase();
+  const make = (traits, vibe, caution = "") => ({ traits, vibe, caution });
+  if (category === "family") {
+    if (includesAny(text, ["본가", "친정", "우리집", "우리집앞", "내집", "내집앞"])) {
+      return make(["익숙함", "부모님", "편안함", "어릴 때 공기", "잔소리 가능성"], "내 편 같은 집", "너무 편해서 배려가 느슨해질 수 있어요.");
+    }
+    if (includesAny(text, ["처가", "처가댁", "시댁", "시가", "배우자집", "남편집", "아내집"])) {
+      return make(["예의", "긴장감", "관계 관리", "눈치", "인사"], "예의 챙기는 방문", "마음은 불편해도 관계 점수는 크게 움직일 수 있어요.");
+    }
+    if (includesAny(text, ["외가", "큰집", "작은집", "친척", "할머니", "할아버지", "고모", "이모", "삼촌"])) {
+      return make(["친척", "명절 느낌", "안부", "가족 분위기", "오래 앉아 있을 가능성"], "가족 행사", "편한 듯해도 대화 체력이 필요할 수 있어요.");
+    }
+    return make(["가족 관계", "방문 부담", "편안함과 예의 사이", "대화 체력"], "가족 방문");
+  }
+  if (category === "travel") {
+    if (includesAny(text, ["해외", "유럽", "일본", "태국", "베트남", "대만", "동남아", "미국"])) {
+      return make(["비행기", "환전", "여행 기분", "비용", "사진과 이야기"], "해외 여행", "비용과 휴가 기간이 같이 따라와요.");
+    }
+    if (includesAny(text, ["제주", "강릉", "삼척", "부산", "속초", "양양", "경주", "전주", "여수", "남해"])) {
+      return make(["국내 이동", "먹거리", "사진", "동선", "날씨 변수"], "국내 여행지", "날씨와 이동 시간이 만족도를 많이 바꿔요.");
+    }
+    if (includesAny(text, ["캠핑", "글램핑", "차박"])) {
+      return make(["짐", "불멍", "바깥 공기", "직접 만드는 추억", "정리 피로"], "직접 만드는 여행", "쉬러 가도 손이 많이 갈 수 있어요.");
+    }
+    if (includesAny(text, ["리조트", "호텔", "펜션", "숙소"])) {
+      return make(["침대", "조식", "쉬는 모드", "수영장", "비용"], "회복 숙소", "추억보다 회복에 가까워질 수 있어요.");
+    }
+    return make(["거리", "비용", "피로", "분위기", "추억"], subCategory === "domestic_trip" ? "여행지 후보" : "여행 선택");
+  }
+  if (category === "hobby") {
+    if (includesAny(text, ["노래방", "코노"])) return make(["목소리", "에너지 발산", "사람들과 분위기", "선곡", "목 피로"], "소리 지르는 놀이");
+    if (includesAny(text, ["pc방", "피시방", "피씨방"])) return make(["게임", "집중", "시간 삭제", "간식", "편한 몰입"], "시간 삭제 구역");
+    return make(["재미", "시간", "비용", "같이 하는 사람", "끝낼 타이밍"], "취미 선택");
+  }
+  return make(["선택 뒤 장면", "시간", "비용", "마음의 부담"], "일상 선택");
+}
+
+function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
+  const { optionA, optionB } = splitChoiceText(question, choiceA, choiceB);
+  const text = `${question || ""} ${optionA} ${optionB}`.toLowerCase();
+  const compact = text.replace(/\s/g, "");
+  if (profile.type && profile.type !== "general") {
+    return { optionA, optionB, category: profile.type, subCategory: profile.type, intent: "프로필 기반 선택", optionA_traits: [], optionB_traits: [], confidence: 0.9 };
+  }
+
+  const familyWords = ["본가", "처가", "처가댁", "시댁", "시가", "친정", "외가", "큰집", "작은집", "친척", "명절", "부모님", "장모", "장인", "시부모", "할머니", "할아버지"];
+  if (includesAny(compact, familyWords)) {
+    const a = semanticOptionTraits(optionA, "family", "family_visit");
+    const b = semanticOptionTraits(optionB, "family", "family_visit");
+    return {
+      optionA,
+      optionB,
+      category: "family",
+      subCategory: "family_visit",
+      intent: "가족과 관련된 장소를 어디로 방문할지 고민",
+      optionA_traits: a.traits,
+      optionB_traits: b.traits,
+      optionA_vibe: a.vibe,
+      optionB_vibe: b.vibe,
+      confidence: 0.88
+    };
+  }
+
+  const hobbyWords = ["노래방", "코노", "코인노래방", "pc방", "피시방", "피씨방", "볼링", "당구", "보드게임", "만화카페", "방탈출"];
+  if (includesAny(compact, hobbyWords)) {
+    const a = semanticOptionTraits(optionA, "hobby", "play_choice");
+    const b = semanticOptionTraits(optionB, "hobby", "play_choice");
+    return {
+      optionA,
+      optionB,
+      category: "hobby",
+      subCategory: "play_choice",
+      intent: "어떤 놀이를 할지 고민",
+      optionA_traits: a.traits,
+      optionB_traits: b.traits,
+      optionA_vibe: a.vibe,
+      optionB_vibe: b.vibe,
+      confidence: 0.84
+    };
+  }
+
+  const travelWords = ["여행", "휴가", "놀러", "숙소", "호텔", "리조트", "캠핑", "글램핑", "해외", "국내", "제주", "강릉", "삼척", "부산", "속초", "양양", "경주", "전주", "여수", "일본", "태국", "유럽", "동남아"];
+  const travelQuestion = includesAny(compact, travelWords) || (includesAny(compact, ["갈까", "갈래", "어디", "다녀올", "놀러갈"]) && /^[가-힣a-zA-Z0-9\s]+$/.test(`${optionA}${optionB}`));
+  if (travelQuestion) {
+    const a = semanticOptionTraits(optionA, "travel", "destination_compare");
+    const b = semanticOptionTraits(optionB, "travel", "destination_compare");
+    return {
+      optionA,
+      optionB,
+      category: "travel",
+      subCategory: "destination_compare",
+      intent: "여행지나 이동 코스를 어디로 잡을지 고민",
+      optionA_traits: a.traits,
+      optionB_traits: b.traits,
+      optionA_vibe: a.vibe,
+      optionB_vibe: b.vibe,
+      confidence: includesAny(compact, travelWords) ? 0.82 : 0.62
+    };
+  }
+
+  return {
+    optionA,
+    optionB,
+    category: "daily",
+    subCategory: "unknown_choice",
+    intent: "상위 카테고리를 더 추론해야 하는 선택",
+    optionA_traits: semanticOptionTraits(optionA, "daily").traits,
+    optionB_traits: semanticOptionTraits(optionB, "daily").traits,
+    confidence: 0.35
+  };
 }
 
 function findFeatureEntry(text, preferredCategory = null) {
@@ -1025,6 +1160,15 @@ function inferredOptionProfile(option, category, question = "") {
     );
   }
 
+  if (category === "family") {
+    const semantic = semanticOptionTraits(name, "family", "family_visit");
+    return make(
+      semantic.traits,
+      semantic.caution || "가족 선택은 편안함과 예의를 같이 봐야 해요.",
+      semantic.vibe || "가족 방문"
+    );
+  }
+
   if (category === "daily") {
     if (has(["버스", "지하철", "택시", "차", "걸어", "걷", "자전거"])) {
       return make(
@@ -1074,6 +1218,7 @@ function analyzeOption(option, category, question = "") {
     study: { features: [`${option}로 진도를 조금이라도 당기는 점`, "마감이나 시험 부담을 줄이는 점", "시작 전 저항감", "끝나고 마음이 덜 쫓기는 점"], caution: "오래 하겠다고 잡으면 시작이 어려우니 작게 끊는 게 좋아요.", vibe: "진도" },
     game: { features: [`${option}로 스트레스를 빨리 푸는 점`, "한 판의 재미", "시간이 빨리 사라지는 점", "끝낼 타이밍이 흔들리는 점"], caution: "시작 전에 종료 시간을 정해두면 내일의 내가 덜 째려봐요.", vibe: "한 판" },
     travel: { features: [`${option}로 일상에서 잠깐 빠져나오는 점`, "사진과 추억이 남는 점", "비용과 동선 부담", "체력 소모"], caution: "설렘과 예산을 같이 놓고 보는 게 좋아요.", vibe: "탈출" },
+    family: { features: [`${option}에 갔을 때의 가족 분위기`, "편안함과 예의 사이의 긴장", "방문 뒤 남는 마음", "대화 체력과 눈치"], caution: "가족 선택은 거리보다 마음의 부담이 더 크게 작동할 수 있어요.", vibe: "가족 방문" },
     daily: { features: [`${option}을 골랐을 때 달라지는 장면`, "하고 난 뒤의 마음", "미뤘을 때 남는 찝찝함", "오늘 감당 가능한 정도"], caution: "한 번에 크게 결정하기보다 작게 해보는 게 좋아요.", vibe: "일상 선택" }
   };
   const fallback = fallbackByCategory[category] || fallbackByCategory.daily;
@@ -2579,17 +2724,18 @@ function sameResultDifferentReason(category, winner, loser, question, cards = []
     const l0 = escapeHtml(lFeatures[0] || `${loserName}의 다른 매력`);
     const l1 = escapeHtml(lFeatures[1] || "반대쪽 코스");
     const winnerVibe = escapeHtml(winner.vibe || "여행");
+    const winnerTopic = escapeHtml(withParticle(winner.name, "은", "는"));
     const travelScenes = [
-      `${winnerName}은 출발 전부터 ${f0}부터 떠오릅니다. ${loserName}의 ${l0}도 끌리지만, 오늘은 코스가 눈앞에 더 잘 이어지는 쪽입니다.`,
+      `${winnerTopic} 출발 전부터 ${f0}부터 떠오릅니다. ${loserName}의 ${l0}도 끌리지만, 오늘은 코스가 눈앞에 더 잘 이어지는 쪽입니다.`,
       `사진첩 기준으로 보면 ${winnerName} 쪽이 조금 더 말을 겁니다. ${f2} 쪽으로 한 장 남기기 좋고, 돌아와서도 "거기 괜찮았지" 할 장면이 있습니다.`,
       `${winnerName}은 밥 먹고 다음 코스로 넘어가는 그림이 덜 끊깁니다. ${f1}가 붙어서 하루 계획을 짜기 편한 쪽입니다.`,
-      `${loserName}에도 ${l1}가 있긴 한데, 오늘 여행은 고민을 길게 늘리는 것보다 ${winnerName}처럼 바로 그려지는 코스가 이깁니다.`,
+      `${loserName}에도 ${l1}도 있긴 한데, 오늘 여행은 고민을 길게 늘리는 것보다 ${winnerName}처럼 바로 그려지는 코스가 이깁니다.`,
       `${winnerName}은 이름을 듣자마자 하루의 온도가 잡힙니다. ${winnerVibe} 쪽으로 마음이 기울고, ${loserName}은 다음 여행 후보석에 앉습니다.`,
       `오늘은 멀리 거창한 이유보다 "가면 뭐 하지?"가 바로 나오는지가 큽니다. ${winnerName}은 ${f0}, ${f1}가 붙어서 계획이 덜 뻣뻣합니다.`,
       `${winnerName} 쪽은 도착한 뒤 첫 두 시간이 빨리 그려집니다. ${loserName}도 좋은데, 오늘은 움직이는 동선이 더 자연스러운 쪽입니다.`,
       `${winnerName}은 다녀오고 나서 설명하기 쉬운 여행입니다. ${f2} 하나만 남아도 오늘 갈림길 값은 합니다.`,
       `지금 필요한 건 여행지 이름 자체보다 하루가 어떻게 흘러갈지입니다. ${winnerName}은 ${f0}부터 ${f1}까지 이어지는 느낌이 더 또렷합니다.`,
-      `${loserName}은 조용히 손을 들고 있지만, ${winnerName}은 벌써 지도 앱에서 핀을 꽂고 있습니다. 오늘은 바로 움직일 수 있는 쪽입니다.`
+      `${loserName}은 조용히 손을 들고 있지만, ${winnerTopic} 벌써 지도 앱에서 핀을 꽂고 있습니다. 오늘은 바로 움직일 수 있는 쪽입니다.`
     ];
     const signTravelAngles = {
       "양자리": ["양자리는 검색보다 출발 버튼이 빠른 날입니다.", "양자리는 복잡하게 따지기 전에 신발부터 봅니다."],
@@ -2623,6 +2769,41 @@ function sameResultDifferentReason(category, winner, loser, question, cards = []
         `택시는 빠르고 버스는 버팁니다. 이상하게 오늘은 그 버티는 쪽이 나중에 덜 찝찝합니다.`
       ], hashText(`${question}-${winner.name}-${signName}-${seed}-bus-scene`));
     return cleanPlayTone(`${line} ${signNudge}`);
+  }
+
+  if (category === "family") {
+    const winnerTraits = winner.features || [];
+    const loserTraits = loser.features || [];
+    const w0 = escapeHtml(winnerTraits[0] || "가족 분위기");
+    const w1 = escapeHtml(winnerTraits[1] || "방문 뒤 마음");
+    const l0 = escapeHtml(loserTraits[0] || "다른 가족 분위기");
+    const familyScenes = [
+      `${winnerName} 쪽은 ${w0}가 먼저 보입니다. ${loserName}도 가족이라 신경 쓰이지만, 오늘은 방문 뒤 마음이 덜 복잡한 쪽입니다.`,
+      `${escapeHtml(withParticle(winner.name, "은", "는"))} 문 열고 들어갔을 때의 공기가 더 빨리 그려집니다. ${escapeHtml(withParticle(loser.name, "은", "는"))} ${l0}가 따라오지만, 오늘은 내가 덜 굳는 쪽입니다.`,
+      `가족 방문은 거리보다 표정 관리가 큽니다. ${winnerName} 쪽은 ${w1}가 있어서 오늘의 나를 덜 딱딱하게 만듭니다.`,
+      `${loserName}도 챙겨야 하는 선택이지만, 오늘은 ${winnerName} 쪽이 인사하고 앉는 장면이 덜 무겁습니다.`,
+      `${winnerName}은 편안함과 예의 사이에서 오늘 조금 더 버틸 만한 쪽입니다. 가족 선택은 맞고 틀림보다 다녀온 뒤 숨이 덜 막히는지가 큽니다.`,
+      `오늘은 누구 집이 더 맞냐보다, 가서 어떤 얼굴로 앉아 있을지가 먼저입니다. ${winnerName} 쪽이 그 얼굴이 조금 덜 굳어 보입니다.`,
+      `${winnerName} 쪽은 들어가기 전 마음의 준비 시간이 짧습니다. ${loserName}은 관계 점수는 챙기지만 오늘 눈치 비용이 조금 더 붙습니다.`,
+      `본심만 보면 쉬운 문제 같은데, 가족 선택은 늘 예의가 같이 따라옵니다. 오늘은 ${winnerName} 쪽이 그 예의를 덜 빡세게 요구합니다.`
+    ];
+    const signFamilyAngles = {
+      "양자리": ["양자리는 오래 눈치 보기보다 빨리 다녀오고 끝내는 쪽을 좋아합니다.", "양자리는 가족 회의도 짧고 굵게 끝내고 싶어 합니다."],
+      "황소자리": ["황소자리는 편한 공기를 무시하지 않습니다.", "황소자리는 밥 먹고 등 기대기 좋은 쪽에 약합니다."],
+      "쌍둥이자리": ["쌍둥이자리는 가서 할 말이 덜 막히는 쪽을 봅니다.", "쌍둥이자리는 대화가 굴러가는 집을 좋아합니다."],
+      "게자리": ["게자리는 가족 선택에서 마음 덜 서운한 쪽을 먼저 봅니다.", "게자리는 다녀온 뒤 마음 온도를 꽤 중요하게 봅니다."],
+      "사자자리": ["사자자리는 괜히 작아지는 자리를 싫어합니다.", "사자자리는 가족 앞에서도 내가 너무 눈치 보지 않는 쪽을 봅니다."],
+      "처녀자리": ["처녀자리는 방문 순서와 예의 점수를 머릿속으로 계산합니다.", "처녀자리는 다녀온 뒤 뒷말이 덜 생기는 쪽을 봅니다."],
+      "천칭자리": ["천칭자리는 양쪽 가족의 균형을 끝까지 봅니다.", "천칭자리는 관계의 저울이 덜 흔들리는 쪽을 고릅니다."],
+      "전갈자리": ["전갈자리는 겉인사보다 속마음이 덜 불편한 쪽을 봅니다.", "전갈자리는 대충 웃고 넘기는 자리를 오래 못 견딥니다."],
+      "사수자리": ["사수자리는 답답한 가족 공기보다 빨리 움직일 수 있는 쪽을 봅니다.", "사수자리는 다녀와서라도 숨통 트이는 쪽을 좋아합니다."],
+      "염소자리": ["염소자리는 해야 할 도리를 꽤 현실적으로 봅니다.", "염소자리는 나중에 덜 혼나는 가족 동선을 고릅니다."],
+      "물병자리": ["물병자리는 가족 선택도 꼭 정석대로만 보진 않습니다.", "물병자리는 남들이 뭐라 해도 내 방식으로 덜 답답한 쪽을 봅니다."],
+      "물고기자리": ["물고기자리는 가족 방문 뒤 마음이 덜 출렁이는 쪽을 봅니다.", "물고기자리는 서운함이 덜 남는 자리를 고릅니다."]
+    };
+    const scene = pick(familyScenes, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-${cardText}-family-scene`));
+    const angle = pick(signFamilyAngles[signName] || [signNudge], hashText(`${question}-${winner.name}-${signName}-${seed}-family-angle`));
+    return cleanPlayTone(`${scene} ${angle}`);
   }
   const style = {
     "양자리": {
@@ -2865,7 +3046,7 @@ function categoryRealityReason(category, winner, loser, question, cards = [], si
   const pair = featurePairText(winner.features[0] || "바로 체감되는 장점", winner.features[1] || "끝나고 남는 느낌");
   const opening = realityOpeningLine(category, winner, loser, question);
   const variedReason = sameResultDifferentReason(category, winner, loser, question, cards, sign, seed);
-  if (variedReason && ["pet", "amusement", "hobby", "relationship", "beverage", "drink", "travel", "daily"].includes(category)) return variedReason;
+  if (variedReason && ["pet", "amusement", "hobby", "relationship", "family", "beverage", "drink", "travel", "daily"].includes(category)) return variedReason;
   if (category === "food") {
     const foodReason = foodRealityReason(winner, loser, question, sign, seed);
     return variedReason || foodReason;
@@ -4401,6 +4582,16 @@ function shareableAdvice(category, winner, loser, question, seed, sign) {
       ];
     return withZodiacTag(pick(locationLines, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-relationship-location-share`)));
   }
+  if (category === "family") {
+    const familyLines = [
+      `${winnerName}은 마음이 덜 굳고, ${loserName}은 예의가 더 빡셀 수 있습니다.`,
+      `가족 방문은 거리보다 다녀온 뒤 마음이 더 오래 갑니다.`,
+      `${winnerName} 쪽은 인사하고 앉는 장면이 조금 덜 무겁습니다.`,
+      `${loserName}도 챙겨야 하지만 오늘 표정 관리는 ${winnerName} 쪽이 쉽습니다.`,
+      `오늘은 정답보다 가족 공기에서 덜 굳는 쪽입니다.`
+    ];
+    return withZodiacTag(pick(familyLines, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-family-share`)));
+  }
   const pools = {
     food: [
       `${winnerName}은 배를 설득하고, ${loserName}은 미련을 남깁니다.`,
@@ -4616,6 +4807,12 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
     if (analysis.intent === "go" && includesAny(question, ["답답", "휴가", "기분전환", "놀러"])) score += 10;
     if (analysis.intent === "skip" && includesAny(question, ["돈", "비싸", "피곤", "시간없", "일정"])) score += 12;
   }
+  if (category === "family") {
+    if (includesAny(text, ["본가", "친정", "부모님"]) && cardHas(cards, ["편안함", "안정감", "가족", "따뜻함", "익숙함"])) score += 12;
+    if (includesAny(text, ["처가", "처가댁", "시댁", "시가"]) && cardHas(cards, ["책임감", "관계", "매너", "조화", "배려"])) score += 12;
+    if (includesAny(question, ["명절", "인사", "먼저", "오랜만", "가야", "방문"])) score += includesAny(text, ["처가", "처가댁", "시댁", "시가", "친척", "큰집"]) ? 6 : 3;
+    if (includesAny(question, ["피곤", "쉬고", "편하게", "부담"])) score += includesAny(text, ["본가", "친정", "우리집", "내집"]) ? 7 : -2;
+  }
   const questionText = String(question).toLowerCase();
   const highValueShopping = category === "shopping" ? highValuePurchaseProfile(`${questionText} ${analysis.name} ${analysis.subjectName || ""}`) : null;
   if (highValueShopping) {
@@ -4652,9 +4849,32 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [])
 }
 
 function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed) {
-  const category = inferCategory(question, choiceA, choiceB, profile);
+  const questionAnalysis = analyzeQuestion(question, choiceA, choiceB, profile);
+  const category = questionAnalysis && questionAnalysis.confidence >= 0.58
+    ? questionAnalysis.category
+    : inferCategory(question, choiceA, choiceB, profile);
   const a = contextualizeOption(choiceA, category, question);
   const b = contextualizeOption(choiceB, category, question);
+  if (questionAnalysis && questionAnalysis.category === category) {
+    if (Array.isArray(questionAnalysis.optionA_traits) && questionAnalysis.optionA_traits.length) {
+      const mergedA = category === "travel"
+        ? (a.features || []).concat(questionAnalysis.optionA_traits)
+        : questionAnalysis.optionA_traits.concat(a.features || []);
+      a.features = uniqueList(mergedA).slice(0, 5);
+      a.vibe = questionAnalysis.optionA_vibe || a.vibe;
+      a.semanticIntent = questionAnalysis.intent;
+      a.subCategory = questionAnalysis.subCategory;
+    }
+    if (Array.isArray(questionAnalysis.optionB_traits) && questionAnalysis.optionB_traits.length) {
+      const mergedB = category === "travel"
+        ? (b.features || []).concat(questionAnalysis.optionB_traits)
+        : questionAnalysis.optionB_traits.concat(b.features || []);
+      b.features = uniqueList(mergedB).slice(0, 5);
+      b.vibe = questionAnalysis.optionB_vibe || b.vibe;
+      b.semanticIntent = questionAnalysis.intent;
+      b.subCategory = questionAnalysis.subCategory;
+    }
+  }
   const cardLabels = zodiacCards(sign, seed);
   const cardText = narrativeCardPreview(cardLabels);
   const primaryCard = cardLabels[0];
@@ -4728,6 +4948,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     pet: categoryRealityReason("pet", winner, loser, question, cardLabels, sign, seed),
     amusement: categoryRealityReason("amusement", winner, loser, question, cardLabels, sign, seed),
     hobby: categoryRealityReason("hobby", winner, loser, question, cardLabels, sign, seed),
+    family: categoryRealityReason("family", winner, loser, question, cardLabels, sign, seed),
     travel: categoryRealityReason("travel", winner, loser, question, cardLabels, sign, seed),
     place: categoryRealityReason("place", winner, loser, question, cardLabels, sign, seed),
     daily: categoryRealityReason("daily", winner, loser, question, cardLabels, sign, seed)

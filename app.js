@@ -843,6 +843,8 @@ const optionFeatureBank = [
   { keys: ["태국", "방콕", "푸켓", "치앙마이", "파타야"], category: "travel", features: ["휴양과 마사지의 느슨함", "수영장과 야시장의 재미", "더운 공기 속에서 천천히 쉬는 느낌", "날씨와 이동 피로가 변수인 점"], caution: "쇼핑과 도시 구경을 빽빽하게 하고 싶으면 일본보다 느슨하게 느껴질 수 있어요.", vibe: "휴양 여행" },
   { keys: ["제주도", "제주"], category: "travel", features: ["렌터카로 드라이브하는 재미", "바다와 오름, 자연을 보는 시간", "카페를 찍고 천천히 도는 여유", "날씨와 이동 동선 영향을 크게 받는 점"], caution: "운전이나 날씨 운이 안 맞으면 생각보다 피곤한 여행이 될 수 있어요.", vibe: "자연 드라이브" },
   { keys: ["부산"], category: "travel", features: ["바다와 밤바다의 기분", "회와 술자리로 이어지는 재미", "도시 여행과 바다 구경이 같이 되는 점", "사람 많은 시즌엔 이동이 답답할 수 있는 점"], caution: "조용한 자연 휴식을 원하면 부산의 도시 에너지가 살짝 시끄러울 수 있어요.", vibe: "바다 도시" },
+  { keys: ["강릉"], category: "travel", features: ["바다 보고 카페까지 이어지는 동선", "커피거리와 바닷바람이 같이 오는 점", "사진첩에 남기 좋은 해변 장면", "사람 많은 시간엔 주차와 이동이 답답할 수 있는 점"], caution: "조용히 깊게 쉬고 싶으면 유명 코스의 사람 많은 느낌이 살짝 피곤할 수 있어요.", vibe: "바다 카페 코스" },
+  { keys: ["삼척"], category: "travel", features: ["조금 더 한적한 바다와 자연", "동굴이나 해안길처럼 구경 포인트가 있는 점", "강릉보다 차분하게 도는 여행감", "코스가 맞지 않으면 이동 시간이 길게 느껴질 수 있는 점"], caution: "카페와 맛집을 촘촘히 이어가고 싶으면 강릉보다 선택지가 적게 느껴질 수 있어요.", vibe: "차분한 바다 여행" },
   { keys: ["경주"], category: "travel", features: ["역사 유적을 따라 걷는 재미", "한옥과 야경 사진이 잘 나오는 분위기", "조용히 구경하는 여행감", "밤에 너무 늦게까지 놀기엔 얌전할 수 있는 점"], caution: "먹거리와 술자리 중심으로 크게 놀고 싶으면 전주나 부산보다 차분하게 느껴질 수 있어요.", vibe: "역사 산책" },
   { keys: ["전주"], category: "travel", features: ["한옥마을과 먹거리 중심의 여행", "비빔밥·막걸리·길거리 음식으로 이어지는 재미", "사진 찍고 천천히 걷기 좋은 분위기", "사람 많은 시간엔 관광지 느낌이 강해지는 점"], caution: "역사 유적을 깊게 보고 싶으면 경주보다 먹방 여행 쪽으로 느껴질 수 있어요.", vibe: "먹거리 산책" },
   { keys: ["캠핑"], category: "travel", features: ["짐 싸는 순간부터 시작되는 여행", "불멍과 바깥 공기", "직접 준비하는 추억", "장비와 날씨가 귀찮아질 수 있는 점"], caution: "회복이 목표면 준비와 정리가 피곤할 수 있어요.", vibe: "직접 만드는 여행" },
@@ -910,7 +912,7 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (includesAny(text, ["롯데월드", "서울랜드", "에버랜드", "놀이공원", "어트랙션", "자이로드롭", "롤러코스터", "대기줄"])) return "amusement";
   if (includesAny(text, ["노래방", "코노", "코인노래방", "pc방", "피시방", "피씨방", "취미", "놀거리", "뭐하고 놀"])) return "hobby";
   if (includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"])) return "gift";
-  if (includesAny(text, ["여행", "휴가", "여름휴가", "겨울휴가", "해외", "국내", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑", "일본", "도쿄", "오사카", "후쿠오카", "교토", "태국", "방콕", "푸켓", "치앙마이", "파타야", "제주도", "제주", "부산", "경주", "전주"])) return "travel";
+  if (includesAny(text, ["여행", "휴가", "여름휴가", "겨울휴가", "해외", "국내", "숙소", "호텔", "비행기표", "놀러갈", "놀러 갈", "캠핑", "일본", "도쿄", "오사카", "후쿠오카", "교토", "태국", "방콕", "푸켓", "치앙마이", "파타야", "제주도", "제주", "부산", "강릉", "삼척", "속초", "양양", "경주", "전주"])) return "travel";
   if (hasChildcareContext(text)) return "childcare";
   if (includesAny(text, ["친구", "만난다", "만날까", "약속", "우리집앞", "우리 집 앞", "내집앞", "내 집 앞", "친구집앞", "친구 집 앞", "상대집앞", "상대 집 앞", "차단", "둔다", "냅둔다", "냅둘", "연락처", "프로필", "읽씹", "카톡"])) return "relationship";
   if (includesAny(text, ["홍대", "합정", "카페", "공원", "영화", "드라마", "넷플릭스", "마트", "백화점", "여행", "놀러", "어디", "캠핑"])) return "place";
@@ -2566,6 +2568,46 @@ function sameResultDifferentReason(category, winner, loser, question, cards = []
         `리조트는 깔끔하고 캠핑은 손이 갑니다. 그런데 오늘은 그 손 가는 과정이 오히려 할 말이 됩니다.`
       ], hashText(`${question}-${winner.name}-${signName}-${seed}-camping-scene`));
     return cleanPlayTone(`${line} ${signNudge}`);
+  }
+
+  if (category === "travel") {
+    const wFeatures = (winner.features || []).filter(Boolean);
+    const lFeatures = (loser.features || []).filter(Boolean);
+    const f0 = escapeHtml(wFeatures[0] || `${winnerName}에서 하루가 바뀌는 느낌`);
+    const f1 = escapeHtml(wFeatures[1] || "다녀온 뒤 남는 이야기");
+    const f2 = escapeHtml(wFeatures[2] || "사진첩에 남을 장면");
+    const l0 = escapeHtml(lFeatures[0] || `${loserName}의 다른 매력`);
+    const l1 = escapeHtml(lFeatures[1] || "반대쪽 코스");
+    const winnerVibe = escapeHtml(winner.vibe || "여행");
+    const travelScenes = [
+      `${winnerName}은 출발 전부터 ${f0}부터 떠오릅니다. ${loserName}의 ${l0}도 끌리지만, 오늘은 코스가 눈앞에 더 잘 이어지는 쪽입니다.`,
+      `사진첩 기준으로 보면 ${winnerName} 쪽이 조금 더 말을 겁니다. ${f2} 쪽으로 한 장 남기기 좋고, 돌아와서도 "거기 괜찮았지" 할 장면이 있습니다.`,
+      `${winnerName}은 밥 먹고 다음 코스로 넘어가는 그림이 덜 끊깁니다. ${f1}가 붙어서 하루 계획을 짜기 편한 쪽입니다.`,
+      `${loserName}에도 ${l1}가 있긴 한데, 오늘 여행은 고민을 길게 늘리는 것보다 ${winnerName}처럼 바로 그려지는 코스가 이깁니다.`,
+      `${winnerName}은 이름을 듣자마자 하루의 온도가 잡힙니다. ${winnerVibe} 쪽으로 마음이 기울고, ${loserName}은 다음 여행 후보석에 앉습니다.`,
+      `오늘은 멀리 거창한 이유보다 "가면 뭐 하지?"가 바로 나오는지가 큽니다. ${winnerName}은 ${f0}, ${f1}가 붙어서 계획이 덜 뻣뻣합니다.`,
+      `${winnerName} 쪽은 도착한 뒤 첫 두 시간이 빨리 그려집니다. ${loserName}도 좋은데, 오늘은 움직이는 동선이 더 자연스러운 쪽입니다.`,
+      `${winnerName}은 다녀오고 나서 설명하기 쉬운 여행입니다. ${f2} 하나만 남아도 오늘 갈림길 값은 합니다.`,
+      `지금 필요한 건 여행지 이름 자체보다 하루가 어떻게 흘러갈지입니다. ${winnerName}은 ${f0}부터 ${f1}까지 이어지는 느낌이 더 또렷합니다.`,
+      `${loserName}은 조용히 손을 들고 있지만, ${winnerName}은 벌써 지도 앱에서 핀을 꽂고 있습니다. 오늘은 바로 움직일 수 있는 쪽입니다.`
+    ];
+    const signTravelAngles = {
+      "양자리": ["양자리는 검색보다 출발 버튼이 빠른 날입니다.", "양자리는 복잡하게 따지기 전에 신발부터 봅니다."],
+      "황소자리": ["황소자리는 돌아와서 덜 지치는 코스를 좋아합니다.", "황소자리는 편한 동선과 확실한 만족을 같이 봅니다."],
+      "쌍둥이자리": ["쌍둥이자리는 돌아와서 할 얘기가 많은 쪽에 약합니다.", "쌍둥이자리는 코스보다 수다거리를 먼저 챙깁니다."],
+      "게자리": ["게자리는 장소보다 같이 갔을 때 마음이 편한지를 봅니다.", "게자리는 사진보다 그날 기분이 오래 남는 쪽입니다."],
+      "사자자리": ["사자자리는 여행에서도 오늘의 컷이 살아야 합니다.", "사자자리는 나중에 말했을 때 폼 나는 쪽을 봅니다."],
+      "처녀자리": ["처녀자리는 이동, 비용, 피로를 머릿속에서 이미 줄 세웠습니다.", "처녀자리는 즉흥보다 하루가 덜 꼬이는 쪽을 좋아합니다."],
+      "천칭자리": ["천칭자리는 사진, 기분, 피로가 적당히 맞는 쪽을 봅니다.", "천칭자리는 너무 빡세지도 심심하지도 않은 코스를 찾습니다."],
+      "전갈자리": ["전갈자리는 겉핥기보다 마음에 깊게 남는 쪽을 봅니다.", "전갈자리는 대충 다녀오는 여행을 별로 안 좋아합니다."],
+      "사수자리": ["사수자리는 경험치가 남으면 피로도 어느 정도 용서합니다.", "사수자리는 답답하면 일단 멀어지는 쪽입니다."],
+      "염소자리": ["염소자리는 다녀온 뒤 일정과 지갑까지 같이 봅니다.", "염소자리는 나중에 봐도 잘 골랐다 싶은 쪽을 고릅니다."],
+      "물병자리": ["물병자리는 정석 코스보다 내 방식대로 움직이는 여행을 봅니다.", "물병자리는 남들이 추천한 곳보다 이상하게 끌리는 쪽을 봅니다."],
+      "물고기자리": ["물고기자리는 사진보다 여운이 오래 갈 선택에 약합니다.", "물고기자리는 다녀와서 마음에 잔잔하게 남는 쪽을 봅니다."]
+    };
+    const scene = pick(travelScenes, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-${cardText}-travel-scene`));
+    const angle = pick(signTravelAngles[signName] || [signNudge], hashText(`${question}-${winner.name}-${signName}-${seed}-travel-angle`));
+    return cleanPlayTone(`${scene} ${angle}`);
   }
 
   if (category === "daily" && hasRaw(["버스", "택시"])) {
@@ -4343,6 +4385,22 @@ function shareableAdvice(category, winner, loser, question, seed, sign) {
   };
   const zodiacTag = () => pick(signHooks[signName] || signHooks["황소자리"], hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-share-zodiac-tag`));
   const withZodiacTag = (line) => cleanPlayTone(`${line} ${zodiacTag()}`);
+  if (category === "relationship" && includesAny(raw, ["우리집앞", "내집앞", "친구집앞", "상대집앞"])) {
+    const locationLines = winnerRaw.includes("우리집앞") || winnerRaw.includes("내집앞")
+      ? [
+        `우리집앞은 편하고, 친구집앞은 마음을 보여줍니다.`,
+        `오늘은 멀리 움직이는 용기보다 편한 거리의 안정감입니다.`,
+        `만남도 장소가 아니라 누가 얼마나 움직이느냐가 은근히 큽니다.`,
+        `우리집앞은 덜 움직이고, 대신 관계의 온도를 가까이 둡니다.`
+      ]
+      : [
+        `친구집앞은 내가 움직였다는 증거가 남는 선택입니다.`,
+        `오늘은 편한 거리보다 먼저 다가가는 그림이 더 큽니다.`,
+        `우리집앞은 편하지만, 친구집앞은 마음을 행동으로 보여줍니다.`,
+        `만남에서 가끔은 거리보다 태도가 먼저 보입니다.`
+      ];
+    return withZodiacTag(pick(locationLines, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-relationship-location-share`)));
+  }
   const pools = {
     food: [
       `${winnerName}은 배를 설득하고, ${loserName}은 미련을 남깁니다.`,

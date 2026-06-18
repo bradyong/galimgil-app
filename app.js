@@ -908,11 +908,34 @@ const optionFeatureBank = [
   { keys: ["보류", "안 한다", "안한다"], category: "general", features: ["당장 부딪히지 않음", "생각할 시간이 생김", "너무 길어지면 답답함이 남음", "결정 피로가 줄어듦"], caution: "언제 다시 볼지 정하지 않으면 흐지부지될 수 있어요.", vibe: "보류" }
 ];
 
+function inferBroadSemanticKind(question, choiceA, choiceB) {
+  const text = `${question || ""} ${choiceA || ""} ${choiceB || ""}`.toLowerCase();
+  const compact = text.replace(/\s/g, "");
+  const options = [choiceA, choiceB].map((value) => compactText(value));
+  const hasFoodShape = (value) => {
+    if (!value) return false;
+    return includesAny(value, [
+      "과자", "칩", "깡", "콘", "킥", "꽈배기", "스낵", "젤리", "초코", "쿠키", "빵", "떡", "탕", "찌개", "국", "면", "밥", "볶이", "마라", "로제", "치즈", "버터", "허니", "꿀", "바나나", "새우", "감자", "포카", "꼬깔"
+    ]);
+  };
+  const hasPlaceShape = (value) => includesAny(value, ["장", "카페", "방", "센터", "랜드", "월드", "공원", "시장", "몰", "백화점", "극장"]);
+  const hasObjectShape = (value) => includesAny(value, ["폰", "컴퓨터", "노트북", "가방", "신발", "옷", "차", "tv", "티비", "기계", "가전", "게임기"]);
+  const hasActionShape = (value) => includesAny(value, ["한다", "안한다", "갈까", "말까", "오늘", "내일", "지금", "나중", "미루", "청소", "정리", "운동", "씻"]);
+
+  if (includesAny(compact, ["먹을까", "간식", "야식", "메뉴", "배달"]) || options.every(hasFoodShape)) return "food";
+  if (includesAny(compact, ["어디갈", "놀러", "데이트", "약속장소"]) || options.every(hasPlaceShape)) return "place";
+  if (includesAny(compact, ["살까", "구매", "결제", "주문"]) || options.every(hasObjectShape)) return "shopping";
+  if (options.some(hasActionShape)) return "daily";
+  return "";
+}
+
 function inferCategory(question, choiceA, choiceB, profile) {
   const text = `${question} ${choiceA} ${choiceB}`.toLowerCase();
   if (profile.type !== "general") return profile.type;
   const semantic = analyzeQuestion(question, choiceA, choiceB, profile);
   if (semantic && semantic.confidence >= 0.58) return semantic.category;
+  const broadKind = inferBroadSemanticKind(question, choiceA, choiceB);
+  if (broadKind) return broadKind;
   if (includesAny(text, ["점심", "저녁", "아침", "야식", "메뉴", "먹을", "뭐먹", "뭐 먹", "식사", "찌개", "라면", "밥", "국밥", "순대국", "순댓국", "뼈해장", "감자탕", "치킨", "피자", "햄버거", "버거", "배달", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "스시", "회", "사시미", "곱창", "삼겹살", "고기", "한우", "소고기"])) return "food";
   if (includesAny(text, ["아메리카노", "아이스", "아아", "뜨아", "커피", "라떼", "카페라떼", "콜드브루", "콜라", "코카콜라", "펩시", "사이다", "스프라이트", "칠성"])) return "beverage";
   if (includesAny(text, ["술", "소주", "맥주", "와인", "막걸리", "마실까", "한잔", "한 잔"])) return "drink";
@@ -945,6 +968,10 @@ function splitChoiceText(question, choiceA, choiceB) {
 function semanticOptionTraits(option, category, subCategory = "") {
   const text = String(option || "").replace(/\s/g, "").toLowerCase();
   const make = (traits, vibe, caution = "") => ({ traits, vibe, caution });
+  const associative = associativePropertyProfile(option, "");
+  if (associative && ["food", "beverage", "place", "hobby", "childcare", "exercise", "daily"].includes(category)) {
+    return make(associative.features, associative.vibe, associative.caution);
+  }
   if (category === "family") {
     if (includesAny(text, ["본가", "친정", "우리집", "우리집앞", "내집", "내집앞"])) {
       return make(["익숙함", "부모님", "편안함", "어릴 때 공기", "잔소리 가능성"], "내 편 같은 집", "너무 편해서 배려가 느슨해질 수 있어요.");
@@ -1063,14 +1090,46 @@ function subjectCueProfile(text) {
 function associativePropertyProfile(value, question = "") {
   const name = String(value || "").trim();
   const raw = compactText(`${value || ""} ${question || ""}`);
+  const optionRaw = compactText(value || "");
   const make = (features, vibe, caution = "") => ({ name, features, vibe, caution, associative: true });
   const has = (words) => includesAny(raw, words);
+  const optionHas = (words) => includesAny(optionRaw, words);
 
   if (has(["수영장", "수영", "물놀이", "워터파크"])) {
     return make(
       ["물놀이", "젖은 옷", "샤워와 갈아입을 옷", "체력 소모", "귀가 후 피곤함"],
       "물놀이",
       "준비물과 씻고 나오는 과정까지 생각해야 덜 지쳐요."
+    );
+  }
+  if (has(["마라탕", "마라", "훠궈"])) {
+    return make(
+      ["얼얼한 국물", "재료 고르는 재미", "먹고 나면 입안이 오래 매운 점", "땀나는 만족감", "향이 강한 한 끼"],
+      "얼얼한 한 그릇",
+      "속이 예민한 날엔 자극이 오래 남을 수 있어요."
+    );
+  }
+  if (has(["로제떡볶이", "로제", "떡볶이", "분식"])) {
+    return make(
+      ["꾸덕한 소스", "떡 식감", "매운맛보다 부드럽게 오는 자극", "소스 찍어 먹는 재미", "먹고 나면 살짝 무거운 느낌"],
+      "꾸덕한 분식",
+      "가볍게 끝내고 싶은 날엔 생각보다 묵직할 수 있어요."
+    );
+  }
+  if (has(["칩", "깡", "콘", "킥", "꽈배기", "스낵", "과자", "꼬깔", "새우", "허니버터", "포카", "바나나"])) {
+    const sweet = optionHas(["꿀", "허니", "버터", "바나나", "초코", "카라멜", "달"]);
+    const salty = optionHas(["새우", "포카", "감자", "콘", "꼬깔", "짭", "소금"]);
+    const crunch = optionHas(["꽈배기", "꼬깔", "콘", "칩", "포카"]);
+    return make(
+      uniqueList([
+        sweet ? "달달한 과자 냄새" : "짭짤한 손맛",
+        crunch ? "바삭하게 씹는 소리" : "가볍게 계속 집어먹는 느낌",
+        salty ? "맥주나 탄산 옆에서 강해지는 점" : "입이 심심할 때 손이 가는 점",
+        optionHas(["꽈배기"]) ? "진한 단맛과 씹는 맛" : "봉지 열면 멈추기 어려운 점",
+        "손에 묻는 가루와 부스러기"
+      ]),
+      sweet ? "달달한 간식" : salty ? "짭짤한 스낵" : "가벼운 과자",
+      "과자는 배보다 손이 먼저 움직여서 양 조절이 살짝 어려울 수 있어요."
     );
   }
   if (has(["키즈카페", "키카", "실내놀이터"])) {
@@ -1338,6 +1397,25 @@ function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
       optionB_vibe: b.vibe,
       subjectProfile: extractSubjectProfile(question, optionA, optionB, "travel"),
       confidence: includesAny(compact, travelWords) ? 0.82 : 0.62
+    };
+  }
+
+  const broadKind = inferBroadSemanticKind(question, optionA, optionB);
+  if (broadKind && broadKind !== "daily") {
+    const a = semanticOptionTraits(optionA, broadKind, "broad_inferred");
+    const b = semanticOptionTraits(optionB, broadKind, "broad_inferred");
+    return {
+      optionA,
+      optionB,
+      category: broadKind,
+      subCategory: "broad_inferred",
+      intent: "처음 보는 단어의 큰 의미와 속성을 먼저 추론한 선택",
+      optionA_traits: a.traits,
+      optionB_traits: b.traits,
+      optionA_vibe: a.vibe,
+      optionB_vibe: b.vibe,
+      subjectProfile: extractSubjectProfile(question, optionA, optionB, broadKind),
+      confidence: 0.72
     };
   }
 
@@ -2375,6 +2453,15 @@ function optionSceneVariant(category, winner, loser, question, sign, seed) {
   const winnerRaw = String(winner.name || "").toLowerCase();
   const pools = [];
   if (category === "food") {
+    if (includesAny(winnerRaw, ["킥", "꽈배기", "칩", "깡", "콘", "과자", "스낵", "허니", "포카", "새우", "바나나"])) {
+      pools.push(
+        `${winnerName}은 밥보다 손이 먼저 가는 쪽입니다. 봉지 열면 한 번에 끝낼 자신이 있는지부터 봐야 합니다.`,
+        `${winnerName} 쪽은 식사보다 입 심심함을 처리하는 선택입니다. ${loserName}도 좋지만 오늘 손끝은 이쪽 봉지를 먼저 찾습니다.`,
+        `${winnerName}은 먹는 순간보다 "하나만 더"가 무서운 과자입니다. 오늘은 그 반복이 덜 어색한 쪽입니다.`,
+        `${winnerName} 쪽은 가루 묻은 손까지 세트입니다. 깔끔함보다 계속 집어먹는 재미가 먼저 옵니다.`,
+        `과자는 배보다 리듬입니다. 오늘은 ${winnerName} 쪽이 손이 쉬지 않는 그림이 더 빨리 나옵니다.`
+      );
+    }
     if (includesAny(winnerRaw, ["회", "사시미"])) pools.push("회는 불판 대신 대화 속도를 늦춥니다.", "초장 뚜껑 열리는 순간 오늘 식사는 조금 차분해집니다.", "회는 배를 꽉 누르기보다 시간을 천천히 잡아주는 쪽입니다.");
     if (includesAny(winnerRaw, ["고기"])) pools.push("고기는 옷에 냄새까지 남기고 가는 선택입니다.", "불판 위에 올라가는 순간 오늘 대화도 같이 익습니다.", "고기는 배만 채우는 게 아니라 자리의 온도까지 올립니다.");
     if (includesAny(winnerRaw, ["삼겹살"])) pools.push("고기 냄새 배는 건 싫은데, 한 점 더 먹는 손은 이미 배신했습니다.", "굽는 사람은 따로 있는데 젓가락은 이상하게 내 앞으로 옵니다.", "쌈 싸는 순간 오늘의 다짐은 잠깐 외출합니다.", "불판 앞에 앉으면 대화보다 뒤집는 타이밍이 먼저 중요해집니다.", "집 가서 옷 냄새 맡고도 방금 한 점은 인정하게 됩니다.");
@@ -2426,6 +2513,10 @@ function foodComparisonLine(winner, loser, question, sign, seed = 0) {
   return null;
 }
 
+function snackLikeName(value) {
+  return includesAny(String(value || "").toLowerCase(), ["킥", "꽈배기", "칩", "깡", "콘", "과자", "스낵", "허니", "포카", "새우", "바나나"]);
+}
+
 function foodRealityReason(winner, loser, question, sign, seed = 0) {
   const winnerName = escapeHtml(winner.name);
   const loserName = escapeHtml(loser.name);
@@ -2436,6 +2527,20 @@ function foodRealityReason(winner, loser, question, sign, seed = 0) {
   if (comparison) return comparison;
   const culturalComparison = culturalRealityReason(winner, loser, question, sign, seed);
   if (culturalComparison) return culturalComparison;
+  if (snackLikeName(winner.name) || snackLikeName(loser.name)) {
+    const winnerSubject = escapeHtml(withParticle(winner.name, "은", "는"));
+    const loserSubject = escapeHtml(withParticle(loser.name, "은", "는"));
+    const w0 = escapeHtml(winner.features[0] || "손이 가는 과자");
+    const w1 = escapeHtml(winner.features[1] || "봉지 뜯는 재미");
+    const l0 = escapeHtml(loser.features[0] || "다른 간식 매력");
+    const lines = [
+      `${winnerSubject} ${w0}, ${w1} 쪽이고 ${loserSubject} ${l0} 쪽입니다. 오늘은 식사보다 봉지 뜯고 손이 어디로 더 자주 가는지 문제예요. ${winnerName} 쪽이 "하나만 더"를 더 쉽게 부릅니다.`,
+      `과자는 배가 아니라 손이 결정합니다. ${loserName}도 옆에 있으면 집어먹겠지만, 오늘 손끝은 ${winnerName} 봉지 쪽으로 먼저 갑니다. 가루 묻은 손까지 감당할 마음이면 이쪽입니다.`,
+      `${winnerSubject} 열어두면 조용히 줄어드는 타입입니다. ${loserName}도 매력은 있는데, 오늘은 ${w0} 쪽이 TV 앞이나 탄산 옆에서 더 빨리 사라질 것 같습니다.`,
+      `이건 맛 평가보다 "뜯고 나서 멈출 수 있냐" 싸움입니다. ${winnerName}은 ${w1} 때문에 손이 한 번 더 갑니다. ${loserName}은 다음 봉지 후보로 남겨둬도 덜 억울합니다.`
+    ];
+    return cleanPlayTone(pick(lines, hashText(`${question}-${winner.name}-${loser.name}-${Array.isArray(sign) ? sign[0] : sign}-${seed}-snack-reason`)));
+  }
   const character = foodCharacterLines(winner.name);
   if (character) {
     const sceneTone = zodiacSceneLine("food", sign, winner, loser, question, seed, "food-character-tone");
@@ -3488,6 +3593,7 @@ function categoryRealityReason(category, winner, loser, question, cards = [], si
   if (variedReason && ["pet", "amusement", "hobby", "relationship", "family", "chore", "beverage", "drink", "travel", "childcare", "exercise", "daily"].includes(category)) return variedReason;
   if (category === "food") {
     const foodReason = foodRealityReason(winner, loser, question, sign, seed);
+    if (snackLikeName(winner.name) || snackLikeName(loser.name)) return foodReason;
     return variedReason || foodReason;
   }
   if (category === "game") return gameRealityReason(winner, loser, question);
@@ -4618,6 +4724,21 @@ function futureComment(category, winner, question, seed, sign) {
   const variationSeed = Math.floor(Date.now() / 1000);
   const signName = sign && sign[0] ? sign[0] : "황소자리";
   if (category === "food") {
+    if (includesAny(winnerRaw, ["킥", "꽈배기", "칩", "깡", "콘", "과자", "스낵", "허니", "포카", "새우", "바나나"])) {
+      const snackFuture = [
+        `봉지 뜯는 순간 "조금만"이라는 말은 신뢰를 잃습니다.`,
+        `손가락에 가루 묻고 나서야 오늘 선택을 인정하게 됩니다.`,
+        `한 개만 먹으려던 미래가 조용히 봉지를 접습니다. 이미 늦었습니다.`,
+        `탄산이나 맥주 옆에 두면 갑자기 존재감이 커집니다.`,
+        `입은 가볍게 시작했는데 손은 꽤 진심입니다.`,
+        `봉지 바닥을 확인하는 순간 잠깐 정적이 올 수 있습니다.`,
+        `과자 부스러기가 오늘의 증거로 남을 예정입니다.`,
+        `TV 앞에 앉으면 이 선택은 더 빨리 사라집니다.`,
+        `손이 한 번 들어가면 회수 명령이 잘 안 먹힙니다.`,
+        `미래의 내가 "어? 벌써?"라고 할 가능성이 있습니다.`
+      ];
+      return cleanPlayTone(pick(snackFuture, seed + raw.length + question.length + variationSeed));
+    }
     const character = foodCharacterLines(winner.name);
     if (character && character.future) {
       return cleanPlayTone(pick(character.future, seed + raw.length + question.length + variationSeed));

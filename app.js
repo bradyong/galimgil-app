@@ -1060,6 +1060,68 @@ function subjectCueProfile(text) {
   return null;
 }
 
+function associativePropertyProfile(value, question = "") {
+  const name = String(value || "").trim();
+  const raw = compactText(`${value || ""} ${question || ""}`);
+  const make = (features, vibe, caution = "") => ({ name, features, vibe, caution, associative: true });
+  const has = (words) => includesAny(raw, words);
+
+  if (has(["수영장", "수영", "물놀이", "워터파크"])) {
+    return make(
+      ["물놀이", "젖은 옷", "샤워와 갈아입을 옷", "체력 소모", "귀가 후 피곤함"],
+      "물놀이",
+      "준비물과 씻고 나오는 과정까지 생각해야 덜 지쳐요."
+    );
+  }
+  if (has(["키즈카페", "키카", "실내놀이터"])) {
+    return make(
+      ["실내 놀이시설", "날씨 영향이 적은 점", "아이들 소음과 사람 많은 시간", "보호자가 잠깐 앉을 수 있는 점", "입장료"],
+      "실내 놀이",
+      "주말이나 붐비는 시간엔 보호자가 더 정신없을 수 있어요."
+    );
+  }
+  if (has(["공원", "산책", "걷기", "걷"])) {
+    return make(
+      ["바깥 공기", "천천히 걷는 리듬", "돈이 거의 안 드는 점", "날씨 영향", "끝나고 머리가 가벼워지는 느낌"],
+      "가벼운 환기",
+      "날씨가 나쁘거나 미세먼지가 심하면 만족도가 확 줄어요."
+    );
+  }
+  if (has(["런닝", "러닝", "달리기", "조깅"])) {
+    return make(
+      ["땀", "심박수", "운동화", "끝난 뒤 개운함", "무리하면 다음 날 다리 피로"],
+      "몸을 깨우는 운동",
+      "몸이 무거운 날엔 강도를 낮춰야 끝까지 갑니다."
+    );
+  }
+  if (has(["청소", "정리", "치우", "닦", "비우", "버리"])) {
+    const subject = stripDecisionWords(value).replace(/\s+/g, " ").trim();
+    return make(
+      [`${subject || "공간"}에 쌓인 먼지`, "눈에 밟히는 물건", "끝난 뒤 바로 보이는 차이", "시작 전 귀찮음", "정리된 공간"],
+      subject ? `${subject} 리셋` : "공간 리셋",
+      "전부 하려 하지 말고 보이는 한 구역부터 잡는 게 좋아요."
+    );
+  }
+  if (has(["장", "카페", "방", "센터", "랜드", "월드", "공원", "시장", "몰", "백화점"])) {
+    return make(
+      [`${name}에 들어갔을 때 바로 보이는 분위기`, "사람 많은 시간", "머무는 비용과 시간", "나오고 난 뒤 피로감", "같이 간 사람의 반응"],
+      "장소 선택",
+      "장소는 이름보다 머무는 시간과 사람 많은 정도가 만족도를 바꿔요."
+    );
+  }
+  if (has(["한다", "안한다", "오늘", "내일", "지금", "나중"])) {
+    const subject = stripDecisionWords(question || value);
+    if (subject) {
+      return make(
+        [`${subject}을 시작하기 전 귀찮음`, "끝냈을 때 바로 보이는 변화", "미루면 남는 찝찝함", "오늘 시간과 체력", "내일로 넘겼을 때의 부담"],
+        `${subject} 처리`,
+        "실행/미루기 문제는 소재 자체가 무엇인지 먼저 봐야 해요."
+      );
+    }
+  }
+  return null;
+}
+
 function inferOptionSubjectProfile(option, category, question) {
   const entry = findFeatureEntry(option, category);
   if (entry && entry.item) {
@@ -1068,6 +1130,16 @@ function inferOptionSubjectProfile(option, category, question) {
       traits: entry.item.features || [],
       scene: `${entry.key || option}의 ${entry.item.vibe || "장면"}`,
       vibe: entry.item.vibe || ""
+    };
+  }
+  const associative = associativePropertyProfile(option, question);
+  if (associative) {
+    return {
+      subject: option,
+      traits: associative.features,
+      scene: `${option}의 ${associative.vibe}`,
+      vibe: associative.vibe || "",
+      associative: true
     };
   }
   const inferred = inferredOptionProfile(option, category, question);
@@ -1095,6 +1167,7 @@ function extractSubjectProfile(question, optionA, optionB, category) {
   const strippedQuestion = stripDecisionWords(question);
   const actionLikeOptions = [optionA, optionB].some((option) => includesAny(compactText(option), ["한다", "안한다", "오늘한다", "내일한다", "지금한다", "나중에", "간다", "안간다", "산다", "버틴다"]));
   const subject = cue ? cue.subject : actionLikeOptions && strippedQuestion ? strippedQuestion : `${optionA} / ${optionB}`;
+  const hasAssociativeOptions = !!((aProfile && aProfile.associative) || (bProfile && bProfile.associative));
   const traits = uniqueList([
     ...(cue ? cue.traits : []),
     ...(actionLikeOptions ? [] : (aProfile.traits || []).slice(0, 2)),
@@ -1106,7 +1179,7 @@ function extractSubjectProfile(question, optionA, optionB, category) {
     scene: cue ? cue.scene : actionLikeOptions ? `${subject}을 고른 뒤 실제로 달라지는 장면` : `${optionA}와 ${optionB}를 골랐을 때 생기는 서로 다른 장면`,
     optionA_profile: aProfile,
     optionB_profile: bProfile,
-    confidence: cue ? 0.82 : actionLikeOptions ? 0.58 : 0.5
+    confidence: cue ? 0.82 : hasAssociativeOptions ? 0.74 : actionLikeOptions ? 0.58 : 0.5
   };
 }
 
@@ -1119,6 +1192,34 @@ function subjectAnchorLine(subjectProfile, winner, loser, question, seed) {
   const t0 = traits[0] || "선택 뒤 장면";
   const t1 = traits[1] || "시간";
   const scene = escapeHtml(subjectProfile.scene || `${subject}의 실제 장면`);
+  const optionProfiles = [subjectProfile.optionA_profile, subjectProfile.optionB_profile].filter(Boolean);
+  const winnerCompact = compactText(winner.name);
+  const loserCompact = compactText(loser.name);
+  const winnerProfile = optionProfiles.find((profile) => {
+    const profileSubject = compactText(profile.subject);
+    return profileSubject === winnerCompact || winnerCompact.includes(profileSubject) || profileSubject.includes(winnerCompact);
+  });
+  const loserProfile = optionProfiles.find((profile) => {
+    const profileSubject = compactText(profile.subject);
+    return profileSubject === loserCompact || loserCompact.includes(profileSubject) || profileSubject.includes(loserCompact);
+  });
+  if (String(subject).includes(" / ") && winnerProfile && loserProfile && (winnerProfile.associative || loserProfile.associative)) {
+    const wf = (winnerProfile.traits || []).filter(Boolean);
+    const lf = (loserProfile.traits || []).filter(Boolean);
+    const w0 = wf[0] || `${winner.name}의 장면`;
+    const w1 = wf[1] || "끝난 뒤 느낌";
+    const l0 = lf[0] || `${loser.name}의 장점`;
+    const l1 = lf[1] || "다른 변수";
+    const w2 = wf[2] || w1;
+    const lines = [
+      `${winnerName} 쪽은 ${escapeHtml(w0)}, ${withParticle(w1, "이", "가")} 먼저 따라옵니다. ${loserName}도 ${escapeHtml(l0)} 쪽 매력이 있지만 오늘은 이쪽 장면이 더 빨리 살아납니다.`,
+      `${withParticle(winner.name, "은", "는")} ${withParticle(w0, "이", "가")} 본편이고, ${withParticle(loser.name, "은", "는")} ${withParticle(l0, "이", "가")} 본편입니다. 오늘은 ${withParticle(w2, "이", "가")} 결정 쪽으로 조금 더 밀었습니다.`,
+      `이 선택은 이름 싸움이 아니라 장면 싸움입니다. ${withParticle(winner.name, "은", "는")} ${escapeHtml(w0)}, ${withParticle(loser.name, "은", "는")} ${escapeHtml(l0)} 쪽이라 오늘은 ${winnerName} 쪽이 먼저 그려집니다.`,
+      `${withParticle(winner.name, "을", "를")} 고르면 ${withParticle(w0, "이", "가")} 바로 붙고, ${withParticle(loser.name, "을", "를")} 고르면 ${escapeHtml(l1)}까지 같이 봐야 합니다. 오늘은 ${winnerName} 쪽이 덜 복잡합니다.`,
+      `${winnerName} 쪽은 ${escapeHtml(w1)}까지 계산이 되고, ${loserName} 쪽은 ${withParticle(l0, "이", "가")} 매력입니다. 그래도 오늘의 몸과 시간은 ${winnerName} 쪽으로 기웁니다.`
+    ];
+    return cleanPlayTone(pick(lines, hashText(`${question}-${winner.name}-${loser.name}-${subject}-${seed}-associative-anchor`)));
+  }
   if (subject === "여행지") {
     const lines = [
       `여행은 이름보다 이동, 비용, 피로가 같이 따라오는 선택입니다. 오늘은 ${winnerName} 쪽이 그 셋을 조금 덜 억지스럽게 묶습니다.`,
@@ -1138,7 +1239,7 @@ function subjectAnchorLine(subjectProfile, winner, loser, question, seed) {
   const lines = [
     `${withParticle(subject, "은", "는")} 결국 ${scene} 쪽 문제입니다. 그래서 ${winnerName} 쪽을 볼 때도 ${escapeHtml(t0)}, ${withParticle(t1, "이", "가")} 같이 따라옵니다.`,
     `${winnerName} 쪽 답보다 먼저 봐야 할 건 ${escapeHtml(subject)}입니다. ${withParticle(loser.name, "과", "와")} 비교해도 오늘 핵심은 ${escapeHtml(t0)} 쪽에서 갈립니다.`,
-    `이 질문은 단순히 ${winnerName}을 고르는 문제가 아니라 ${withParticle(subject, "을", "를")} 어떻게 처리할지입니다. ${scene}가 오늘 판단의 중심입니다.`,
+    `이 질문은 단순히 ${withParticle(winner.name, "을", "를")} 고르는 문제가 아니라 ${withParticle(subject, "을", "를")} 어떻게 처리할지입니다. ${withParticle(subjectProfile.scene || `${subject}의 실제 장면`, "이", "가")} 오늘 판단의 중심입니다.`,
     `${withParticle(subject, "이", "가")} 빠지면 답이 너무 뻔해집니다. 오늘은 ${withParticle(t0, "과", "와")} ${withParticle(t1, "이", "가")} 살아있는 쪽으로 보는 게 맞습니다.`
   ];
   return cleanPlayTone(pick(lines, hashText(`${question}-${winner.name}-${loser.name}-${subject}-${seed}-subject-anchor`)));
@@ -1281,6 +1382,19 @@ function inferredOptionProfile(option, category, question = "") {
   const make = (features, caution, vibe) => ({ name, category, features, caution, vibe, inferred: true });
   const has = (words) => includesAny(optionCompact, words);
   const contextHas = (words) => includesAny(questionCompact, words);
+  const associative = associativePropertyProfile(name, question);
+
+  if (associative && !["travel", "food", "shopping", "relationship", "family", "chore"].includes(category)) {
+    return {
+      name,
+      category,
+      features: associative.features,
+      caution: associative.caution || "이름보다 그 선택 뒤에 실제로 생기는 장면을 같이 봐야 해요.",
+      vibe: associative.vibe,
+      inferred: true,
+      associative: true
+    };
+  }
 
   if (category === "travel" || category === "place") {
     if (has(["바다", "해변", "비치", "섬", "제주", "푸켓", "코타", "몰디브", "괌", "휴양"])) {
@@ -3193,7 +3307,7 @@ function sameResultDifferentReason(category, winner, loser, question, cards = []
       `${winnerName} 쪽은 아이가 웃는 장면과 보호자가 돌아오는 길에 얼마나 조용해지는지를 같이 봐야 합니다. ${loserName}도 좋지만 오늘은 이쪽이 에너지 배분이 덜 거칠어 보입니다.`,
       `${winnerTopic} 재미가 바로 보이고, ${loserTopic} 준비물과 체력 계산이 따라옵니다. 오늘은 아이 반응보다 귀가 후 표정까지 본 선택입니다.`,
       `아이와 가는 곳은 입장할 때보다 나올 때가 진짜입니다. ${winnerName} 쪽은 웃음과 피로 사이에서 오늘 균형이 조금 더 낫습니다.`,
-      `${winnerName}은 아이가 바로 반응할 장면이 있고, ${loserName}은 부모 체력이 더 조용히 버틸 수 있습니다. 오늘은 그래도 ${winnerName} 쪽 그림이 먼저 살아납니다.`,
+      `${winnerTopic} 아이가 바로 반응할 장면이 있고, ${loserTopic} 부모 체력이 더 조용히 버틸 수 있습니다. 오늘은 그래도 ${winnerName} 쪽 느낌이 먼저 살아납니다.`,
       `수영장/키즈카페 같은 선택은 재미만 보면 답이 안 나옵니다. 물놀이든 실내놀이든 끝나고 씻기고 집 가는 길까지 보면 ${winnerName} 쪽입니다.`
     ];
     return cleanPlayTone(pick(childPool, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-childcare-varied`)));
@@ -5257,10 +5371,14 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const b = contextualizeOption(choiceB, category, question);
   if (subjectProfile && subjectProfile.subject) {
     const subjectTraits = subjectProfile.traits || [];
-    if (a.intent !== "specific" && (a.subjectName === a.name || subjectProfile.confidence >= 0.7)) a.subjectName = subjectProfile.subject;
-    if (b.intent !== "specific" && (b.subjectName === b.name || subjectProfile.confidence >= 0.7)) b.subjectName = subjectProfile.subject;
-    if (a.intent !== "specific") a.features = uniqueList(subjectTraits.concat(a.features || [])).slice(0, 5);
-    if (b.intent !== "specific") b.features = uniqueList(subjectTraits.concat(b.features || [])).slice(0, 5);
+    const pairSubject = String(subjectProfile.subject).includes(" / ");
+    const associativePair = !!((subjectProfile.optionA_profile && subjectProfile.optionA_profile.associative) || (subjectProfile.optionB_profile && subjectProfile.optionB_profile.associative));
+    if (!pairSubject && !associativePair) {
+      if (a.intent !== "specific" && (a.subjectName === a.name || subjectProfile.confidence >= 0.7)) a.subjectName = subjectProfile.subject;
+      if (b.intent !== "specific" && (b.subjectName === b.name || subjectProfile.confidence >= 0.7)) b.subjectName = subjectProfile.subject;
+      if (a.intent !== "specific") a.features = uniqueList(subjectTraits.concat(a.features || [])).slice(0, 5);
+      if (b.intent !== "specific") b.features = uniqueList(subjectTraits.concat(b.features || [])).slice(0, 5);
+    }
     a.subjectProfile = subjectProfile;
     b.subjectProfile = subjectProfile;
   }

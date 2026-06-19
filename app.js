@@ -953,7 +953,8 @@ function inferCategory(question, choiceA, choiceB, profile) {
   if (hasChildcareContext(text)) return "childcare";
   if (includesAny(text, ["친구", "만난다", "만날까", "약속", "우리집앞", "우리 집 앞", "내집앞", "내 집 앞", "친구집앞", "친구 집 앞", "상대집앞", "상대 집 앞", "차단", "둔다", "냅둔다", "냅둘", "연락처", "프로필", "읽씹", "카톡"])) return "relationship";
   if (includesAny(text, ["홍대", "합정", "카페", "공원", "영화", "드라마", "넷플릭스", "마트", "백화점", "여행", "놀러", "어디", "캠핑"])) return "place";
-  if (includesAny(text, ["소비", "살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "버틴", "버티", "컴퓨터", "pc", "피씨", "노트북", "게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약", "휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시", "에어컨", "tv", "티비", "텔레비전", "가전"])) return "shopping";
+  if (includesAny(text, ["매수", "매도", "투자", "코인", "주식", "적금", "예금", "종목", "차트", "팔까", "살까말까"])) return "money";
+  if (includesAny(text, ["소비", "살까", "구매", "쇼핑", "예약", "결제", "주문", "장바구니", "바꿀까", "바꾼", "바꾼다", "바꾸", "교체", "버틴", "버티", "중고", "새거", "새것", "새 걸", "새걸", "컴퓨터", "pc", "피씨", "노트북", "게임기", "플스", "플레이스테이션", "닌텐도", "스위치", "자동차", "차량", "차 산", "차 살", "차 바꿀", "차 구매", "차 계약", "휴대폰", "핸드폰", "스마트폰", "폰", "아이폰", "갤럭시", "에어컨", "tv", "티비", "텔레비전", "가전"])) return "shopping";
   return "daily";
 }
 
@@ -1341,6 +1342,44 @@ function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
   const compact = text.replace(/\s/g, "");
   if (profile.type && profile.type !== "general") {
     return { optionA, optionB, category: profile.type, subCategory: profile.type, intent: "프로필 기반 선택", optionA_traits: [], optionB_traits: [], subjectProfile: extractSubjectProfile(question, optionA, optionB, profile.type), confidence: 0.9 };
+  }
+
+  const moneyWords = ["적금", "예금", "주식", "코인", "투자", "매수", "매도", "종목", "차트", "팔까", "판다", "안판다", "보유", "홀딩", "관망"];
+  if (includesAny(compact, moneyWords)) {
+    const a = semanticOptionTraits(optionA, "money", "investment_compare");
+    const b = semanticOptionTraits(optionB, "money", "investment_compare");
+    return {
+      optionA,
+      optionB,
+      category: "money",
+      subCategory: "investment_compare",
+      intent: "돈을 어디에 두거나 어떻게 움직일지 고민",
+      optionA_traits: a.traits,
+      optionB_traits: b.traits,
+      optionA_vibe: a.vibe,
+      optionB_vibe: b.vibe,
+      subjectProfile: extractSubjectProfile(question, optionA, optionB, "money"),
+      confidence: 0.9
+    };
+  }
+
+  const shoppingCompareWords = ["중고", "새거", "새것", "새걸", "새 걸", "산다", "만다", "구매", "결제", "버틴다", "바꾼다", "컴퓨터", "노트북", "폰", "휴대폰", "핸드폰", "tv", "티비", "가전", "게임기"];
+  if (includesAny(compact, shoppingCompareWords)) {
+    const a = semanticOptionTraits(optionA, "shopping", "purchase_compare");
+    const b = semanticOptionTraits(optionB, "shopping", "purchase_compare");
+    return {
+      optionA,
+      optionB,
+      category: "shopping",
+      subCategory: "purchase_compare",
+      intent: "가격, 사용 빈도, 후회가 걸린 구매 고민",
+      optionA_traits: a.traits,
+      optionB_traits: b.traits,
+      optionA_vibe: a.vibe,
+      optionB_vibe: b.vibe,
+      subjectProfile: extractSubjectProfile(question, optionA, optionB, "shopping"),
+      confidence: 0.86
+    };
   }
 
   const familyWords = ["본가", "처가", "처가댁", "시댁", "시가", "친정", "외가", "큰집", "작은집", "친척", "명절", "부모님", "장모", "장인", "시부모", "할머니", "할아버지"];
@@ -5902,6 +5941,191 @@ function shareableAdvice(category, winner, loser, question, seed, sign) {
   return cleanPlayTone(pick(combined, hashText(`${question}-${winner.name}-${loser.name}-${signName}-${seed}-shareable-advice`)));
 }
 
+function categoryFramePool(category, question = "") {
+  const raw = String(question || "").replace(/\s/g, "").toLowerCase();
+  const byCategory = {
+    money: ["stability_vs_chance", "volatility", "sleep_quality", "cash_position", "timing"],
+    shopping: ["price_vs_desire", "daily_use", "newness_regret", "repair_or_replace", "wallet_aftertaste"],
+    food: ["temperature", "craving", "heaviness", "clean_finish", "snack_hand"],
+    beverage: ["temperature", "wake_up", "comfort_cup", "aftertaste"],
+    drink: ["tonight_speed", "tomorrow_face", "people_mood", "stop_timing"],
+    travel: ["rest_vs_activity", "travel_cost", "memory_density", "movement_fatigue", "food_route"],
+    place: ["movement_cost", "scene_gain", "crowd_energy", "return_home"],
+    relationship: ["send_aftershock", "silence_noise", "timing", "other_person", "pride"],
+    family: ["comfort_vs_manners", "family_air", "visit_weight", "after_visit_mind"],
+    gift: ["first_reaction", "long_play", "price_smile", "receiver_routine"],
+    childcare: ["child_reaction", "parent_stamina", "weather_backup", "safety_space"],
+    chore: ["visible_mess", "future_me", "start_barrier", "after_clean_air"],
+    hygiene: ["freshness", "sleep_after", "start_barrier", "body_signal"],
+    exercise: ["start_barrier", "after_sweat", "body_condition", "tomorrow_pride"],
+    study: ["deadline_pressure", "small_start", "future_debt", "focus_energy"],
+    game: ["fun_now", "time_leak", "team_stress", "one_more_round"],
+    hobby: ["fun_now", "time_leak", "energy_after", "social_noise"],
+    pet: ["daily_routine", "affection_style", "space_care", "long_term"],
+    amusement: ["ride_density", "waiting_line", "stamina_bill", "photo_memory"],
+    daily: ["future_regret", "effort_now", "mind_noise", "simple_next_step"]
+  };
+  const pool = (byCategory[category] || byCategory.daily).slice();
+  if (includesAny(raw, ["적금", "주식", "코인", "매수", "매도", "투자", "팔까", "살까"])) pool.push("stability_vs_chance", "volatility", "timing");
+  if (includesAny(raw, ["중고", "새거", "새것", "산다", "만다", "바꾼다", "버틴다", "컴퓨터", "폰", "tv", "티비"])) pool.push("price_vs_desire", "daily_use", "newness_regret");
+  if (includesAny(raw, ["냉면", "콩국수", "콘칩", "포카칩", "과자", "라면", "고기", "커피", "라떼", "아아"])) pool.push("temperature", "craving", "clean_finish");
+  if (includesAny(raw, ["부산", "제주", "리조트", "캠핑", "강릉", "양양", "바다", "계곡", "여행"])) pool.push("rest_vs_activity", "memory_density", "movement_fatigue");
+  return uniqueList(pool);
+}
+
+function selectCategoryFrame(category, question, seed, sign) {
+  const pool = categoryFramePool(category, question);
+  return pick(pool, hashText(`${question}-${category}-${seed}-${sign && sign[0] ? sign[0] : ""}-category-frame`));
+}
+
+function categoryFrameKeywords(frame) {
+  const map = {
+    stability_vs_chance: ["안정", "적금", "관망", "보유", "기다", "현금", "안심", "기회", "주식", "코인", "상승"],
+    volatility: ["코인", "변동", "리스크", "손실", "급등", "급락", "주식"],
+    sleep_quality: ["안심", "관망", "보유", "기다", "편안", "부담"],
+    cash_position: ["현금", "적금", "아끼", "돈절약", "예산", "통장"],
+    timing: ["지금", "타이밍", "오늘", "기다", "매수", "매도", "판다"],
+    price_vs_desire: ["가격", "비용", "중고", "실속", "욕망", "새거", "새것", "지름", "만족"],
+    daily_use: ["매일", "자주", "사용", "화질", "성능", "렉", "편의", "오래"],
+    newness_regret: ["신제품", "새모델", "새", "기다", "후회", "출시"],
+    repair_or_replace: ["고장", "수리", "바꾼다", "교체", "버틴다", "멀쩡"],
+    wallet_aftertaste: ["통장", "결제", "할부", "비싸", "잔고"],
+    temperature: ["차갑", "시원", "뜨거", "따뜻", "냉면", "콩국수", "아이스", "라떼"],
+    craving: ["매콤", "달달", "바삭", "냄새", "고기", "라면", "치킨", "떡볶이", "짬뽕"],
+    heaviness: ["든든", "푸짐", "묵직", "고기", "한우", "삼겹살", "감자탕", "밥"],
+    clean_finish: ["깔끔", "가볍", "담백", "김밥", "냉면", "초밥", "사이다"],
+    snack_hand: ["과자", "칩", "콘", "깡", "꽈배기", "킥", "손", "봉지"],
+    wake_up: ["아아", "아이스", "카페인", "깨", "졸려"],
+    comfort_cup: ["라떼", "따뜻", "위로", "달달", "부드"],
+    aftertaste: ["깔끔", "뒷맛", "느끼", "사이다", "아메리카노"],
+    tonight_speed: ["소주", "맥주", "잔", "빠르", "말", "술"],
+    tomorrow_face: ["내일", "숙취", "알람", "물", "얼굴"],
+    people_mood: ["친구", "대화", "사람", "분위기", "자리"],
+    stop_timing: ["한잔", "멈", "막잔", "귀가", "시간"],
+    rest_vs_activity: ["리조트", "휴식", "제주", "활동", "부산", "캠핑", "체험"],
+    travel_cost: ["비용", "비행", "숙소", "예산", "교통"],
+    memory_density: ["사진", "추억", "바다", "카페", "야경", "먹거리", "이야기"],
+    movement_fatigue: ["이동", "피곤", "거리", "걷", "짐", "동선"],
+    food_route: ["맛집", "카페", "먹거리", "회", "국밥", "시장"],
+    movement_cost: ["이동", "택시", "버스", "거리", "시간", "체력"],
+    scene_gain: ["장면", "사진", "바깥", "공기", "구경"],
+    crowd_energy: ["사람", "붐", "시끄", "조용", "대기"],
+    return_home: ["돌아", "귀가", "집", "피곤", "만족"],
+    send_aftershock: ["연락", "카톡", "전화", "답장", "읽음"],
+    silence_noise: ["참", "안", "조용", "상상", "신경", "마음"],
+    other_person: ["상대", "친구", "연인", "사람", "표정"],
+    pride: ["자존심", "먼저", "사과", "고백", "용기"],
+    comfort_vs_manners: ["본가", "친정", "편안", "처가", "시댁", "예의", "눈치"],
+    family_air: ["가족", "부모", "밥", "잔소리", "공기"],
+    visit_weight: ["방문", "인사", "명절", "오랜만", "거리"],
+    after_visit_mind: ["마음", "부담", "편안", "숙제"],
+    first_reaction: ["우와", "반응", "표정", "포장", "선물"],
+    long_play: ["오래", "반복", "장난감", "사용", "가지고"],
+    price_smile: ["가격", "예산", "만족", "영수증"],
+    receiver_routine: ["아이", "아들", "조카", "받는", "루틴"],
+    child_reaction: ["아이", "웃", "뛰", "놀이", "반응"],
+    parent_stamina: ["보호자", "부모", "체력", "허리", "피곤"],
+    weather_backup: ["비", "날씨", "실내", "미세먼지", "춥", "덥"],
+    safety_space: ["안전", "부딪", "공간", "실내", "넓"],
+    visible_mess: ["먼지", "물때", "그릇", "싱크대", "차", "욕실", "화장실"],
+    future_me: ["내일", "나중", "미래", "미루", "오늘"],
+    start_barrier: ["귀찮", "시작", "일어나", "물", "손"],
+    after_clean_air: ["개운", "깨끗", "광택", "공기", "정리"],
+    freshness: ["개운", "씻", "샤워", "물", "찝찝"],
+    sleep_after: ["잠", "침대", "이불", "수면"],
+    body_signal: ["몸", "피곤", "땀", "냄새"],
+    after_sweat: ["땀", "운동", "물", "뿌듯"],
+    body_condition: ["몸", "아파", "무리", "체력"],
+    tomorrow_pride: ["내일", "자존감", "뿌듯", "변명"],
+    deadline_pressure: ["시험", "마감", "과제", "숙제", "내일"],
+    small_start: ["20분", "시작", "한페이지", "책상"],
+    future_debt: ["미루", "부담", "빚", "압박"],
+    focus_energy: ["집중", "공부", "정리", "진도"],
+    fun_now: ["재미", "게임", "놀", "취미", "스트레스"],
+    time_leak: ["시간", "한판", "새벽", "플레이", "삭제"],
+    team_stress: ["팀", "랭크", "채팅", "친구"],
+    one_more_round: ["한판", "복수", "다시", "라운드"],
+    energy_after: ["기분", "피곤", "충전", "풀림"],
+    social_noise: ["친구", "사람", "대화", "소리"],
+    daily_routine: ["산책", "밥", "모래", "털", "루틴"],
+    affection_style: ["강아지", "고양이", "애교", "독립", "반응"],
+    space_care: ["집", "공간", "청소", "책임"],
+    long_term: ["매일", "오래", "책임", "생활"],
+    ride_density: ["놀이기구", "대기", "하루", "롯데월드", "서울랜드"],
+    waiting_line: ["줄", "대기", "사람", "기다"],
+    stamina_bill: ["체력", "다리", "피곤", "발"],
+    photo_memory: ["사진", "추억", "인생샷", "하루"],
+    effort_now: ["지금", "귀찮", "노력", "시작"],
+    mind_noise: ["마음", "생각", "소음", "고민"],
+    simple_next_step: ["바로", "간단", "다음", "작은"]
+  };
+  return map[frame] || [];
+}
+
+function categoryFrameOptionBoost(category, question, analysis, seed, sign) {
+  const frame = selectCategoryFrame(category, question, seed, sign);
+  const compact = `${analysis.name || ""} ${analysis.subjectName || ""} ${(analysis.features || []).join(" ")} ${analysis.vibe || ""}`.replace(/\s/g, "").toLowerCase();
+  const keywords = categoryFrameKeywords(frame);
+  let boost = keywords.some((word) => compact.includes(String(word).replace(/\s/g, "").toLowerCase())) ? 9 : 0;
+  if (analysis.intent === "skip" && ["sleep_quality", "cash_position", "wallet_aftertaste", "future_me", "body_condition", "tomorrow_face"].includes(frame)) boost += 5;
+  if (analysis.intent === "go" && ["craving", "fun_now", "scene_gain", "memory_density", "first_reaction", "after_clean_air", "after_sweat"].includes(frame)) boost += 5;
+  if (category === "food" && frame === "temperature" && includesAny(compact, ["냉면", "콩국수", "아이스", "따뜻", "라떼", "국물"])) boost += 6;
+  if (category === "travel" && frame === "rest_vs_activity" && includesAny(compact, ["리조트", "제주", "캠핑", "부산", "휴식", "활동"])) boost += 7;
+  if (category === "shopping" && frame === "daily_use" && includesAny(compact, ["컴퓨터", "폰", "tv", "티비", "성능", "화질", "렉"])) boost += 8;
+  if (category === "money" && frame === "volatility" && includesAny(compact, ["코인", "주식", "변동", "리스크"])) boost += 7;
+  return boost;
+}
+
+function categoryFrameReasonLine(frame, category, winner, loser, question) {
+  const winnerName = escapeHtml(winner.name);
+  const loserName = escapeHtml(loser.name);
+  const winnerTopic = escapeHtml(withParticle(winner.name, "은", "는"));
+  const loserTopic = escapeHtml(withParticle(loser.name, "은", "는"));
+  const f0 = escapeHtml((winner.features || [])[0] || "오늘 바로 떠오르는 장점");
+  const l0 = escapeHtml((loser.features || [])[0] || "다른 장점");
+  const lines = {
+    stability_vs_chance: `${winnerTopic} 오늘 돈을 불리는 상상보다 흔들려도 버틸 수 있는지가 먼저 보입니다. ${loserTopic} 기회는 있지만 마음의 진폭이 더 큽니다.`,
+    volatility: `${winnerTopic} 오르내림까지 감당하는 선택입니다. ${loserName}보다 심장은 더 뛰지만, 오늘 기준은 변동성을 어떻게 볼지예요.`,
+    sleep_quality: `${winnerTopic} 고르고 나서 잠이 덜 깨질 쪽입니다. ${loserTopic} 숫자는 재밌어도 밤에 차트를 다시 열게 만들 수 있습니다.`,
+    cash_position: `${winnerTopic} 돈을 움직이는 쪽보다 지키는 쪽의 힘이 있습니다. 오늘은 수익보다 손에 남는 감각을 봅니다.`,
+    price_vs_desire: `${winnerTopic} 가격표와 욕망이 정면으로 만나는 선택입니다. ${loserName}도 끌리지만 지금은 사고 나서 자주 웃을지가 더 큽니다.`,
+    daily_use: `${winnerTopic} 한 번의 설렘보다 매일 손이 가는지가 포인트입니다. ${loserName}보다 실제로 쓰는 장면이 더 자주 보입니다.`,
+    newness_regret: `${winnerTopic} 지금 갖는 만족과 나중에 새 모델을 보는 마음 사이의 선택입니다. 오늘은 기다림보다 쓰는 장면이 더 앞섭니다.`,
+    repair_or_replace: `${winnerTopic} 고장과 불편을 계속 참을지, 한 번에 갈아엎을지의 문제입니다. 오늘은 불편을 얼마나 더 볼 수 있느냐가 핵심입니다.`,
+    wallet_aftertaste: `${winnerTopic} 결제 직후 표정까지 봐야 합니다. ${loserName}보다 통장이 덜 째려보는지, 내가 더 웃는지가 갈립니다.`,
+    temperature: `${winnerTopic} 온도부터 다릅니다. ${loserName}도 좋지만 오늘 입은 시원함/따뜻함 중 한쪽에 먼저 반응했습니다.`,
+    craving: `${winnerTopic} 설명보다 당김이 먼저 온 선택입니다. ${loserName}도 후보지만 냄새와 식감이 오늘은 이쪽을 더 세게 부릅니다.`,
+    heaviness: `${winnerTopic} 가볍게 지나가는 선택이 아니라 배를 확실히 채우는 쪽입니다. ${loserName}보다 든든함이 앞에 섰습니다.`,
+    clean_finish: `${winnerTopic} 먹고 나서 깔끔하게 끝나는 그림이 있습니다. ${loserName}보다 뒤끝이 덜 무거운 쪽이에요.`,
+    snack_hand: `${winnerTopic} 손이 한 번 들어가면 계속 가는 타입입니다. ${loserName}도 좋지만 오늘 과자판은 손맛이 먼저입니다.`,
+    wake_up: `${winnerTopic} 기분보다 눈꺼풀을 먼저 깨우는 선택입니다. ${loserName}보다 지금 필요한 건 각성 쪽입니다.`,
+    comfort_cup: `${winnerTopic} 정신 차리기보다 나를 달래는 컵에 가깝습니다. 오늘은 효율보다 위로가 먼저 보입니다.`,
+    tonight_speed: `${winnerTopic} 잔이 돌기 시작하면 대화가 빨리 풀리는 쪽입니다. ${loserName}보다 오늘 밤 속도가 빠릅니다.`,
+    tomorrow_face: `${winnerTopic} 오늘 밤보다 내일 아침 얼굴까지 같이 보는 선택입니다. ${loserTopic}은 지금은 좋아도 알람 앞에서 말이 달라질 수 있습니다.`,
+    rest_vs_activity: `${winnerTopic} 쉬는 여행인지 움직이는 여행인지부터 갈립니다. 오늘은 ${loserName}보다 몸이 받아들일 하루 모양이 더 중요합니다.`,
+    travel_cost: `${winnerTopic} 숙소, 교통, 이동 시간을 같이 끌고 옵니다. ${loserName}보다 비용 대비 기분 전환이 더 잘 보입니다.`,
+    memory_density: `${winnerTopic} 다녀와서 꺼낼 사진과 얘깃거리가 먼저 보입니다. ${loserName}도 좋지만 남는 장면은 이쪽이 더 많습니다.`,
+    movement_fatigue: `${winnerTopic} 도착보다 이동 뒤 표정까지 봐야 합니다. ${loserName}보다 피곤함을 덜 억지로 밀어붙이는 쪽입니다.`,
+    send_aftershock: `${winnerTopic} 보내고 난 뒤 핸드폰을 몇 번 볼지까지 포함한 선택입니다. ${loserTopic}은 조용하지만 머릿속이 더 시끄러울 수 있습니다.`,
+    silence_noise: `${winnerTopic} 말하지 않았을 때 남는 소음까지 봅니다. 오늘은 조용한 척보다 마음이 덜 떠드는 쪽이 이깁니다.`,
+    comfort_vs_manners: `${winnerTopic} 편안함과 예의 사이에서 오늘 무게가 더 실리는 쪽입니다. ${loserName}보다 앉았을 때 몸이 덜 굳습니다.`,
+    first_reaction: `${winnerTopic} 받는 순간 표정이 먼저 떠오릅니다. ${loserName}보다 포장 뜯는 장면이 더 세게 옵니다.`,
+    child_reaction: `${winnerTopic} 아이가 바로 어떻게 반응할지가 핵심입니다. ${loserName}보다 웃음이 빨리 나오는 장면이 보입니다.`,
+    visible_mess: `${winnerTopic} 눈에 보이는 찝찝함을 처리하는 선택입니다. ${loserName}보다 끝나고 공기가 달라지는 쪽입니다.`,
+    freshness: `${winnerTopic} 귀찮음보다 개운함이 오래 남는 선택입니다. ${loserTopic}은 당장은 편해도 찝찝함이 따라올 수 있습니다.`,
+    after_sweat: `${winnerTopic} 힘든 건 짧고 끝난 뒤 물 한 잔이 꽤 셉니다. ${loserName}보다 자존감 쪽으로 남는 게 있습니다.`,
+    deadline_pressure: `${winnerTopic} 마감이나 시험 같은 압박을 조금 줄이는 쪽입니다. ${loserTopic}은 지금은 편해도 나중에 커질 수 있습니다.`,
+    fun_now: `${winnerTopic} 지금 재미가 바로 오는 선택입니다. ${loserName}보다 오늘 스트레스를 끊는 힘이 큽니다.`,
+    time_leak: `${winnerTopic} 재미는 오지만 시간이 새는 것도 같이 봐야 합니다. 오늘은 그 새는 시간을 감당할 수 있느냐입니다.`,
+    daily_routine: `${winnerTopic} 귀여움보다 매일 반복되는 생활까지 보는 선택입니다. ${loserName}보다 루틴이 더 선명합니다.`,
+    ride_density: `${winnerTopic} 하루 안에 얼마나 꽉 차게 노느냐가 핵심입니다. ${loserName}보다 이벤트 밀도가 더 큽니다.`,
+    effort_now: `${winnerTopic} 지금 조금 움직이면 뒤가 가벼워지는 선택입니다. ${loserTopic}은 편하지만 같은 고민을 남길 수 있습니다.`,
+    mind_noise: `${winnerTopic} 마음속 소음을 줄이는 쪽입니다. ${loserName}도 이유는 있지만 생각이 더 오래 남을 수 있습니다.`,
+    simple_next_step: `${winnerTopic} 복잡한 정답보다 바로 다음 행동이 보입니다. ${loserName}보다 오늘 굴러가기 쉽습니다.`
+  };
+  return cleanPlayTone(lines[frame] || `${winnerTopic} ${f0} 쪽이 먼저 보입니다. ${loserTopic} ${l0}도 있지만 오늘 기준은 ${winnerName} 쪽으로 기울었습니다.`);
+}
+
 function decisionLensPool(category, question = "") {
   const raw = String(question || "").replace(/\s/g, "").toLowerCase();
   const base = ["future_regret", "emotion_satisfaction", "fun", "laziness"];
@@ -6172,6 +6396,7 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [],
     if (includesAny(text, ["짬뽕", "얼큰"])) score += 7;
   }
   score += lensOptionBoost(decisionLenses, analysis, category, question);
+  score += categoryFrameOptionBoost(category, question, analysis, seed, sign);
   score += Math.round(zodiacBoost(sign, analysis, question).boost * 0.35);
   score += Math.round(cardOptionBoost(cards, analysis) * 0.4);
   return Math.max(35, Math.min(75, score));
@@ -6301,8 +6526,10 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   };
   const shareLine = shareableAdvice(category, winner, loser, question, seed, sign);
   const lensReason = decisionLensReasonLine(decisionLenses, winner, loser, category, question, seed);
+  const categoryFrame = selectCategoryFrame(category, question, seed, sign);
+  const frameReason = categoryFrameReasonLine(categoryFrame, category, winner, loser, question);
   const selectedWhyBase = ensureSubjectInReason(whyByCategory[category] || defaultWhy, subjectProfile, winner, loser, question, seed);
-  const selectedWhy = compactResultReason(`${selectedWhyBase} ${lensReason}`, 2);
+  const selectedWhy = compactResultReason(`${frameReason} ${selectedWhyBase}`, 2);
   const oppositeText = hasQuestionContext
     ? `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`
     : `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`;

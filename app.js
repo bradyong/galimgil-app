@@ -6934,19 +6934,29 @@ function downloadLatestCard() {
   ctx.font = "500 30px Malgun Gothic";
   ctx.fillText("오락 및 자기성찰용", 150, 1466);
 
+  const filename = `galimgil-card-${todayKey()}.png`;
+  const imageData = canvas.toDataURL("image/png");
+  if (window.GalimgilAndroid && typeof window.GalimgilAndroid.saveImage === "function") {
+    window.GalimgilAndroid.saveImage(imageData, filename);
+    return;
+  }
   const link = document.createElement("a");
-  link.download = `galimgil-card-${todayKey()}.png`;
-  link.href = canvas.toDataURL("image/png");
+  link.download = filename;
+  link.href = imageData;
   link.click();
 }
 
 async function shareText(text, title = "갈림길", url = getShareUrl()) {
   const shareUrl = url || getShareUrl();
+  const copyText = `${text}\n\n${shareUrl}`;
+  if (window.GalimgilAndroid && typeof window.GalimgilAndroid.shareText === "function") {
+    window.GalimgilAndroid.shareText(String(title || "갈림길"), copyText);
+    return;
+  }
   if (navigator.share) {
     await navigator.share({ title, text, url: shareUrl });
     return;
   }
-  const copyText = `${text}\n\n${shareUrl}`;
   if (navigator.clipboard) {
     await navigator.clipboard.writeText(copyText);
   } else {

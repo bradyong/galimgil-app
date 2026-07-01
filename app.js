@@ -1,16 +1,16 @@
 ﻿const signs = [
-  ["양자리", "♈", "불", "바로 움직일 때 빛이 나는 별"],
-  ["황소자리", "♉", "땅", "천천히 쌓을수록 강해지는 별"],
-  ["쌍둥이자리", "♊", "바람", "말과 연결에서 답을 찾는 별"],
-  ["게자리", "♋", "물", "마음의 안전을 먼저 보는 별"],
-  ["사자자리", "♌", "불", "표현할수록 선명해지는 별"],
-  ["처녀자리", "♍", "땅", "작은 정리로 운을 여는 별"],
-  ["천칭자리", "♎", "바람", "균형과 타이밍을 읽는 별"],
-  ["전갈자리", "♏", "물", "깊은 감각으로 본질을 보는 별"],
-  ["사수자리", "♐", "불", "더 넓은 선택지를 찾는 별"],
-  ["염소자리", "♑", "땅", "현실적인 한 걸음에 강한 별"],
-  ["물병자리", "♒", "바람", "다른 방식으로 판을 바꾸는 별"],
-  ["물고기자리", "♓", "물", "직감과 분위기를 잘 읽는 별"]
+  ["양자리", "♈", "불", "바로 움직일 때 빛이 나는 별", "3/21~4/19"],
+  ["황소자리", "♉", "땅", "천천히 쌓을수록 강해지는 별", "4/20~5/20"],
+  ["쌍둥이자리", "♊", "바람", "말과 연결에서 답을 찾는 별", "5/21~6/21"],
+  ["게자리", "♋", "물", "마음의 안전을 먼저 보는 별", "6/22~7/22"],
+  ["사자자리", "♌", "불", "표현할수록 선명해지는 별", "7/23~8/22"],
+  ["처녀자리", "♍", "땅", "작은 정리로 운을 여는 별", "8/23~9/22"],
+  ["천칭자리", "♎", "바람", "균형과 타이밍을 읽는 별", "9/23~10/22"],
+  ["전갈자리", "♏", "물", "깊은 감각으로 본질을 보는 별", "10/23~11/22"],
+  ["사수자리", "♐", "불", "더 넓은 선택지를 찾는 별", "11/23~12/24"],
+  ["염소자리", "♑", "땅", "현실적인 한 걸음에 강한 별", "12/25~1/19"],
+  ["물병자리", "♒", "바람", "다른 방식으로 판을 바꾸는 별", "1/20~2/18"],
+  ["물고기자리", "♓", "물", "직감과 분위기를 잘 읽는 별", "2/19~3/20"]
 ];
 
 const wordLexicon = [
@@ -357,7 +357,17 @@ function updateStreak() {
 
 function updateMoodLabel(value) {
   const label = value <= 3 ? "잔잔함" : value <= 6 ? "흔들림" : value <= 8 ? "고민중" : "폭풍전야";
-  document.getElementById("moodLabel").textContent = label;
+  const percent = value * 10;
+  const moodLabel = document.getElementById("moodLabel");
+  const moodValue = document.getElementById("moodValue");
+  const moodInput = document.getElementById("moodInput");
+
+  if (moodLabel) moodLabel.textContent = label;
+  if (moodValue) moodValue.textContent = `${percent}% · ${label}`;
+  if (moodInput) {
+    moodInput.style.setProperty("--mood-percent", `${percent}%`);
+    moodInput.dataset.moodLevel = value <= 3 ? "low" : value <= 6 ? "middle" : value <= 8 ? "high" : "hot";
+  }
 }
 
 function moodReading(value) {
@@ -6979,10 +6989,11 @@ document.getElementById("todayDate").textContent = new Intl.DateTimeFormat("ko-K
 const signInput = document.getElementById("signInput");
 const chemMySign = document.getElementById("chemMySign");
 const chemTheirSign = document.getElementById("chemTheirSign");
-signs.forEach(([name, symbol]) => {
-  signInput.add(new Option(`${symbol} ${name}`, name));
-  chemMySign.add(new Option(`${symbol} ${name}`, name));
-  chemTheirSign.add(new Option(`${symbol} ${name}`, name));
+signs.forEach(([name, symbol, , , dateRange]) => {
+  const label = dateRange ? `${symbol} ${name} (${dateRange})` : `${symbol} ${name}`;
+  signInput.add(new Option(label, name));
+  chemMySign.add(new Option(label, name));
+  chemTheirSign.add(new Option(label, name));
 });
 chemTheirSign.selectedIndex = 6;
 updateStreak();

@@ -18,6 +18,10 @@
           <h1>당신의 갈림길은 어디에 있나요?</h1>
           <p class="subcopy">두 선택지만 적으면 오늘 더 유리한 방향과 주의할 점을 정리해드려요.</p>
           <form class="panel home-choice-form" id="choiceForm">
+            <label>
+              고민 한 줄 <span class="optional-label">선택</span>
+              <input id="questionInput" type="text" placeholder="예: 지금 회사를 그만둘까?">
+            </label>
             <div class="choice-pair">
               <label>
                 선택 A
@@ -28,15 +32,10 @@
                 <input id="choiceB" type="text" placeholder="예: 계속 다닌다">
               </label>
             </div>
-            <label>
-              고민 한 줄 <span class="optional-label">선택</span>
-              <input id="questionInput" type="text" placeholder="예: 지금 회사를 그만둘까?">
-            </label>
-            <button class="wide-button" id="choiceSubmitButton" type="submit">분석하기</button>
             <details class="advanced-options" open>
               <summary>마음 온도와 별자리 더하기</summary>
-              <label>
-                지금 마음 온도
+              <label class="mood-control">
+                <span>지금 마음 온도 <strong id="moodValue">60% · 흔들림</strong></span>
                 <input id="moodInput" type="range" min="1" max="10" value="6">
               </label>
               <label>
@@ -44,6 +43,7 @@
                 <select id="signInput"></select>
               </label>
             </details>
+            <button class="wide-button" id="choiceSubmitButton" type="submit">분석하기</button>
           </form>
           <article class="analysis-loader" id="analysisLoader" aria-live="polite">
             <div class="loader-orbit"></div>
@@ -86,10 +86,10 @@
         </div>
         <div class="panel palm-panel">
           <label class="upload-box" for="palmInput">
-            <input id="palmInput" type="file" accept="image/*">
+            <input id="palmInput" type="file" accept="image/*" capture="environment">
             <span class="upload-icon">+</span>
-            <strong>손바닥 사진 선택</strong>
-            <small>손 전체와 손금이 선명하게 보이는 사진을 선택해주세요.</small>
+            <strong>손바닥 촬영하기</strong>
+            <small>카메라로 손 전체와 손금이 선명하게 보이게 촬영해주세요.</small>
           </label>
           <div class="privacy-note">
             <strong>사진 처리 안내</strong>

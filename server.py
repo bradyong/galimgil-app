@@ -6,12 +6,16 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from cache_policy import representation
+from palm_limits import configured_limits
 
 
 ROOT = pathlib.Path(__file__).resolve().parent
 HOST = "0.0.0.0"
 PORT = int(os.getenv("PORT", "8787"))
 MAX_BODY = 16 * 1024 * 1024
+PALM_LIMITS = configured_limits()
+if PALM_LIMITS.path.resolve().is_relative_to(ROOT):
+    raise ValueError("PALM_USAGE_DB must be outside the public web directory")
 
 
 PALM_PROMPT = """
@@ -95,6 +99,22 @@ class AppHandler(BaseHTTPRequestHandler):
             image = payload.get("image", "")
             if not image.startswith("data:image/"):
                 raise ValueError("지원되는 손바닥 사진을 선택해주세요.")
+            # The global cap remains effective even if a client forges forwarding headers.
+            forwarded_for = self.headers.get("X-Forwarded-For", "")
+            client_ip = forwarded_for.split(",", 1)[0].strip() or self.client_address[0]
+            try:
+                limit = PALM_LIMITS.reserve(client_ip)
+            except Exception:
+                json_response(self, 503, {"error": "손금 이용량 확인이 잠시 지연되고 있어요. 잠시 후 다시 시도해주세요."})
+                return
+            if limit:
+                message = (
+                    f"안전한 이용을 위해 같은 네트워크에서는 하루 {PALM_LIMITS.per_ip}회까지 손금을 볼 수 있어요. 내일 다시 이용해주세요. (한국 시간 자정 기준)"
+                    if limit == "ip" else
+                    "오늘의 손금 서비스 안전 이용량에 도달했어요. 내일 다시 이용해주세요. (한국 시간 자정 기준)"
+                )
+                json_response(self, 429, {"error": message, "code": f"palm_daily_{limit}_limit"})
+                return
             request_body = {
                 "model": "gpt-5-mini",
                 "input": [{

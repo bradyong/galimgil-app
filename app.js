@@ -7039,7 +7039,6 @@ function openChoiceCard(card, freshResult = false) {
   document.getElementById("choiceShareButton").addEventListener("click", () => shareText(text, "갈림길 선택 카드"));
   const startNextQuestion = () => {
     ["questionInput", "choiceA", "choiceB", "choiceContext"].forEach((id) => { document.getElementById(id).value = ""; });
-    globalThis.GalimgilChoiceEntry?.reset();
     document.getElementById("choiceFeedback").textContent = "";
     document.getElementById("choiceContextRow").hidden = true;
     document.querySelectorAll("[data-choice-context]").forEach((chip) => chip.setAttribute("aria-pressed", "false"));
@@ -7077,7 +7076,13 @@ document.getElementById("moodInput").addEventListener("input", (event) => {
   updateMoodLabel(Number(event.target.value));
 });
 
-["questionInput", "choiceA", "choiceB"].forEach((id) => {
+["questionInput", "choiceA", "choiceB"].forEach((id, index, fields) => {
+  document.getElementById(id).addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.isComposing || event.keyCode === 229) return;
+    event.preventDefault();
+    if (index < fields.length - 1) document.getElementById(fields[index + 1]).focus();
+    else event.target.blur();
+  });
   document.getElementById(id).addEventListener("input", () => {
     document.getElementById("choiceResult").classList.remove("show");
     document.getElementById("choiceFeedback").textContent = "";
@@ -7117,9 +7122,8 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     document.getElementById("choiceResult").scrollIntoView({behavior: "smooth", block: "start"});
     return;
   }
-  if (globalThis.GalimgilChoiceEntry && !globalThis.GalimgilChoiceEntry.validate()) return;
   const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
-    (option) => findFeatureEntry(option)?.item.category, document.getElementById("choiceContext").value || globalThis.GalimgilChoiceEntry?.category() || "");
+    (option) => findFeatureEntry(option)?.item.category, document.getElementById("choiceContext").value);
   document.getElementById("choiceFeedback").textContent = interpretation.needsCategory
     ? "어떤 종류의 선택인가요?" : interpretation.message || "";
   if (interpretation.message) {

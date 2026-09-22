@@ -8,6 +8,7 @@ from collections import defaultdict
 from datetime import date
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Lock
+from cache_policy import representation
 
 
 ROOT = pathlib.Path(__file__).resolve().parent
@@ -42,6 +43,7 @@ def json_response(handler, status, payload):
     handler.send_response(status)
     handler.send_header("Content-Type", "application/json; charset=utf-8")
     handler.send_header("Content-Length", str(len(body)))
+    handler.send_header("Cache-Control", "no-store")
     handler.end_headers()
     handler.wfile.write(body)
 
@@ -86,9 +88,18 @@ class AppHandler(BaseHTTPRequestHandler):
         if not target.is_file():
             self.send_error(404)
             return
-        content = target.read_bytes()
+        content, cache_control, etag = representation(target, self.path, ROOT)
         content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+        validators = [value.strip().removeprefix('W/') for value in self.headers.get('If-None-Match', '').split(',')]
+        if etag in validators or '*' in validators:
+            self.send_response(304)
+            self.send_header("Cache-Control", cache_control)
+            self.send_header("ETag", etag)
+            self.end_headers()
+            return
         self.send_response(200)
+        self.send_header("Cache-Control", cache_control)
+        self.send_header("ETag", etag)
         self.send_header("Content-Type", f"{content_type}; charset=utf-8" if content_type.startswith("text/") else content_type)
         self.send_header("Content-Length", str(len(content)))
         self.end_headers()

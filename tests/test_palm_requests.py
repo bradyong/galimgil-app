@@ -5,8 +5,7 @@ import pathlib
 import sys
 import unittest
 import urllib.error
-import tempfile
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 import server
@@ -37,9 +36,7 @@ class PalmRequestsTest(unittest.TestCase):
         env = patch.dict(server.os.environ, {"OPENAI_API_KEY": "fixture-not-a-key"})
         env.start()
         self.addCleanup(env.stop)
-        folder = tempfile.TemporaryDirectory()
-        self.addCleanup(folder.cleanup)
-        limits = patch.object(server, "PALM_LIMITS", PalmLimits(pathlib.Path(folder.name) / "usage.db"))
+        limits = patch.object(server, "PALM_LIMITS", Mock(per_ip=30, reserve=Mock(return_value=None)))
         limits.start()
         self.addCleanup(limits.stop)
 
@@ -54,8 +51,7 @@ class PalmRequestsTest(unittest.TestCase):
             self.assertEqual(api.call_count, 40)
 
     def test_31st_request_is_blocked_before_provider(self):
-        for _ in range(30):
-            self.assertIsNone(server.PALM_LIMITS.reserve("192.0.2.1"))
+        server.PALM_LIMITS.reserve.return_value = 'ip'
         with patch.object(server.urllib.request, "urlopen") as api:
             status, body = request()
             self.assertEqual(status, 429)
@@ -72,8 +68,7 @@ class PalmRequestsTest(unittest.TestCase):
         with patch.object(server.urllib.request, "urlopen") as api:
             self.assertEqual(request("not-an-image")[0], 400)
             api.assert_not_called()
-        for _ in range(30):
-            self.assertIsNone(server.PALM_LIMITS.reserve("192.0.2.1"))
+        server.PALM_LIMITS.reserve.assert_not_called()
 
     def test_oversized_body_still_rejected(self):
         with patch.object(server.urllib.request, "urlopen") as api:

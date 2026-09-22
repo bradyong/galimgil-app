@@ -14,8 +14,6 @@ HOST = "0.0.0.0"
 PORT = int(os.getenv("PORT", "8787"))
 MAX_BODY = 16 * 1024 * 1024
 PALM_LIMITS = configured_limits()
-if PALM_LIMITS.path.resolve().is_relative_to(ROOT):
-    raise ValueError("PALM_USAGE_DB must be outside the public web directory")
 
 
 PALM_PROMPT = """

@@ -1,5 +1,8 @@
 # Palm request safety caps
 
+> Superseded on 2026-09-22 by UPSTASH-SAFETY.md. SQLite notes below describe the
+> previous, never-deployed implementation, not the current operating path.
+
 Native ad counters and behavior are unchanged. The server does not trust an ad
 view claim and does not require an ad to succeed before processing a request.
 

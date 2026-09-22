@@ -338,19 +338,14 @@ function todayKey() {
 }
 
 function updateStreak() {
-  let streak = 1;
-  try {
-    const lastDate = localStorage.getItem(lastDateKey);
-    streak = Number(localStorage.getItem(streakKey) || "0");
-    if (lastDate !== todayKey()) {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      streak = lastDate === yesterday.toISOString().slice(0, 10) ? streak + 1 : 1;
-      localStorage.setItem(lastDateKey, todayKey());
-      localStorage.setItem(streakKey, String(streak));
-    }
-  } catch {
-    streak = Math.max(archive.length, 1);
+  const key = (date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  const days = new Set(archive.filter((card) => card.createdAt).map((card) => key(new Date(card.createdAt))));
+  const cursor = new Date();
+  if (!days.has(key(cursor))) cursor.setDate(cursor.getDate() - 1);
+  let streak = 0;
+  while (days.has(key(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
   }
   document.getElementById("streakCount").textContent = `${streak}일`;
 }
@@ -483,12 +478,14 @@ function choiceProfile(question, choiceA, choiceB) {
   const giftContext = includesAny(text, ["선물", "생일", "어린이날", "크리스마스", "사줄까", "사줘", "장난감"]);
   if (includesAny(text, ["출근", "결근", "지각", "근무", "회사 가", "일하러"])) {
     profile.type = "attendance";
-    const healthReason = includesAny(text, ["아프", "열", "몸살", "병원", "독감", "응급", "다쳤", "쓰러", "생리통", "장염"]);
+    const healthText = text.replace(/\s/g, "").replace(/아프지않(?:아요|아|다|고)?|안아프(?:다|고|지만|요)?|열이없(?:다|고|어요)?/g, "");
+    const healthReason = includesAny(healthText, ["아프", "아파", "열이나", "열이있", "고열", "몸살", "독감", "응급", "다쳤", "쓰러", "생리통", "장염"]);
     if (healthReason) {
-      profile.forced = includesAny(a, ["안", "쉬", "결근", "병원"]) ? "A" : includesAny(b, ["안", "쉬", "결근", "병원"]) ? "B" : null;
+      profile.forced = optionIntent(a) === "skip" ? "A" : optionIntent(b) === "skip" ? "B" : null;
     } else {
-      profile.forced = includesAny(a, ["출근", "회사", "근무", "간다", "가"]) ? "A" : includesAny(b, ["출근", "회사", "근무", "간다", "가"]) ? "B" : null;
+      profile.forced = optionIntent(a) === "go" ? "A" : optionIntent(b) === "go" ? "B" : null;
     }
+    if (optionIntent(a) === optionIntent(b)) profile.forced = null;
   } else if (includesAny(text, ["퇴사", "이직", "그만둘", "관둘"])) {
     profile.type = "career";
     profile.forced = includesAny(a, ["유지", "계속", "보류", "기다"]) ? "A" : includesAny(b, ["유지", "계속", "보류", "기다"]) ? "B" : null;
@@ -518,6 +515,11 @@ function choiceProfile(question, choiceA, choiceB) {
     if (!badOutdoor && includesAny(b, ["놀이터", "공원", "산책"])) profile.forced = "B";
     if (badOutdoor && includesAny(a, ["키즈카페", "실내", "카페"])) profile.forced = "A";
     if (badOutdoor && includesAny(b, ["키즈카페", "실내", "카페"])) profile.forced = "B";
+  }
+  const interpretation = ChoiceInput.inspect(question, choiceA, choiceB, (option) => findFeatureEntry(option)?.item.category);
+  if (interpretation.category) {
+    if (interpretation.category !== profile.type) profile.forced = null;
+    profile.type = interpretation.category;
   }
   return profile;
 }
@@ -1734,10 +1736,7 @@ function analyzeOption(option, category, question = "") {
 }
 
 function optionIntent(option) {
-  const text = String(option).replace(/\s/g, "").toLowerCase();
-  if (includesAny(text, ["만다", "그냥", "그대로", "유지", "안간", "안한다", "안판다", "안바꾼", "안바꾸", "안마신", "안마셔", "마시지마", "말자", "보류", "나중", "내일", "미룬", "미루", "쉬", "쉰", "기다", "관망", "패스", "보유", "홀딩", "버틴", "버티", "참", "더쓴", "그냥쓴"])) return "skip";
-  if (includesAny(text, ["간다", "가기", "간", "한다", "먹", "마신", "마셔", "산다", "살래", "바꾼", "바꾸", "교체", "매수", "매도", "판다", "연락", "고백", "출근"])) return "go";
-  return "specific";
+  return ChoiceInput.intent(option);
 }
 
 function giftTarget(question) {
@@ -6605,6 +6604,9 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [],
 }
 
 function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed) {
+  const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
+    (option) => findFeatureEntry(option)?.item.category, profile.type === "general" ? "" : profile.type);
+  if (interpretation.message) throw new Error(interpretation.message);
   const questionAnalysis = analyzeQuestion(question, choiceA, choiceB, profile);
   const subjectProfile = (questionAnalysis && questionAnalysis.subjectProfile)
     || extractSubjectProfile(question, choiceA, choiceB, questionAnalysis ? questionAnalysis.category : "daily");
@@ -6613,6 +6615,8 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     : inferCategory(question, choiceA, choiceB, profile);
   const a = contextualizeOption(choiceA, category, question);
   const b = contextualizeOption(choiceB, category, question);
+  a.intent = interpretation.intentA;
+  b.intent = interpretation.intentB;
   if (subjectProfile && subjectProfile.subject) {
     const subjectTraits = subjectProfile.traits || [];
     const pairSubject = String(subjectProfile.subject).includes(" / ");
@@ -6652,10 +6656,10 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const secondaryCard = cardLabels[1];
   const decisionLenses = selectDecisionLenses(category, question, seed, sign);
   let aScore = scoreOption(a, category, question, mood, seed, sign, cardLabels, decisionLenses);
-  let bScore = scoreOption(b, category, question, mood, seed + 11, sign, cardLabels, decisionLenses);
+  let bScore = scoreOption(b, category, question, mood, seed, sign, cardLabels, decisionLenses);
   if (profile.forced === "A") aScore = Math.max(aScore, bScore + 12);
   if (profile.forced === "B") bScore = Math.max(bScore, aScore + 12);
-  const recommendA = aScore >= bScore;
+  const recommendA = aScore > bScore || (aScore === bScore && ChoiceInput.normalize(a.name) < ChoiceInput.normalize(b.name));
   const winner = recommendA ? a : b;
   const loser = recommendA ? b : a;
   const rawWinnerScore = recommendA ? aScore : bScore;
@@ -6736,6 +6740,16 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const oppositeText = hasQuestionContext
     ? `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`
     : `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`;
+  const actionChoice = a.intent !== "specific" || b.intent !== "specific";
+  const safeWhy = winner.intent === "skip"
+    ? `오늘의 놀이 카드는 ‘${escapeHtml(winner.name)}’ 쪽으로 기울었어요. 실행을 미루거나 하지 않는 선택인 만큼, 다시 결정할 시점도 함께 정해두면 좋아요.`
+    : `오늘의 놀이 카드는 ‘${escapeHtml(winner.name)}’ 쪽으로 기울었어요. 실행하는 선택인 만큼, 필요한 시간과 부담을 먼저 확인하고 작게 시작해보세요.`;
+  const neutralWhy = `오늘의 놀이 카드는 ‘${escapeHtml(winner.name)}’ 쪽이에요. 두 선택의 구체적인 장단점까지 확인된 것은 아니니, 지금 더 끌리는 쪽인지 가볍게 비교해보세요.`;
+  const exactFeature = (name) => optionFeatureBank.find((entry) => entry.keys.some((key) => ChoiceInput.normalize(key) === ChoiceInput.normalize(name)));
+  const knownWinner = exactFeature(winner.name), knownLoser = exactFeature(loser.name);
+  const concreteWhy = knownWinner && knownLoser
+    ? `‘${escapeHtml(winner.name)}’의 포인트는 ${escapeHtml(knownWinner.features.slice(0, 2).join(", "))}예요. ‘${escapeHtml(loser.name)}’의 ${escapeHtml(knownLoser.features[0])}보다 지금 더 끌리는지 비교해보세요.`
+    : neutralWhy;
   return {
     category,
     recommendA,
@@ -6743,12 +6757,12 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     loser,
     winnerScore,
     loserScore,
-    advice: cleanPlayTone(shareLine),
-    why: cleanPlayTone(selectedWhy),
+    advice: actionChoice ? "결정은 가볍게, 내 조건은 꼼꼼하게." : cleanPlayTone(shareLine),
+    why: actionChoice ? safeWhy : concreteWhy,
     opposite: oppositeText,
-    fortune: cleanPlayTone(fortune),
+    fortune: actionChoice || category === "daily" ? `${escapeHtml(sign[0])}의 오늘 키워드는 ${cardLabels.map(escapeHtml).join(", ")}예요. 내 상황에 맞는 말만 골라 담아보세요.` : cleanPlayTone(fortune),
     zodiacCards: cardLabels,
-    futureComment: cleanPlayTone(futureComment(category, winner, question, seed, sign)),
+    futureComment: actionChoice || category === "daily" ? "미래의 나: 결과보다 내가 왜 골랐는지 기억해둘게." : cleanPlayTone(futureComment(category, winner, question, seed, sign)),
     resultTitle: `${escapeHtml(winner.name)} 승`,
     finalText: `<strong>${escapeHtml(winner.name)} ${winnerScore}%</strong><br><strong>${escapeHtml(loser.name)} ${loserScore}%</strong><br><small>${probabilityReason(category, winner, loser, winnerScore, loserScore)}</small>`
   };
@@ -6777,13 +6791,15 @@ async function checkAiStatus() {
 }
 
 function setActiveTab(tabName) {
+  document.querySelector(".home-hero").classList.toggle("is-hidden", tabName !== "choice");
+  document.querySelector(".home-section").classList.toggle("is-hidden", tabName !== "choice");
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.tab === tabName);
   });
   document.querySelectorAll(".screen").forEach((screen) => {
     screen.classList.toggle("active", screen.id === tabName);
   });
-  const target = document.getElementById(tabName);
+  const target = document.getElementById(tabName === "choice" ? "choiceForm" : tabName);
   if (target) {
     target.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -6827,7 +6843,7 @@ function renderArchive() {
     renderHomeRecent();
     return;
   }
-  list.innerHTML = archive.map((card) => `
+  list.innerHTML = archive.map((card, index) => `
     <article class="archive-card">
       <span>${escapeHtml(card.date)}</span>
       <h3>${escapeHtml(card.question)}</h3>
@@ -6836,8 +6852,16 @@ function renderArchive() {
       ${card.advice ? `<p><strong>한 줄 조언:</strong> ${escapeHtml(card.advice)}</p>` : ""}
       ${card.outcome ? `<p><strong>체크인:</strong> ${escapeHtml(card.outcome)}</p>` : ""}
       ${card.memo ? `<p><strong>메모:</strong> ${escapeHtml(card.memo)}</p>` : ""}
+      ${card.details ? `<button type="button" class="secondary-button" data-open-card="${index}">결과 다시보기</button>` : ""}
     </article>
   `).join("");
+  list.querySelectorAll("[data-open-card]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const card = archive[Number(button.dataset.openCard)];
+      setActiveTab("choice");
+      openChoiceCard(card);
+    });
+  });
   renderHomeRecent();
 }
 
@@ -6869,13 +6893,13 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   return currentY + lineHeight;
 }
 
-function downloadLatestCard() {
+function downloadLatestCard(selectedCard = null) {
   if (!archive.length) {
     alert("먼저 선택 카드를 만들어주세요.");
     setActiveTab("choice");
     return;
   }
-  const card = archive[0];
+  const card = selectedCard && selectedCard.createdAt ? selectedCard : archive[0];
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
   canvas.height = 1920;
@@ -6980,6 +7004,55 @@ async function shareText(text, title = "갈림길", url = getShareUrl()) {
   alert("공유 문구와 앱 링크를 복사했어요.");
 }
 
+function plainResultText(value) {
+  return String(value || "").replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+}
+
+function openChoiceCard(card, freshResult = false) {
+  if (!card || !card.details) return;
+  const d = card.details;
+  const text = ["[갈림길 선택 놀이]", card.question, `A: ${card.choiceA}`, `B: ${card.choiceB}`, card.recommended, d.why,
+    `별 한 스푼: ${d.cards.join(" · ")}`, `별의 한마디: ${d.fortune || ""}`,
+    `미래의 나 댓글: ${d.future || ""}`, `캡처 한 줄: ${card.advice || ""}`,
+    "놀이용 결과이며 실제 성공 확률이 아닙니다."].join("\n");
+  showResult(document.getElementById("choiceResult"), `
+    <div class="report-hero">
+      <span>${escapeHtml(card.date)} · 오늘의 갈림길</span>
+      <h3 class="winner-line">${escapeHtml(d.winner)} 쪽으로!</h3>
+      <p>${escapeHtml(card.choiceA)} vs ${escapeHtml(card.choiceB)}</p>
+    </div>
+    <p class="result-reason">${escapeHtml(d.why)}</p>
+    <p class="result-balance">놀이 기울기 · ${escapeHtml(d.winner)} ${d.percent}% / ${escapeHtml(d.loser)} ${100 - d.percent}%</p>
+    <p class="fine-print">별자리와 선택 규칙으로 만든 놀이용 수치이며 실제 성공 확률이 아니에요.</p>
+    <div class="result-extras">
+      <section class="report-section"><h4>별 한 스푼</h4><p class="zodiac-card-row">${d.cards.map((name) => `<span>${escapeHtml(name)}</span>`).join("")}</p></section>
+      <section class="report-section"><h4>별의 한마디</h4><p>${escapeHtml(d.fortune)}</p></section>
+      <section class="report-section"><h4>미래의 나 댓글</h4><blockquote class="advice-quote">${escapeHtml(d.future)}</blockquote></section>
+      <section class="report-section" data-ad-result-end><h4>캡처 한 줄</h4><blockquote class="advice-quote">${escapeHtml(card.advice)}</blockquote></section>
+    </div>
+    <div class="share-actions">
+      <button class="secondary-button" id="downloadChoiceButton" type="button">이미지 저장</button>
+      <button class="ghost-button" id="choiceShareButton" type="button">결과 공유</button>
+    </div>
+    <button class="wide-button new-choice-button" id="newChoiceButton" type="button">다른 고민하기</button>`);
+  document.getElementById("downloadChoiceButton").addEventListener("click", () => downloadLatestCard(card));
+  document.getElementById("choiceShareButton").addEventListener("click", () => shareText(text, "갈림길 선택 카드"));
+  const startNextQuestion = () => {
+    ["questionInput", "choiceA", "choiceB", "choiceContext"].forEach((id) => { document.getElementById(id).value = ""; });
+    document.getElementById("choiceFeedback").textContent = "";
+    document.getElementById("choiceContextRow").hidden = true;
+    document.getElementById("choiceResult").classList.remove("show");
+    setActiveTab("choice");
+    document.getElementById("questionInput").focus({preventScroll: true});
+  };
+  document.getElementById("newChoiceButton").addEventListener("click", () => {
+    if (globalThis.GalimgilAdsEvents) globalThis.GalimgilAdsEvents.nextQuestion(startNextQuestion);
+    else startNextQuestion();
+  });
+  globalThis.GalimgilAdsEvents?.resultShown(card.createdAt, freshResult);
+  document.getElementById("choiceResult").scrollIntoView({behavior: "smooth", block: "start"});
+}
+
 document.getElementById("todayDate").textContent = new Intl.DateTimeFormat("ko-KR", {
   month: "long",
   day: "numeric",
@@ -7002,6 +7075,15 @@ document.getElementById("moodInput").addEventListener("input", (event) => {
   updateMoodLabel(Number(event.target.value));
 });
 
+["questionInput", "choiceA", "choiceB"].forEach((id) => {
+  document.getElementById(id).addEventListener("input", () => {
+    document.getElementById("choiceResult").classList.remove("show");
+    document.getElementById("choiceFeedback").textContent = "";
+    document.getElementById("choiceContext").value = "";
+    document.getElementById("choiceContextRow").hidden = true;
+  });
+});
+
 document.querySelectorAll("[data-tab]").forEach((button) => {
   button.addEventListener("click", () => setActiveTab(button.dataset.tab));
 });
@@ -7012,6 +7094,24 @@ document.querySelector("[data-scroll-target]")?.addEventListener("click", () => 
 
 document.getElementById("choiceForm").addEventListener("submit", (event) => {
   event.preventDefault();
+  const question = document.getElementById("questionInput").value.trim();
+  const choiceA = document.getElementById("choiceA").value.trim();
+  const choiceB = document.getElementById("choiceB").value.trim();
+  const safety = dangerousChoiceCheck(question, choiceA, choiceB);
+  if (safety.dangerous) {
+    showResult(document.getElementById("choiceResult"), safety.message);
+    document.getElementById("choiceResult").scrollIntoView({behavior: "smooth", block: "start"});
+    return;
+  }
+  const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
+    (option) => findFeatureEntry(option)?.item.category, document.getElementById("choiceContext").value);
+  document.getElementById("choiceFeedback").textContent = interpretation.message || "";
+  if (interpretation.message) {
+    document.getElementById("choiceResult").classList.remove("show");
+    document.getElementById("choiceContextRow").hidden = !interpretation.needsCategory;
+    document.getElementById(interpretation.field).focus();
+    return;
+  }
   const loader = document.getElementById("analysisLoader");
   const loaderText = document.getElementById("loaderText");
   const submitButtons = document.querySelectorAll("#choiceForm button[type='submit']");
@@ -7030,32 +7130,17 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     }, index * 420);
   });
   try {
-    const question = document.getElementById("questionInput").value.trim() || "오늘 움직일까, 기다릴까?";
-    const choiceA = document.getElementById("choiceA").value.trim() || "지금 움직인다";
-    const choiceB = document.getElementById("choiceB").value.trim() || "조금 더 기다린다";
     const mood = Number(document.getElementById("moodInput").value);
     const signName = signInput.value || "양자리";
     const sign = signs.find(([name]) => name === signName) || signs[0];
-    const safety = dangerousChoiceCheck(question, choiceA, choiceB);
-    if (safety.dangerous) {
-      setTimeout(() => {
-        loader.classList.remove("show");
-        showResult(document.getElementById("choiceResult"), safety.message);
-        document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
-        submitButtons.forEach((button) => {
-          button.disabled = false;
-          button.textContent = "분석하기";
-        });
-      }, 300);
-      return;
-    }
-    const seed = hashText(`${question}-${choiceA}-${choiceB}-${mood}-${signName}-${new Date().toDateString()}`);
+    const pairKey = [ChoiceInput.normalize(choiceA), ChoiceInput.normalize(choiceB)].sort().join("|");
+    const seed = hashText(`${question}-${pairKey}-${mood}-${signName}-${new Date().toDateString()}`);
     const profile = choiceProfile(question, choiceA, choiceB);
+    if (profile.type !== interpretation.category) profile.forced = null;
+    profile.type = interpretation.category;
     const narrative = buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed);
     const recommendA = narrative.recommendA;
     const recommended = narrative.winner.name;
-    const mission = pick(missions, seed);
-    const code = reportCode(seed);
     const adviceLine = narrative.advice;
 
     archive.unshift({
@@ -7065,85 +7150,24 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       choiceA,
       choiceB,
       recommended: `추천: ${recommendA ? "A" : "B"} · ${recommended}`,
-      advice: adviceLine,
+      advice: plainResultText(adviceLine),
+      details: {
+        winner: recommended, loser: narrative.loser.name, percent: narrative.winnerScore,
+        why: plainResultText(narrative.why), fortune: plainResultText(narrative.fortune),
+        future: plainResultText(narrative.futureComment), cards: narrative.zodiacCards
+      },
       sign: signName,
       mood,
       createdAt: new Date().toISOString()
     });
+    const createdCard = archive[0];
     saveArchive();
     updateStreak();
     renderArchive();
 
-    const shareCopy = [
-      "[오늘의 갈림길 놀이 카드]",
-      `리포트: ${code}`,
-      `고민: ${question}`,
-      `A: ${choiceA}`,
-      `B: ${choiceB}`,
-      `별자리 카드: ${narrative.zodiacCards.join(" + ")}`,
-      `캡처 한 줄: ${narrative.advice.replace(/<[^>]+>/g, "")}`,
-      `짧게 말하면: ${narrative.why.replace(/<[^>]+>/g, "")}`,
-      `결과: ${recommended} 승`,
-      `미래의 나: ${narrative.futureComment.replace(/<[^>]+>/g, "")}`,
-      `확률: ${recommended} ${narrative.winnerScore}% / ${narrative.loser.name} ${narrative.loserScore}%`,
-      "",
-      "너도 갈림길 한 번 돌려봐 ㅋㅋ"
-    ].join("\n");
-    const inviteCopy = [
-      "나 방금 갈림길 돌렸는데 결과가 좀 웃겨 ㅋㅋ",
-      `내 고민은 "${question}"였고, "${recommended}" 승 나왔어.`,
-      `캡처 한 줄: "${narrative.advice.replace(/<[^>]+>/g, "")}"`,
-      `미래의 나 댓글: "${narrative.futureComment.replace(/<[^>]+>/g, "")}"`,
-      "너도 하나 넣어서 돌려봐."
-    ].join("\n");
-
-    const resultHtml = `
-    <div class="report-hero">
-      <span>${code} · 오늘의 갈림길 놀이</span>
-      <h3>오늘의 별자리 카드</h3>
-      <p>${escapeHtml(choiceA)} vs ${escapeHtml(choiceB)}</p>
-    </div>
-    <div class="report-section">
-      <h4>🌟 별 한 스푼</h4>
-      <p class="zodiac-card-row">${narrative.zodiacCards.map((card) => `<span>🎲 ${escapeHtml(card)}</span>`).join("")}</p>
-    </div>
-    <div class="report-section">
-      <h4>🌟 별의 한마디</h4>
-      <p>${narrative.fortune}</p>
-    </div>
-    <div class="report-section">
-      <h4>💡 짧게 말하면</h4>
-      <p>${narrative.why}</p>
-    </div>
-    <div class="report-section final-recommendation">
-      <h4>🏁 갈림길 결과</h4>
-      <p class="winner-line">${escapeHtml(recommended)} 승</p>
-    </div>
-    <div class="report-section">
-      <h4>💬 미래의 나 댓글</h4>
-      <blockquote class="advice-quote">${narrative.futureComment}</blockquote>
-    </div>
-    <div class="report-section">
-      <h4>📌 캡처 한 줄</h4>
-      <blockquote class="advice-quote">${escapeHtml(narrative.advice)}</blockquote>
-    </div>
-    <div class="report-section">
-      <h4>🎯 오늘의 승률</h4>
-      <p>${narrative.finalText}</p>
-    </div>
-    <div class="share-actions">
-      <button class="secondary-button" id="downloadChoiceButton" type="button">이미지 저장</button>
-      <button class="ghost-button" id="choiceShareButton" type="button">결과 공유</button>
-    </div>
-    <button class="ghost-button full-width" id="choiceInviteButton" type="button">친구에게 앱 보내기</button>
-  `;
     setTimeout(() => {
       loader.classList.remove("show");
-      showResult(document.getElementById("choiceResult"), resultHtml);
-      document.getElementById("downloadChoiceButton").addEventListener("click", downloadLatestCard);
-      document.getElementById("choiceShareButton").addEventListener("click", () => shareText(shareCopy, "갈림길 선택 카드"));
-      document.getElementById("choiceInviteButton").addEventListener("click", () => shareText(inviteCopy, "갈림길"));
-      document.getElementById("choiceResult").scrollIntoView({ behavior: "smooth", block: "start" });
+      if (document.getElementById("choiceA").value.trim() === choiceA && document.getElementById("choiceB").value.trim() === choiceB && document.getElementById("questionInput").value.trim() === question) openChoiceCard(createdCard, true);
       submitButtons.forEach((button) => {
         button.disabled = false;
         button.textContent = "분석하기";

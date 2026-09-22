@@ -141,7 +141,7 @@ h1 {
   top: 0;
   z-index: 3;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
   padding: 10px;
   background: rgba(7, 17, 22, 0.92);
@@ -548,10 +548,25 @@ select {
 
 .winner-line {
   color: var(--text);
-  font-size: clamp(1.7rem, 8vw, 2.7rem);
+  font-size: 28px;
   font-weight: 900;
   line-height: 1.1;
+  overflow-wrap: anywhere;
 }
+
+[hidden], .is-hidden { display: none !important; }
+.choice-feedback { color: #ffe7a3; line-height: 1.5; }
+.choice-feedback:empty { display: none; }
+.home-hero h1 { font-size: 36px; line-height: 1.15; }
+.tab { padding: 8px 2px; min-width: 0; }
+.result-card, .screen, #choiceForm { scroll-margin-top: 80px; }
+.result-card p, .result-card h3, .archive-card, .recent-card { overflow-wrap: anywhere; }
+.result-extras { margin-top: 20px; }
+.result-extras .report-section { padding: 16px 0; }
+.result-extras .advice-quote { margin: 12px 0 0; overflow-wrap: anywhere; }
+.result-reason { margin-top: 16px; line-height: 1.65; }
+.result-balance { margin-top: 16px; font-size: 14px; color: var(--teal); }
+.new-choice-button { margin-top: 12px; width: 100%; }
 
 .detail-report {
   color: var(--muted);
@@ -587,6 +602,8 @@ select {
 .share-actions .secondary-button,
 .share-actions .ghost-button {
   width: 100%;
+  min-height: 48px;
+  margin-top: 0;
 }
 
 .metric-grid {

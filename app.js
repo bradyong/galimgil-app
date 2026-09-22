@@ -7039,6 +7039,7 @@ function openChoiceCard(card, freshResult = false) {
   document.getElementById("choiceShareButton").addEventListener("click", () => shareText(text, "갈림길 선택 카드"));
   const startNextQuestion = () => {
     ["questionInput", "choiceA", "choiceB", "choiceContext"].forEach((id) => { document.getElementById(id).value = ""; });
+    globalThis.GalimgilChoiceEntry?.reset();
     document.getElementById("choiceFeedback").textContent = "";
     document.getElementById("choiceContextRow").hidden = true;
     document.querySelectorAll("[data-choice-context]").forEach((chip) => chip.setAttribute("aria-pressed", "false"));
@@ -7116,8 +7117,9 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     document.getElementById("choiceResult").scrollIntoView({behavior: "smooth", block: "start"});
     return;
   }
+  if (globalThis.GalimgilChoiceEntry && !globalThis.GalimgilChoiceEntry.validate()) return;
   const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
-    (option) => findFeatureEntry(option)?.item.category, document.getElementById("choiceContext").value);
+    (option) => findFeatureEntry(option)?.item.category, document.getElementById("choiceContext").value || globalThis.GalimgilChoiceEntry?.category() || "");
   document.getElementById("choiceFeedback").textContent = interpretation.needsCategory
     ? "어떤 종류의 선택인가요?" : interpretation.message || "";
   if (interpretation.message) {
@@ -7392,6 +7394,9 @@ document.getElementById("palmButton").addEventListener("click", () => {
   (async () => {
     try {
       const preparedImage = await preparePalmImage(palmInput.files[0]);
+      if (globalThis.GalimgilAdsEvents?.beforePalm) {
+        await new Promise(resolve => globalThis.GalimgilAdsEvents.beforePalm(resolve));
+      }
       const response = await fetch("/api/palm-reading", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -26,10 +26,16 @@
           <p class="subcopy">이쪽일까, 저쪽일까? 오늘 마음이 가는 쪽을 찾아봐요.</p>
           <form class="panel home-choice-form" id="choiceForm">
             <label>
-              <span>고민 한 줄 <span class="optional-label">선택</span></span>
-              <input id="questionInput" type="text" maxlength="200" placeholder="예: 친구랑 저녁 뭐 먹을까?">
+              <span>고민 한 줄</span>
+              <input id="questionInput" type="text" maxlength="200" placeholder="예: 오늘 저녁 치킨 먹을까 피자 먹을까?">
             </label>
-            <div class="choice-pair">
+            <div id="extractedChoices" class="extracted-choices" hidden aria-live="polite">
+              <span class="extracted-title">오늘의 갈림길</span>
+              <strong id="extractedA"></strong><span>VS</span><strong id="extractedB"></strong>
+            </div>
+            <button id="editChoices" class="edit-choices" type="button">수정</button>
+            <p id="extractionHint" class="choice-feedback" role="status"></p>
+            <div class="choice-pair" id="manualChoices" hidden>
               <label>
                 선택 A
                 <input id="choiceA" type="text" maxlength="80" placeholder="예: 피자" aria-describedby="choiceFeedback">
@@ -229,6 +235,8 @@
       </section>
     </main>
     <script src="choice-input.js"></script>
+    <script src="choice-extraction.js"></script>
+    <script src="choice-entry.js"></script>
     <script src="native-ads-events.js"></script>
     <script src="app.js"></script>
   </body>

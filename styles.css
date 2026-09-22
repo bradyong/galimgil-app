@@ -695,6 +695,12 @@ select {
   gap: 10px;
 }
 
+#manualChoices[hidden], #extractedChoices[hidden] { display: none; }
+.extracted-choices { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 8px; }
+.extracted-title { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+.extracted-choices strong { padding: 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; overflow-wrap: anywhere; text-align: center; }
+.edit-choices { justify-self: end; min-height: 44px; background: transparent; border: 0; color: var(--teal); cursor: pointer; }
+
 .mood-control > span {
   display: flex;
   align-items: center;

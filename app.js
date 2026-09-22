@@ -7041,6 +7041,7 @@ function openChoiceCard(card, freshResult = false) {
     ["questionInput", "choiceA", "choiceB", "choiceContext"].forEach((id) => { document.getElementById(id).value = ""; });
     document.getElementById("choiceFeedback").textContent = "";
     document.getElementById("choiceContextRow").hidden = true;
+    document.querySelectorAll("[data-choice-context]").forEach((chip) => chip.setAttribute("aria-pressed", "false"));
     document.getElementById("choiceResult").classList.remove("show");
     setActiveTab("choice");
     document.getElementById("questionInput").focus({preventScroll: true});
@@ -7081,6 +7082,18 @@ document.getElementById("moodInput").addEventListener("input", (event) => {
     document.getElementById("choiceFeedback").textContent = "";
     document.getElementById("choiceContext").value = "";
     document.getElementById("choiceContextRow").hidden = true;
+    document.querySelectorAll("[data-choice-context]").forEach((chip) => chip.setAttribute("aria-pressed", "false"));
+  });
+});
+
+document.querySelectorAll("[data-choice-context]").forEach((chip) => {
+  chip.addEventListener("click", () => {
+    if (document.getElementById("choiceSubmitButton").disabled) return;
+    document.getElementById("choiceContext").value = chip.dataset.choiceContext;
+    document.querySelectorAll("[data-choice-context]").forEach((item) => {
+      item.setAttribute("aria-pressed", String(item === chip));
+    });
+    document.getElementById("choiceForm").requestSubmit();
   });
 });
 
@@ -7105,11 +7118,16 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
   }
   const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
     (option) => findFeatureEntry(option)?.item.category, document.getElementById("choiceContext").value);
-  document.getElementById("choiceFeedback").textContent = interpretation.message || "";
+  document.getElementById("choiceFeedback").textContent = interpretation.needsCategory
+    ? "어떤 종류의 선택인가요?" : interpretation.message || "";
   if (interpretation.message) {
     document.getElementById("choiceResult").classList.remove("show");
     document.getElementById("choiceContextRow").hidden = !interpretation.needsCategory;
-    document.getElementById(interpretation.field).focus();
+    if (interpretation.needsCategory) {
+      document.querySelector("[data-choice-context]").focus({preventScroll: true});
+    } else {
+      document.getElementById(interpretation.field).focus();
+    }
     return;
   }
   const loader = document.getElementById("analysisLoader");

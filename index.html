@@ -26,7 +26,7 @@
           <p class="subcopy">이쪽일까, 저쪽일까? 오늘 마음이 가는 쪽을 찾아봐요.</p>
           <form class="panel home-choice-form" id="choiceForm">
             <label>
-              고민 한 줄 <span class="optional-label">선택</span>
+              <span>고민 한 줄 <span class="optional-label">선택</span></span>
               <input id="questionInput" type="text" maxlength="200" placeholder="예: 친구랑 저녁 뭐 먹을까?">
             </label>
             <div class="choice-pair">
@@ -40,29 +40,23 @@
               </label>
             </div>
             <p id="choiceFeedback" class="choice-feedback" role="status" aria-live="polite"></p>
-            <label id="choiceContextRow" hidden>
-              어떤 선택인가요?
-              <select id="choiceContext">
-                <option value="">선택해주세요</option>
-                <option value="food">음식</option>
-                <option value="beverage">음료</option>
-                <option value="shopping">물건 구매</option>
-                <option value="relationship">연락·관계</option>
-                <option value="travel">여행·장소</option>
-                <option value="daily">그 밖의 일상 선택</option>
-              </select>
-            </label>
-            <details class="advanced-options">
-              <summary>마음 온도와 별자리 더하기</summary>
-              <label class="mood-control">
-                <span>지금 마음 온도 <strong id="moodValue">60% · 흔들림</strong></span>
+            <div id="choiceContextRow" class="choice-context" role="group" aria-label="선택의 종류" aria-describedby="choiceFeedback" hidden>
+              <input id="choiceContext" type="hidden" value="">
+              <button type="button" class="context-chip" data-choice-context="food" aria-pressed="false">음식</button>
+              <button type="button" class="context-chip" data-choice-context="beverage" aria-pressed="false">음료</button>
+              <button type="button" class="context-chip" data-choice-context="relationship" aria-pressed="false">관계</button>
+              <button type="button" class="context-chip" data-choice-context="travel" aria-pressed="false">여행</button>
+              <button type="button" class="context-chip" data-choice-context="shopping" aria-pressed="false">구매</button>
+              <button type="button" class="context-chip" data-choice-context="daily" aria-pressed="false">기타</button>
+            </div>
+              <label class="mood-control permanent-mood">
+                <span>마음의 온도 <strong id="moodValue">60% · 흔들림</strong></span>
                 <input id="moodInput" type="range" min="1" max="10" value="6">
               </label>
-              <label>
+              <label class="permanent-sign">
                 오늘의 별자리
                 <select id="signInput"></select>
               </label>
-            </details>
             <button class="wide-button" id="choiceSubmitButton" type="submit">분석하기</button>
           </form>
           <article class="analysis-loader" id="analysisLoader" aria-live="polite">

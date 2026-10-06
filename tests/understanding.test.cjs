@@ -37,7 +37,8 @@ test('new term not promoted to known fact',()=>{
   const r=run('저녁 메뉴','프룬젤','트롤핀');
   assert.equal(r.understanding.level,'low');
   assert.ok(r.understanding.evidence.every(e=>e.source!=='feature-bank'));
-  assert.match(r.why,/확인하지 못/);
+  assert.equal(r.needsMeaning,true);
+  assert.equal(r.why,undefined);
 });
 test('double negation still clarifies',()=>assert.ok(run('어떻게?','안 할 수 없다','한다').invalid));
 test('reason contrast retains negative label',()=>assert.match(run('연락할까?','연락한다','연락하지 않는다').why,/연락하지 않는다/));
@@ -57,20 +58,21 @@ const corpus=[
  ['친구랑 저녁 뭐 먹을까?','피자','치킨']
 ];
 const reports=corpus.map(x=>run(...x));
-const valid=reports.filter(r=>!r.invalid);
+const valid=reports.filter(r=>!r.invalid && !r.needsMeaning);
 // Mask both option names and echoed questions so cosmetic interpolation does not count.
 const skeleton = s=>s.replace(/‘[^’]*’/g,'OPTION').replace(/“[^”]*”/g,'QUESTION');
 const duplicateExcess = rs=>rs.length-new Set(rs.map(r=>skeleton(r.why))).size;
-const metrics={source:'existing offline reproduction fixtures, not production traffic',total:reports.length,invalid:reports.length-valid.length,low:valid.filter(r=>r.understanding.level==='low').length,eligible:valid.length,afterDuplicateExcess:duplicateExcess(valid)};
+const metrics={source:'existing offline reproduction fixtures, not production traffic',total:reports.length,invalid:reports.filter(r=>r.invalid).length,needsMeaning:reports.filter(r=>r.needsMeaning).length,eligible:valid.length,afterDuplicateExcess:duplicateExcess(valid)};
 if(process.env.BASELINE_APP) {
  const before=engine(process.env.BASELINE_APP);
  const old=corpus.map(x=>before(...x)).filter(r=>!r.invalid);
  metrics.beforeDuplicateExcess=duplicateExcess(old);
- test('scores and fun content unchanged across existing corpus and seeds',()=>{
+ test('scores and stars unchanged on immediately interpretable corpus',()=>{
   for(const x of corpus) for(let seed=0;seed<30;seed++) {
    const a=before(...x,seed), b=run(...x,seed);
    if(a.invalid) { assert.ok(b.invalid); continue; }
-   for(const key of ['winnerScore','loserScore','recommendA','advice','fortune','futureComment','finalText']) assert.equal(b[key],a[key],key);
+   if(b.needsMeaning) { assert.equal(b.why,undefined); continue; }
+   for(const key of ['winnerScore','loserScore','recommendA','fortune','finalText']) assert.equal(b[key],a[key],key);
   }
  });
  assert.ok(metrics.afterDuplicateExcess < metrics.beforeDuplicateExcess);

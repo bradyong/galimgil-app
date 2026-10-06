@@ -49,6 +49,11 @@
               <button type="button" class="context-chip" data-choice-context="shopping" aria-pressed="false">구매</button>
               <button type="button" class="context-chip" data-choice-context="daily" aria-pressed="false">기타</button>
             </div>
+            <div id="choiceMeaningRow" class="choice-meaning" role="group" aria-label="두 선택의 실제 차이" hidden>
+              <label><span id="meaningALabel">A에서 기대하는 것</span><input id="meaningA" type="text" maxlength="100" placeholder="기대하는 경험이나 행동" enterkeyhint="next"></label>
+              <label><span id="meaningBLabel">B에서 기대하는 것</span><input id="meaningB" type="text" maxlength="100" placeholder="A와 다른 경험이나 행동" enterkeyhint="next"></label>
+              <label class="meaning-axis">지금 비교할 기준<input id="meaningAxis" type="text" maxlength="100" placeholder="예: 차분한 체험과 활동적인 체험" enterkeyhint="done"></label>
+            </div>
               <label class="mood-control permanent-mood">
                 <span>마음의 온도 <strong id="moodValue">60% · 흔들림</strong></span>
                 <input id="moodInput" type="range" min="1" max="10" value="6">

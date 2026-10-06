@@ -1,0 +1,72 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+(async()=>{
+ const browser=await chromium.launch({channel:'msedge',headless:true});
+ try{
+  for(const width of [360,390,1280]){
+   const page=await browser.newPage({viewport:{width,height:800}}), errors=[];
+   page.on('pageerror',e=>errors.push(e.message));
+   await page.goto(process.env.APP_URL || 'http://127.0.0.1:8788/');
+   assert.equal(await page.locator('#extractedChoices,#editChoices,#choiceForm details').count(),0);
+   for(const id of ['questionInput','choiceA','choiceB','moodInput','signInput'])assert.ok(await page.locator('#'+id).isVisible());
+   assert.equal(await page.locator('#questionInput').getAttribute('enterkeyhint'),'next');
+   assert.equal(await page.locator('#choiceA').getAttribute('enterkeyhint'),'next');
+   assert.equal(await page.locator('#choiceB').getAttribute('enterkeyhint'),'done');
+   await page.locator('#questionInput').fill('오늘 저녁 뭐 먹을까?');
+   assert.equal(await page.locator('#choiceA').inputValue(),'');
+   await page.locator('#questionInput').press('Enter');
+   assert.equal(await page.evaluate(()=>document.activeElement.id),'choiceA');
+   await page.locator('#choiceA').fill('피자');
+   await page.locator('#choiceA').dispatchEvent('keydown',{key:'Enter',isComposing:true});
+   assert.equal(await page.evaluate(()=>document.activeElement.id),'choiceA');
+   await page.locator('#choiceA').press('Enter');
+   assert.equal(await page.evaluate(()=>document.activeElement.id),'choiceB');
+   await page.locator('#choiceB').fill('치킨');
+   await page.locator('#choiceB').press('Enter');
+   assert.notEqual(await page.evaluate(()=>document.activeElement.id),'choiceB');
+   assert.ok(await page.locator('#choiceResult').isHidden());
+   assert.ok(await page.locator('#analysisLoader').isHidden());
+   const positions=await page.evaluate(()=>['questionInput','choiceA','choiceB','moodInput','signInput','choiceSubmitButton'].map(id=>{const r=document.getElementById(id).getBoundingClientRect();return {id,top:r.top,bottom:r.bottom};}));
+   for(let i=1;i<positions.length;i++)assert.ok(positions[i].top>=positions[i-1].bottom);
+   assert.ok(positions[5].bottom<=800,JSON.stringify(positions));
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   if(process.env.UX_SCREENSHOT_DIR){fs.mkdirSync(process.env.UX_SCREENSHOT_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.UX_SCREENSHOT_DIR,`manual-${width}.png`)});}
+   await page.locator('#choiceSubmitButton').click();
+   await page.locator('#choiceResult.show').waitFor();
+   for(const name of ['별 한 스푼','별의 한마디','미래의 나 댓글','캡처 한 줄'])assert.ok(await page.getByRole('heading',{name,exact:true}).isVisible());
+   await page.getByRole('button',{name:'다른 고민하기',exact:true}).click();
+   for(const id of ['questionInput','choiceA','choiceB'])assert.equal(await page.locator('#'+id).inputValue(),'');
+   await page.locator('#choiceA').fill('프룬젤');await page.locator('#choiceB').fill('트롤핀');
+   await page.locator('#choiceSubmitButton').click();
+   assert.ok(await page.locator('#choiceContextRow').isVisible());
+   assert.equal(await page.locator('select#choiceContext').count(),0);
+   await page.locator('[data-choice-context="daily"]').click();
+   const archiveCount=await page.evaluate(()=>JSON.parse(localStorage.getItem('crossroads-choice-cards-v1')).length);
+   assert.ok(await page.locator('#choiceMeaningRow').isVisible());
+   assert.ok(await page.locator('#choiceResult').isHidden());
+   await page.locator('#choiceSubmitButton').click();
+   assert.ok(await page.locator('#choiceMeaningRow').isVisible());
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('crossroads-choice-cards-v1')).length),archiveCount);
+   const meaningBounds=await page.locator('#choiceMeaningRow').boundingBox();
+   assert.ok(meaningBounds.y>=55 && meaningBounds.y+meaningBounds.height<=800,JSON.stringify(meaningBounds));
+   if(process.env.UX_SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.UX_SCREENSHOT_DIR,`meaning-inline-${width}.png`)});
+   await page.locator('#meaningA').fill('차분한 관람');
+   await page.locator('#meaningB').fill('활동적인 체험');
+   await page.locator('#meaningAxis').fill('오늘 원하는 체험');
+   await page.locator('#choiceSubmitButton').click();
+   await page.locator('#choiceResult.show').waitFor();
+   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('crossroads-choice-cards-v1'))[0]);
+   assert.equal(saved.details.meaning.options[0].meaning,'차분한 관람');
+   assert.equal(saved.details.contentSources.future.meaningId,saved.details.meaning.id);
+   if(process.env.UX_SCREENSHOT_DIR)await page.screenshot({path:path.join(process.env.UX_SCREENSHOT_DIR,`meaning-result-${width}.png`),fullPage:true});
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   await page.getByRole('button',{name:'다른 고민하기',exact:true}).click();
+   assert.ok(await page.locator('#choiceContextRow').isHidden());
+   assert.ok(await page.locator('#choiceMeaningRow').isHidden());
+   assert.equal(await page.locator('#meaningA').inputValue(),'');
+   assert.deepEqual(errors,[]);
+   console.log(`PASS ${width}px manual inputs, Next/Next/Done blur, IME, chips, results, reset; submit bottom ${positions[5].bottom}px`);
+   await page.close();
+  }
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

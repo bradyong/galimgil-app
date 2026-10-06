@@ -6640,7 +6640,79 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [],
   return Math.max(35, Math.min(75, score));
 }
 
-function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed) {
+function buildChoiceMeaning(question, choiceA, choiceB, category, understanding, clarification = null) {
+  const names = [choiceA, choiceB];
+  const options = names.map((name) => contextualizeOption(name, category, question));
+  const concrete = options.every((option) => option.evidence?.source === "feature-bank");
+  const action = understanding.level === "supported" && understanding.actionPair;
+  const meaning = {
+    version: 1, situation: question, status: "needs-confirmation",
+    options: names.map((name, index) => ({ name, meaning: "", cue: "", source: options[index].evidence?.source || "unknown" })),
+    differences: [], axes: [], uncertainties: [...understanding.reasons],
+    scoringPolicy: "existing-rules-unchanged"
+  };
+  if (understanding.level === "supported" && concrete) {
+    meaning.options.forEach((option, index) => { option.meaning = options[index].evidence.features.slice(0, 2).join(", "); option.cue = options[index].evidence.features[0]; });
+    meaning.axes = ["체험과 선호의 차이"];
+  } else if (action) {
+    const active = options.find((option) => option.intent === "go" && option.reasonEvidence);
+    if (active) {
+      meaning.options.forEach((option, index) => {
+        option.meaning = options[index].intent === "go"
+          ? active.reasonEvidence.features.slice(0, 2).join(", ")
+          : `${active.subjectName || active.name} 실행을 미루거나 하지 않음`;
+        option.source = "scenario-rule";
+        option.cue = options[index].intent === "go" ? active.reasonEvidence.features[0] : option.meaning;
+      });
+      meaning.axes = ["실행과 보류"];
+    }
+  }
+  const binding = JSON.stringify([question, choiceA, choiceB]);
+  if (clarification && clarification.binding === binding) {
+    const values = [clarification.a, clarification.b, clarification.axis].map((value) => String(value || "").trim());
+    const valid = values.every((value) => value.length >= 2 && value.length <= 100)
+      && ChoiceInput.normalize(values[0]) !== ChoiceInput.normalize(values[1])
+      && values.slice(0, 2).every((value, index) => ChoiceInput.normalize(value) !== ChoiceInput.normalize(names[index]) && !/^(그거|저거|이거|모름|몰라|기타)$/.test(value));
+    if (valid) {
+      meaning.options.forEach((option, index) => { option.meaning = values[index]; option.cue = values[index]; option.source = "user-confirmed"; });
+      meaning.axes = [values[2]];
+      meaning.uncertainties = ["사용자가 설명한 차이이며 외부 사실 검증은 하지 않음"];
+    }
+  }
+  if (meaning.options.every((option) => option.meaning) && meaning.options[0].meaning !== meaning.options[1].meaning) {
+    meaning.status = "ready";
+    meaning.differences = [{ axis: meaning.axes[0], a: meaning.options[0].meaning, b: meaning.options[1].meaning }];
+  }
+  meaning.id = `meaning-${hashText(JSON.stringify(meaning))}`;
+  return meaning;
+}
+
+function meaningContent(meaning, recommendA, existing, seed) {
+  if (meaning.status !== "ready") throw new Error("Meaning must be confirmed before generating content");
+  const w = meaning.options[recommendA ? 0 : 1], l = meaning.options[recommendA ? 1 : 0];
+  const name = escapeHtml(w.name), other = escapeHtml(l.name);
+  const wm = escapeHtml(w.meaning), lm = escapeHtml(l.meaning), axis = escapeHtml(meaning.axes[0]);
+  const cue = escapeHtml(w.cue);
+  const userProvided = w.source === "user-confirmed";
+  const why = `${userProvided ? "말씀한 차이: " : "선택의 차이: "}‘${name}’ ${wm} / ‘${other}’ ${lm}. 비교 기준: ${axis}.`;
+  // Different roles consume the same evidence; fictional scenes never become scoring facts.
+  const future = existing.future || pick([
+    `미래의 나: “${cue}”까지는 계획이었지. 그 얘기를 세 번 하는 건 계획에 없었는데.`,
+    `미래의 나: ${name} 고른 뒤 “${cue}” 후기 작성 중. 반대편 ${other}의 후기도 슬쩍 궁금해졌다.`,
+    `미래의 나: “${cue}” 때문에 골랐다고 말했는데, 설명하다 보니 혼자 발표회를 열었네.`
+  ], hashText(`${meaning.id}:${seed}:future`));
+  const capture = existing.capture || pick([
+    `내 취향의 자막: “${cue}”. 반대 의견은 내일의 나에게.`,
+    `오늘 내 마음의 검색어는 “${cue}”. 검색 종료 버튼은 ${name}.`,
+    `“${cue}” 앞에서 내 취향이 들켰다. 해명은 안 하겠습니다.`
+  ], hashText(`${meaning.id}:${seed}:capture`));
+  return { meaningId: meaning.id,
+    reason: { meaningId: meaning.id, role: "comparison", text: why },
+    future: { meaningId: meaning.id, role: "imagined-aftermath", text: future },
+    capture: { meaningId: meaning.id, role: "shareable-punchline", text: capture } };
+}
+
+function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification = null) {
   const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
     (option) => findFeatureEntry(option)?.item.category, profile.type === "general" ? "" : profile.type);
   if (interpretation.message) throw new Error(interpretation.message);
@@ -6650,6 +6722,8 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const category = questionAnalysis && questionAnalysis.categoryRoutingConfidence >= 0.58
     ? questionAnalysis.category
     : inferCategory(question, choiceA, choiceB, profile);
+  const meaning = buildChoiceMeaning(question, choiceA, choiceB, category, questionAnalysis.understanding, clarification);
+  if (meaning.status !== "ready") return { needsMeaning: true, meaning, understanding: questionAnalysis.understanding };
   const a = contextualizeOption(choiceA, category, question);
   const b = contextualizeOption(choiceB, category, question);
   a.intent = interpretation.intentA;
@@ -6692,8 +6766,10 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const primaryCard = cardLabels[0];
   const secondaryCard = cardLabels[1];
   const decisionLenses = selectDecisionLenses(category, question, seed, sign);
-  let aScore = scoreOption(a, category, question, mood, seed, sign, cardLabels, decisionLenses);
-  let bScore = scoreOption(b, category, question, mood, seed, sign, cardLabels, decisionLenses);
+  // Shared context carries existing rule evidence separately from user descriptions.
+  meaning.decisionEvidence = { a: [...a.features], b: [...b.features], source: "existing-rule-features" };
+  let aScore = scoreOption({ ...a, features: meaning.decisionEvidence.a }, category, meaning.situation, mood, seed, sign, cardLabels, decisionLenses);
+  let bScore = scoreOption({ ...b, features: meaning.decisionEvidence.b }, category, meaning.situation, mood, seed, sign, cardLabels, decisionLenses);
   if (profile.forced === "A") aScore = Math.max(aScore, bScore + 12);
   if (profile.forced === "B") bScore = Math.max(bScore, aScore + 12);
   const recommendA = aScore > bScore || (aScore === bScore && ChoiceInput.normalize(a.name) < ChoiceInput.normalize(b.name));
@@ -6777,34 +6853,31 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     ? `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`
     : `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`;
   const actionChoice = a.intent !== "specific" || b.intent !== "specific";
-  const neutralWhy = `오늘의 놀이 카드는 ‘${escapeHtml(winner.name)}’ 쪽이에요. 두 선택의 구체적인 장단점까지 확인된 것은 아니니, 지금 더 끌리는 쪽인지 가볍게 비교해보세요.`;
-  const exactFeature = (name) => optionFeatureBank.find((entry) => entry.keys.some((key) => ChoiceInput.normalize(key) === ChoiceInput.normalize(name)));
-  const knownWinner = exactFeature(winner.name), knownLoser = exactFeature(loser.name);
-  const concreteWhy = knownWinner && knownLoser
-    ? `‘${escapeHtml(winner.name)}’의 포인트는 ${escapeHtml(knownWinner.features.slice(0, 2).join(", "))}예요. ‘${escapeHtml(loser.name)}’의 ${escapeHtml(knownLoser.features[0])}보다 지금 더 끌리는지 비교해보세요.`
-    : neutralWhy;
   const understanding = questionAnalysis.understanding;
-  const execution = a.intent === "go" ? a : b.intent === "go" ? b : null;
-  const deferral = a.intent === "skip" ? a : b.intent === "skip" ? b : null;
-  const selectedWhy = understanding.level === "supported" && understanding.concretePair
-    ? concreteWhy
-    : understanding.level === "supported" && execution && deferral && execution.reasonEvidence
-      ? `‘${escapeHtml(execution.name)}’는 실행하는 선택으로, ${escapeHtml(execution.reasonEvidence.features.slice(0, 2).join(", "))}을 살펴볼 수 있어요. ‘${escapeHtml(deferral.name)}’는 그 실행을 미루거나 하지 않는 선택이에요. ${escapeHtml(execution.reasonEvidence.caution)}`
-      : `‘${escapeHtml(a.name)}’와 ‘${escapeHtml(b.name)}’를 비교하고 있어요.${question ? ` 고민은 “${escapeHtml(question)}”예요.` : ""} 아직 두 선택의 조건과 차이를 충분히 확인하지 못했어요. 놀이 결과를 실제 판단 근거로 단정하지 말아주세요.`;
+  const preserveFun = understanding.level === "supported" && meaning.options.every((option) => option.source === "feature-bank") && !actionChoice && category !== "daily";
+  const sharedWinner = { ...winner, name: meaning.options[recommendA ? 0 : 1].name, features: meaning.decisionEvidence[recommendA ? "a" : "b"] };
+  const sharedLoser = { ...loser, name: meaning.options[recommendA ? 1 : 0].name, features: meaning.decisionEvidence[recommendA ? "b" : "a"] };
+  meaning.decision = { winner: sharedWinner.name, winnerScore, loserScore, lenses: decisionLenses };
+  const content = meaningContent(meaning, recommendA, {
+    future: preserveFun ? cleanPlayTone(futureComment(category, sharedWinner, meaning.situation, seed, sign)) : "",
+    capture: preserveFun ? cleanPlayTone(shareableAdvice(category, sharedWinner, sharedLoser, meaning.situation, seed, sign)) : ""
+  }, seed);
   return {
     category,
     understanding,
+    meaning,
+    content,
     recommendA,
     winner,
     loser,
     winnerScore,
     loserScore,
-    advice: actionChoice ? "결정은 가볍게, 내 조건은 꼼꼼하게." : cleanPlayTone(shareLine),
-    why: selectedWhy,
+    advice: content.capture.text,
+    why: content.reason.text,
     opposite: oppositeText,
     fortune: actionChoice || category === "daily" ? `${escapeHtml(sign[0])}의 오늘 키워드는 ${cardLabels.map(escapeHtml).join(", ")}예요. 내 상황에 맞는 말만 골라 담아보세요.` : cleanPlayTone(fortune),
     zodiacCards: cardLabels,
-    futureComment: actionChoice || category === "daily" ? "미래의 나: 결과보다 내가 왜 골랐는지 기억해둘게." : cleanPlayTone(futureComment(category, winner, question, seed, sign)),
+    futureComment: content.future.text,
     resultTitle: `${escapeHtml(winner.name)} 승`,
     finalText: `<strong>${escapeHtml(winner.name)} ${winnerScore}%</strong><br><strong>${escapeHtml(loser.name)} ${loserScore}%</strong><br><small>${probabilityReason(category, winner, loser, winnerScore, loserScore)}</small>`
   };
@@ -7080,7 +7153,8 @@ function openChoiceCard(card, freshResult = false) {
   document.getElementById("downloadChoiceButton").addEventListener("click", () => downloadLatestCard(card));
   document.getElementById("choiceShareButton").addEventListener("click", () => shareText(text, "갈림길 선택 카드"));
   const startNextQuestion = () => {
-    ["questionInput", "choiceA", "choiceB", "choiceContext"].forEach((id) => { document.getElementById(id).value = ""; });
+    ["questionInput", "choiceA", "choiceB", "choiceContext", "meaningA", "meaningB", "meaningAxis"].forEach((id) => { document.getElementById(id).value = ""; });
+    document.getElementById("choiceMeaningRow").hidden = true;
     document.getElementById("choiceFeedback").textContent = "";
     document.getElementById("choiceContextRow").hidden = true;
     document.querySelectorAll("[data-choice-context]").forEach((chip) => chip.setAttribute("aria-pressed", "false"));
@@ -7129,6 +7203,8 @@ document.getElementById("moodInput").addEventListener("input", (event) => {
     document.getElementById("choiceResult").classList.remove("show");
     document.getElementById("choiceFeedback").textContent = "";
     document.getElementById("choiceContext").value = "";
+    ["meaningA", "meaningB", "meaningAxis"].forEach((field) => { document.getElementById(field).value = ""; });
+    document.getElementById("choiceMeaningRow").hidden = true;
     document.getElementById("choiceContextRow").hidden = true;
     document.querySelectorAll("[data-choice-context]").forEach((chip) => chip.setAttribute("aria-pressed", "false"));
   });
@@ -7142,6 +7218,15 @@ document.querySelectorAll("[data-choice-context]").forEach((chip) => {
       item.setAttribute("aria-pressed", String(item === chip));
     });
     document.getElementById("choiceForm").requestSubmit();
+  });
+});
+
+["meaningA", "meaningB", "meaningAxis"].forEach((id, index, fields) => {
+  document.getElementById(id).addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.isComposing || event.keyCode === 229) return;
+    event.preventDefault();
+    if (index < 2) document.getElementById(fields[index + 1]).focus();
+    else document.getElementById("choiceForm").requestSubmit();
   });
 });
 
@@ -7204,7 +7289,26 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     const profile = choiceProfile(question, choiceA, choiceB);
     if (profile.type !== interpretation.category) profile.forced = null;
     profile.type = interpretation.category;
-    const narrative = buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed);
+    const clarification = {
+      binding: JSON.stringify([question, choiceA, choiceB]),
+      a: document.getElementById("meaningA").value,
+      b: document.getElementById("meaningB").value,
+      axis: document.getElementById("meaningAxis").value
+    };
+    const narrative = buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification);
+    if (narrative.needsMeaning) {
+      loader.classList.remove("show");
+      document.getElementById("choiceContextRow").hidden = true;
+      document.getElementById("choiceMeaningRow").hidden = false;
+      document.getElementById("meaningALabel").textContent = `A · ${choiceA}`;
+      document.getElementById("meaningBLabel").textContent = `B · ${choiceB}`;
+      document.getElementById("choiceFeedback").textContent = "두 선택은 어떻게 다른가요? 각각 기대하는 점과 비교할 기준을 짧게 알려주세요.";
+      submitButtons.forEach((button) => { button.disabled = false; button.textContent = "분석하기"; });
+      document.getElementById("meaningA").focus({ preventScroll: true });
+      document.getElementById("choiceMeaningRow").scrollIntoView({ behavior: "instant", block: "center" });
+      return;
+    }
+    document.getElementById("choiceMeaningRow").hidden = true;
     const recommendA = narrative.recommendA;
     const recommended = narrative.winner.name;
     const adviceLine = narrative.advice;
@@ -7220,7 +7324,8 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       details: {
         winner: recommended, loser: narrative.loser.name, percent: narrative.winnerScore,
         why: plainResultText(narrative.why), fortune: plainResultText(narrative.fortune),
-        future: plainResultText(narrative.futureComment), cards: narrative.zodiacCards
+        future: plainResultText(narrative.futureComment), cards: narrative.zodiacCards,
+        meaning: narrative.meaning, contentSources: narrative.content
       },
       sign: signName,
       mood,

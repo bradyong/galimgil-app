@@ -35,7 +35,8 @@ test('attendance order invariance and explanation', () => {
   assert.equal(result[0].winner.name, '출근한다');
   assert.equal(result[1].winner.name, '출근한다');
   assert.equal(result[0].winnerScore, result[1].winnerScore);
-  assert.match(result[0].why, /실행하는/);
+  assert.match(result[0].why, /실행과 보류/);
+  assert.match(result[0].why, /출근 안 한다/);
 });
 test('food order invariance across seeds', () => {
   for (let seed=0;seed<30;seed++) {
@@ -46,8 +47,9 @@ test('food order invariance across seeds', () => {
   }
 });
 test('animal question has no financial story', () => {
-  const why = evaluate(`buildChoiceNarrative('동물원에서 뭐 볼까?','판다','호랑이',6,signs[0],choiceProfile('동물원에서 뭐 볼까?','판다','호랑이'),12345).why`);
-  assert.doesNotMatch(why, /수익|변동성|투자/);
+  const result = evaluate(`buildChoiceNarrative('동물원에서 뭐 볼까?','판다','호랑이',6,signs[0],choiceProfile('동물원에서 뭐 볼까?','판다','호랑이'),12345)`);
+  assert.equal(result.needsMeaning, true);
+  assert.equal(result.why, undefined);
 });
 test('safety check preserved', () => assert.equal(evaluate(`dangerousChoiceCheck('음주운전 할까?', '한다', '안 한다').dangerous`), true));
 test('hard-working is not fever', () => assert.equal(evaluate(`choiceProfile('열심히 출근할까?', '출근 안 한다', '출근한다').forced`), 'B'));

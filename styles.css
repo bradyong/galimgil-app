@@ -589,6 +589,10 @@ select {
 [hidden], .is-hidden { display: none !important; }
 .choice-feedback { color: #ffe7a3; line-height: 1.5; font-size: 13px; margin: 0; }
 .choice-feedback:empty { display: none; }
+.choice-meaning:not([hidden]) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.choice-meaning label { min-width: 0; font-size: 12px; overflow-wrap: anywhere; }
+.choice-meaning input { width: 100%; min-width: 0; }
+.choice-meaning .meaning-axis { grid-column: 1 / -1; }
 .home-hero h1 { font-size: 36px; line-height: 1.15; }
 .tab { padding: 8px 2px; min-width: 0; }
 .result-card, .screen, #choiceForm { scroll-margin-top: 80px; }

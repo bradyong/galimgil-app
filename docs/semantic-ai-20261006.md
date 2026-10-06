@@ -55,7 +55,7 @@ then made 20 successful provider requests. Subsequent tests only replay saved re
 - Some option summaries still merely paraphrase labels. Contrast is often more useful,
   but not always sufficiently specific (e.g. tea types).
 - No exact duplicate output among 27 produced reports. After removing input/meaning
-  content, duplicate-template excess is reason 25/27 (92.6%), future 18/27 (66.7%), caption
+  content, duplicate-template excess is reason 24/27 (88.9%), future 18/27 (66.7%), caption
   18/27 (66.7%). Removing the quoted input makes repeated framing visible rather than
   claiming success based only on unique names. Rule-based writing remains the bottleneck.
 - Semantic descriptions do not secretly alter weights. The body discloses the existing

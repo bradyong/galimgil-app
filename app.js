@@ -6755,7 +6755,10 @@ function meaningContent(meaning, recommendA, existing, seed) {
   const name = escapeHtml(w.name), other = escapeHtml(l.name);
   const wm = escapeHtml(w.meaning), lm = escapeHtml(l.meaning), axis = escapeHtml(meaning.axes[0]);
   const cue = escapeHtml(w.cue);
-  const why = `‘${name}’ 쪽은 ${wm}, ‘${other}’ 쪽은 ${lm}. ${meaning.contrast ? escapeHtml(meaning.contrast) + ". " : ""}이번 놀이 기울기는 ${name}. ${axis} 중 내가 원하는 쪽인지 확인해 봐요.`;
+  const contrast = meaning.contrast
+    ? escapeHtml(meaning.contrast.replace(/[.!?。]+$/, ""))
+    : `‘${name}’ 쪽은 ${wm}, ‘${other}’ 쪽은 ${lm}`;
+  const why = `${contrast}. 이번 놀이 기울기는 ‘${name}’. 비교 기준: ${axis}.`;
   // Different roles consume the same evidence; fictional scenes never become scoring facts.
   const future = existing.future || pick([
     `미래의 나: 할 일 메모에 ‘${cue}’ 써 놓고 완료 체크할 펜부터 골랐다. 선택이 또 생겼네.`,

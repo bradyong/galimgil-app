@@ -7,6 +7,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from cache_policy import representation
 from palm_limits import configured_limits
+from choice_meaning import RedisMeaningStore, resolve as resolve_choice_meaning
 
 
 ROOT = pathlib.Path(__file__).resolve().parent
@@ -82,6 +83,22 @@ class AppHandler(BaseHTTPRequestHandler):
         self.wfile.write(content)
 
     def do_POST(self):
+        if self.path == "/api/choice-meaning":
+            if os.getenv('CHOICE_AI_ENABLED') != '1' or not os.getenv('OPENAI_API_KEY'):
+                json_response(self, 200, {'status': 'confirmation', 'code': 'disabled'})
+                return
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 0 < length <= 4096:
+                    raise ValueError('body')
+                payload = json.loads(self.rfile.read(length))
+                ip = self.headers.get('X-Forwarded-For', '').split(',', 1)[0].strip() or self.client_address[0]
+                result = resolve_choice_meaning(payload, ip, RedisMeaningStore())
+                # Only validated semantic content is public; usage stays in server cache.
+                json_response(self, 200, {k: v for k, v in result.items() if k in ('status', 'meaning', 'code')})
+            except Exception:
+                json_response(self, 200, {'status': 'confirmation', 'code': 'unavailable'})
+            return
         if self.path != "/api/palm-reading":
             self.send_error(404)
             return

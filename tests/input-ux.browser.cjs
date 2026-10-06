@@ -5,6 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
  try{
   for(const width of [360,390,1280]){
    const page=await browser.newPage({viewport:{width,height:800}}), errors=[];
+   await page.route('**/api/choice-meaning',route=>route.fulfill({json:{status:'confirmation',code:'uncertain'}}));
    page.on('pageerror',e=>errors.push(e.message));
    await page.goto(process.env.APP_URL || 'http://127.0.0.1:8788/');
    assert.equal(await page.locator('#extractedChoices,#editChoices,#choiceForm details').count(),0);
@@ -38,9 +39,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
    for(const id of ['questionInput','choiceA','choiceB'])assert.equal(await page.locator('#'+id).inputValue(),'');
    await page.locator('#choiceA').fill('프룬젤');await page.locator('#choiceB').fill('트롤핀');
    await page.locator('#choiceSubmitButton').click();
-   assert.ok(await page.locator('#choiceContextRow').isVisible());
+   await page.locator('#choiceMeaningRow').waitFor({state:'visible'});
+   assert.ok(await page.locator('#choiceContextRow').isHidden());
    assert.equal(await page.locator('select#choiceContext').count(),0);
-   await page.locator('[data-choice-context="daily"]').click();
    const archiveCount=await page.evaluate(()=>JSON.parse(localStorage.getItem('crossroads-choice-cards-v1')).length);
    assert.ok(await page.locator('#choiceMeaningRow').isVisible());
    assert.ok(await page.locator('#choiceResult').isHidden());

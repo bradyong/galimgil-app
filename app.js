@@ -6640,7 +6640,55 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [],
   return Math.max(35, Math.min(75, score));
 }
 
-function buildChoiceMeaning(question, choiceA, choiceB, category, understanding, clarification = null) {
+function inspectMeaningInput(question, a, b, category = "") {
+  const result = ChoiceInput.inspect(question, a, b, (option) => findFeatureEntry(option)?.item.category, category);
+  const scopeUnknown = [a, b].some((v) => ChoiceInput.intent(v) === "unclear");
+  if (result.needsCategory || (scopeUnknown && a.trim() && b.trim() && ChoiceInput.normalize(a) !== ChoiceInput.normalize(b))) {
+    return { category: category || "daily", intentA: ChoiceInput.intent(a), intentB: ChoiceInput.intent(b) };
+  }
+  return result;
+}
+
+function validatedAiMeaning(envelope, question, a, b) {
+  if (!envelope || envelope.binding !== JSON.stringify([question, a, b]) || envelope.version !== "semantic-v1") return null;
+  const m = envelope.meaning;
+  if (!m || m.uncertainty?.level !== "low" || !Array.isArray(m.useful_comparison_axes) || !m.useful_comparison_axes.length) return null;
+  const options = [m.optionA_meaning, m.optionB_meaning];
+  if (options.some((o, i) => !o || !["explicit", "general-meaning"].includes(o.basis) || !o.quote || ![a,b][i].includes(o.quote)
+    || [o.summary, o.activity].some(v => typeof v !== "string" || !v.trim() || v.length > 120))) return null;
+  if (options[0].summary === options[1].summary || typeof m.meaningful_difference !== "string" || !m.meaningful_difference) return null;
+  if (/(구체|내용|의미).{0,18}(없|않|불명|모르)|(?:이름|활동명).{0,8}다르/.test(m.meaningful_difference)) return null;
+  if (!Array.isArray(m.evidence) || m.evidence.some(e => !["question", "a", "b"].includes(e.input) || !e.quote || !({question,a,b}[e.input]).includes(e.quote))) return null;
+  return m;
+}
+
+const meaningRequests = new Map();
+let meaningInputRevision = 0;
+async function requestChoiceMeaning(question, a, b, reasons, fetcher = globalThis.fetch) {
+  const binding = JSON.stringify([question, a, b]);
+  const key = `semantic-v1:${binding}`;
+  if (meaningRequests.has(key)) return meaningRequests.get(key);
+  const work = (async () => {
+    const saved = archive.find(item => item.question === question && item.choiceA === a && item.choiceB === b)?.details?.meaning?.ai;
+    if (validatedAiMeaning(saved, question, a, b)) return saved;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 40000);
+    try {
+      const response = await fetcher("/api/choice-meaning", {method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question, a, b, reasons: reasons.length ? reasons : ["insufficient-grounded-contrast"]}), signal: controller.signal});
+      if (!response.ok) return null;
+      const result = await response.json();
+      const envelope = {binding, version: "semantic-v1", meaning: result.meaning};
+      return result.status === "ready" && validatedAiMeaning(envelope, question, a, b) ? envelope : null;
+    } catch (_) { return null; }
+    finally { clearTimeout(timer); }
+  })();
+  meaningRequests.set(key, work);
+  if (meaningRequests.size > 100) meaningRequests.delete(meaningRequests.keys().next().value);
+  return work;
+}
+
+function buildChoiceMeaning(question, choiceA, choiceB, category, understanding, clarification = null, ai = null) {
   const names = [choiceA, choiceB];
   const options = names.map((name) => contextualizeOption(name, category, question));
   const concrete = options.every((option) => option.evidence?.source === "feature-bank");
@@ -6683,6 +6731,20 @@ function buildChoiceMeaning(question, choiceA, choiceB, category, understanding,
     meaning.status = "ready";
     meaning.differences = [{ axis: meaning.axes[0], a: meaning.options[0].meaning, b: meaning.options[1].meaning }];
   }
+  // AI cannot replace sufficient rule or user evidence, nor set scores or a winner.
+  const interpreted = meaning.status !== "ready" && validatedAiMeaning(ai, question, choiceA, choiceB);
+  if (interpreted) {
+    meaning.options = [interpreted.optionA_meaning, interpreted.optionB_meaning].map((o,i) => ({
+      name: names[i], meaning: o.summary, cue: o.activity, source: "ai-semantic", basis: o.basis, quote: o.quote
+    }));
+    meaning.axes = interpreted.useful_comparison_axes;
+    meaning.differences = [{axis: meaning.axes[0], a: meaning.options[0].meaning, b: meaning.options[1].meaning}];
+    meaning.contrast = interpreted.meaningful_difference;
+    meaning.uncertainties = interpreted.uncertainty.reasons;
+    meaning.evidence = interpreted.evidence;
+    meaning.ai = ai;
+    meaning.status = "ready";
+  }
   meaning.id = `meaning-${hashText(JSON.stringify(meaning))}`;
   return meaning;
 }
@@ -6693,18 +6755,21 @@ function meaningContent(meaning, recommendA, existing, seed) {
   const name = escapeHtml(w.name), other = escapeHtml(l.name);
   const wm = escapeHtml(w.meaning), lm = escapeHtml(l.meaning), axis = escapeHtml(meaning.axes[0]);
   const cue = escapeHtml(w.cue);
-  const userProvided = w.source === "user-confirmed";
-  const why = `${userProvided ? "말씀한 차이: " : "선택의 차이: "}‘${name}’ ${wm} / ‘${other}’ ${lm}. 비교 기준: ${axis}.`;
+  const why = `‘${name}’ 쪽은 ${wm}, ‘${other}’ 쪽은 ${lm}. ${meaning.contrast ? escapeHtml(meaning.contrast) + ". " : ""}이번 놀이 기울기는 ${name}. ${axis} 중 내가 원하는 쪽인지 확인해 봐요.`;
   // Different roles consume the same evidence; fictional scenes never become scoring facts.
   const future = existing.future || pick([
-    `미래의 나: “${cue}”까지는 계획이었지. 그 얘기를 세 번 하는 건 계획에 없었는데.`,
-    `미래의 나: ${name} 고른 뒤 “${cue}” 후기 작성 중. 반대편 ${other}의 후기도 슬쩍 궁금해졌다.`,
-    `미래의 나: “${cue}” 때문에 골랐다고 말했는데, 설명하다 보니 혼자 발표회를 열었네.`
+    `미래의 나: 할 일 메모에 ‘${cue}’ 써 놓고 완료 체크할 펜부터 골랐다. 선택이 또 생겼네.`,
+    `미래의 나: 메모 제목은 ‘${cue}’. ${other} 검색하던 탭은 아직 못 닫았습니다.`,
+    `미래의 나: ${name} 선택한 나와 ${other} 궁금한 나가 머릿속에서 자리 바꾸는 중. 일단 ‘${cue}’ 담당은 출근했다.`,
+    `미래의 나: 사진 제목은 ‘${cue}’. 사진 고르는 데 ${name} 고를 때보다 오래 걸리면 웃기겠다.`,
+    `미래의 나: ‘${cue}’ 일정 옆에 별표까지 쳤다. 내 일정표에서 제일 열심히 일하는 건 별표다.`
   ], hashText(`${meaning.id}:${seed}:future`));
   const capture = existing.capture || pick([
-    `내 취향의 자막: “${cue}”. 반대 의견은 내일의 나에게.`,
-    `오늘 내 마음의 검색어는 “${cue}”. 검색 종료 버튼은 ${name}.`,
-    `“${cue}” 앞에서 내 취향이 들켰다. 해명은 안 하겠습니다.`
+    `오늘의 종목: ${cue}. ${other} 팀은 벤치에서 응원 중.`,
+    `${name} 쪽으로 한 표. ‘${cue}’에 사심 있습니다.`,
+    `${other}도 좋지만, 오늘 내 편은 ‘${cue}’.`,
+    `나의 ${axis}: ${name} 편 입장합니다.`,
+    `‘${cue}’ 고른 사람, 저요. 반대편도 궁금한 사람, 또 저요.`
   ], hashText(`${meaning.id}:${seed}:capture`));
   return { meaningId: meaning.id,
     reason: { meaningId: meaning.id, role: "comparison", text: why },
@@ -6712,9 +6777,8 @@ function meaningContent(meaning, recommendA, existing, seed) {
     capture: { meaningId: meaning.id, role: "shareable-punchline", text: capture } };
 }
 
-function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification = null) {
-  const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
-    (option) => findFeatureEntry(option)?.item.category, profile.type === "general" ? "" : profile.type);
+function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification = null, ai = null) {
+  const interpretation = inspectMeaningInput(question, choiceA, choiceB, profile.type === "general" ? "" : profile.type);
   if (interpretation.message) throw new Error(interpretation.message);
   const questionAnalysis = analyzeQuestion(question, choiceA, choiceB, profile);
   const subjectProfile = (questionAnalysis && questionAnalysis.subjectProfile)
@@ -6722,7 +6786,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const category = questionAnalysis && questionAnalysis.categoryRoutingConfidence >= 0.58
     ? questionAnalysis.category
     : inferCategory(question, choiceA, choiceB, profile);
-  const meaning = buildChoiceMeaning(question, choiceA, choiceB, category, questionAnalysis.understanding, clarification);
+  const meaning = buildChoiceMeaning(question, choiceA, choiceB, category, questionAnalysis.understanding, clarification, ai);
   if (meaning.status !== "ready") return { needsMeaning: true, meaning, understanding: questionAnalysis.understanding };
   const a = contextualizeOption(choiceA, category, question);
   const b = contextualizeOption(choiceB, category, question);
@@ -7238,8 +7302,11 @@ document.querySelector("[data-scroll-target]")?.addEventListener("click", () => 
   document.getElementById("choiceA").scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
-document.getElementById("choiceForm").addEventListener("submit", (event) => {
+document.getElementById("choiceForm").addEventListener("input", () => { meaningInputRevision++; });
+document.getElementById("choiceForm").addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (document.getElementById("choiceSubmitButton").disabled) return;
+  const inputRevision = meaningInputRevision;
   const question = document.getElementById("questionInput").value.trim();
   const choiceA = document.getElementById("choiceA").value.trim();
   const choiceB = document.getElementById("choiceB").value.trim();
@@ -7249,8 +7316,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     document.getElementById("choiceResult").scrollIntoView({behavior: "smooth", block: "start"});
     return;
   }
-  const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
-    (option) => findFeatureEntry(option)?.item.category, document.getElementById("choiceContext").value);
+  const interpretation = inspectMeaningInput(question, choiceA, choiceB, document.getElementById("choiceContext").value);
   document.getElementById("choiceFeedback").textContent = interpretation.needsCategory
     ? "어떤 종류의 선택인가요?" : interpretation.message || "";
   if (interpretation.message) {
@@ -7295,7 +7361,17 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       b: document.getElementById("meaningB").value,
       axis: document.getElementById("meaningAxis").value
     };
-    const narrative = buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification);
+    let narrative = buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification);
+    if (narrative.needsMeaning) {
+      loaderText.textContent = "두 선택의 의미를 확인하고 있어요";
+      const ai = await requestChoiceMeaning(question, choiceA, choiceB, narrative.understanding.reasons);
+      if (inputRevision !== meaningInputRevision || document.getElementById("questionInput").value.trim() !== question || document.getElementById("choiceA").value.trim() !== choiceA || document.getElementById("choiceB").value.trim() !== choiceB) {
+        loader.classList.remove("show");
+        submitButtons.forEach(button => {button.disabled = false; button.textContent = "분석하기";});
+        return;
+      }
+      if (ai) narrative = buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification, ai);
+    }
     if (narrative.needsMeaning) {
       loader.classList.remove("show");
       document.getElementById("choiceContextRow").hidden = true;

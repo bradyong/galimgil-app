@@ -1,0 +1,1085 @@
+{
+  "0": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 546,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 234,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 780
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "질문은 어디 놀러갈지 선택하는 상황이다. 옵션 A와 B의 의미를 비교한다.",
+      "optionA_meaning": {
+        "summary": "동물원 방문을 선택하는 의미",
+        "activity": "동물원 가기",
+        "basis": "explicit",
+        "quote": "동물원"
+      },
+      "optionB_meaning": {
+        "summary": "놀이동산 방문을 선택하는 의미",
+        "activity": "놀이동산 가기",
+        "basis": "explicit",
+        "quote": "놀이동산"
+      },
+      "meaningful_difference": "두 옵션은 장소 타입이 다르며 동물원은 동물 관찰 중심, 놀이동산은 놀이기구 중심이다.",
+      "useful_comparison_axes": [
+        "장소 성격",
+        "활동 초점"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "동물원"
+        },
+        {
+          "input": "b",
+          "quote": "놀이동산"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "질문에서 선택지의 구체적 맥락은 단순 비교로 한정됨"
+        ]
+      }
+    }
+  },
+  "2": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 544,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 210,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 754
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "퇴근길 방법을 두 가지 대안으로 제시하고 서로 비교하는 상황",
+      "optionA_meaning": {
+        "summary": "버스를 이용하는 선택",
+        "activity": "버스 이용하기",
+        "basis": "explicit",
+        "quote": "버스"
+      },
+      "optionB_meaning": {
+        "summary": "지하철을 이용하는 선택",
+        "activity": "지하철 이용하기",
+        "basis": "explicit",
+        "quote": "지하철"
+      },
+      "meaningful_difference": "두 옵션은 교통수단이 다르고 출퇴근 경로가 달라질 수 있음",
+      "useful_comparison_axes": [
+        "수단",
+        "노선의 차이"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "버스"
+        },
+        {
+          "input": "b",
+          "quote": "지하철"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "질문은 퇴근길 방법 제시이므로 옵션의 수단을 명시적으로 설명함"
+        ]
+      }
+    }
+  },
+  "3": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 550,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 247,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 797
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "노트북 선택 상황에서 중고 여부를 두 대안으로 비교",
+      "optionA_meaning": {
+        "summary": "중고노트북의 의미",
+        "activity": "구매를 위한 선택",
+        "basis": "explicit",
+        "quote": "중고노트북"
+      },
+      "optionB_meaning": {
+        "summary": "새노트북의 의미",
+        "activity": "구매를 위한 선택",
+        "basis": "explicit",
+        "quote": "새노트북"
+      },
+      "meaningful_difference": "두 옵션은 중고와 새 여부로 구분되며 상태 차이에 대한 판단이 필요",
+      "useful_comparison_axes": [
+        "구매 상태(중고/새)",
+        "가격/가치에 대한 기대(가치 판단은 명시적이지 않음)"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "중고노트북"
+        },
+        {
+          "input": "b",
+          "quote": "새노트북"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "질문은 단순히 노트북의 상태 구분만 명시",
+          "추가 맥락 없이 선택지 구분이 명확함"
+        ]
+      }
+    }
+  },
+  "6": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 553,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 253,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 806
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "질문은 피곤한 상태에서 선택지 A: 운동하고 공부하기, B: 쉼(쉬기) 둘 중 하나를 택하는 상황이다.",
+      "optionA_meaning": {
+        "summary": "A는 피곤한 상태에서 신체 활동과 학습을 모두 수행하는 선택",
+        "activity": "운동하고 공부한다",
+        "basis": "explicit",
+        "quote": "운동하고 공부한다"
+      },
+      "optionB_meaning": {
+        "summary": "B는 피곤을 해소하기 위해 휴식을 택하는 선택",
+        "activity": "쉰다",
+        "basis": "explicit",
+        "quote": "쉰다"
+      },
+      "meaningful_difference": "A는 피로에도 불구하고 활동적으로 행동하는 반면, B는 휴식을 통해 몸과 마음을 쉬게 한다.",
+      "useful_comparison_axes": [
+        "활동 여부",
+        "피로 해소 방식"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "운동하고 공부한다"
+        },
+        {
+          "input": "b",
+          "quote": "쉰다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "질문에 두 가지 명확한 선택지와 서술이 존재"
+        ]
+      }
+    }
+  },
+  "7": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 556,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 233,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 789
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "질문은 두 선택지 중 어떤 행동을 취할지 결정하는 상황이다.",
+      "optionA_meaning": {
+        "summary": "연락하고 약속 잡는다의 의미",
+        "activity": "연락하고 약속 잡는다",
+        "basis": "explicit",
+        "quote": "연락하고 약속 잡는다"
+      },
+      "optionB_meaning": {
+        "summary": "더 생각한다의 의미",
+        "activity": "더 생각한다",
+        "basis": "explicit",
+        "quote": "더 생각한다"
+      },
+      "meaningful_difference": "두 선택지는 즉시 행동으로 옮길지 vs 이후에 생각을 더 할지의 차이이다.",
+      "useful_comparison_axes": [
+        "바로 실행 여부",
+        "추가 고려 여부"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "연락하고 약속 잡는다"
+        },
+        {
+          "input": "b",
+          "quote": "더 생각한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 문구가 서로 배타적 선택지를 명확히 나타냄",
+          "질문과 선택지의 관계가 명시적이다"
+        ]
+      }
+    }
+  },
+  "9": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 545,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 216,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 761
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "질문은 간식 선택이 필요하고 두 옵션은 떡볶이와 순대이다.",
+      "optionA_meaning": {
+        "summary": "떡볶이를 선택하는 의미",
+        "activity": "떡볶이 먹기",
+        "basis": "explicit",
+        "quote": "떡볶이"
+      },
+      "optionB_meaning": {
+        "summary": "순대를 선택하는 의미",
+        "activity": "순대 먹기",
+        "basis": "explicit",
+        "quote": "순대"
+      },
+      "meaningful_difference": "두 옵션은 서로 다른 간식 종류를 가리키며, 선택 시 식감/맛의 차이가 있다.",
+      "useful_comparison_axes": [
+        "간식 유형",
+        "주요 재료"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "떡볶이"
+        },
+        {
+          "input": "b",
+          "quote": "순대"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "질문과 옵션이 간식 종류를 명확히 제시"
+        ]
+      }
+    }
+  },
+  "11": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 543,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 207,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 750
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "오늘 마실 차를 고르는 상황. 두 선택지의 의미와 차별 요소를 명시",
+      "optionA_meaning": {
+        "summary": "A: 녹차를 마신다",
+        "activity": "녹차 마시기",
+        "basis": "explicit",
+        "quote": "녹차"
+      },
+      "optionB_meaning": {
+        "summary": "B: 홍차를 마신다",
+        "activity": "홍차 마시기",
+        "basis": "explicit",
+        "quote": "홍차"
+      },
+      "meaningful_difference": "녹차와 홍차를 각각 마시는 선택",
+      "useful_comparison_axes": [
+        "차 종류의 차이",
+        "일상적 선택 상황"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "녹차"
+        },
+        {
+          "input": "b",
+          "quote": "홍차"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 가지 옵션의 의미가 명확히 차이로 제시됨"
+        ]
+      }
+    }
+  },
+  "13": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 545,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 249,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 794
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "출근 이동수단을 선택하는 상황에서, 두 선택지의 활동을 비교한다.",
+      "optionA_meaning": {
+        "summary": "자전거를 이용하기",
+        "activity": "자전거 타기",
+        "basis": "explicit",
+        "quote": "자전거"
+      },
+      "optionB_meaning": {
+        "summary": "지하철을 이용하기",
+        "activity": "지하철 타기",
+        "basis": "explicit",
+        "quote": "지하철"
+      },
+      "meaningful_difference": "두 옵션은 이동 수단의 방식과 경로가 다르며, 자전거는 도보 외곽 경로 및 자기 주도 이동, 지하철은 대중교통 이용으로의 차이가 있다.",
+      "useful_comparison_axes": [
+        "이동 방식의 주체",
+        "이동 경로의 제약"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "자전거"
+        },
+        {
+          "input": "b",
+          "quote": "지하철"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "질문과 선택지가 명확히 주어졌고, 수단은 두 가지로 한정되어 있다."
+        ]
+      }
+    }
+  },
+  "14": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 549,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 220,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 769
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "독서용으로 무엇을 살지 결정하는 상황",
+      "optionA_meaning": {
+        "summary": "전자책 단말기를 구입하는 행위",
+        "activity": "전자책 단말기 구입",
+        "basis": "explicit",
+        "quote": "전자책 단말기"
+      },
+      "optionB_meaning": {
+        "summary": "종이책을 구입하는 행위",
+        "activity": "종이책 구입",
+        "basis": "explicit",
+        "quote": "종이책"
+      },
+      "meaningful_difference": "두 옵션은 독서 매체의 물리적 형태 차이를 나타낸다",
+      "useful_comparison_axes": [
+        "매체 형태",
+        "독서 경험"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "전자책 단말기"
+        },
+        {
+          "input": "b",
+          "quote": "종이책"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "의도된 구매 대상이 명확함",
+          "주요 선택지 둘 중 하나를 고르는 맥락이 명확함"
+        ]
+      }
+    }
+  },
+  "15": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 546,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 253,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 799
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "옷 마련 방법을 두 가지 대안으로 제시하고, 각 옵션의 구체적 의미를 비교한다.",
+      "optionA_meaning": {
+        "summary": "대여하는 방식으로 옷을 구한다",
+        "activity": "대여하기",
+        "basis": "explicit",
+        "quote": "대여한다"
+      },
+      "optionB_meaning": {
+        "summary": "구매하는 방식으로 옷을 구한다",
+        "activity": "구매하기",
+        "basis": "explicit",
+        "quote": "구매한다"
+      },
+      "meaningful_difference": "두 옵션은 의류를 얻는 주된 행위가 다름(대여 vs 구입)로 차이가 있다.",
+      "useful_comparison_axes": [
+        "주된 행위의 차이",
+        "소유 방식의 차이"
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "옷을 어떻게 마련할까?"
+        },
+        {
+          "input": "a",
+          "quote": "대여한다"
+        },
+        {
+          "input": "b",
+          "quote": "구매한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 의미가 명확하게 주어져 있음",
+          "대여/구매라는 직접적 어구로 표현"
+        ]
+      }
+    }
+  },
+  "16": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 545,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 232,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 777
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "이번 주말에 미술관 vs 수족관을 방문할지 결정하는 상황",
+      "optionA_meaning": {
+        "summary": "미술관 방문을 선택하는 의미",
+        "activity": "미술관 방문",
+        "basis": "explicit",
+        "quote": "미술관"
+      },
+      "optionB_meaning": {
+        "summary": "수족관 방문을 선택하는 의미",
+        "activity": "수족관 방문",
+        "basis": "explicit",
+        "quote": "수족관"
+      },
+      "meaningful_difference": "두 옵션은 방문 장소의 유형이 다르고 전시 주제의 차이를 가진다",
+      "useful_comparison_axes": [
+        "방문 장소의 성격",
+        "전시 주제의 차이"
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "이번 주말 어디 갈까?"
+        },
+        {
+          "input": "a",
+          "quote": "미술관"
+        },
+        {
+          "input": "b",
+          "quote": "수족관"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 주된 차이가 장소의 종류로 명확하게 제시되었기 때문"
+        ]
+      }
+    }
+  },
+  "17": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 540,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 230,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 770
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "짧은 질문에 대해 두 선택지의 의미를 비교한다. 부정적/긍정적 행동은 원문에서 유지한다.",
+      "optionA_meaning": {
+        "summary": "바다를 선택한다는 의미",
+        "activity": "해수욕/해양방문",
+        "basis": "explicit",
+        "quote": "바다"
+      },
+      "optionB_meaning": {
+        "summary": "산을 선택한다는 의미",
+        "activity": "산 방문",
+        "basis": "explicit",
+        "quote": "산"
+      },
+      "meaningful_difference": "두 선택지는 장소의 유형이 서로 다르며, 자연환경의 방향성(해양 vs 산악) 차이가 있다.",
+      "useful_comparison_axes": [
+        "장소의 환경",
+        "활동의 유형"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "바다"
+        },
+        {
+          "input": "b",
+          "quote": "산"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "질문에서 선택지의 뜻은 명확",
+          "부정/긍정 부정의 모호성 없음"
+        ]
+      }
+    }
+  },
+  "18": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 552,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 239,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 791
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "친구에게 어떻게 사과할지 선택하는 상황",
+      "optionA_meaning": {
+        "summary": "직접 만나 사과한다라는 선택",
+        "activity": "직접 만나 사과하기",
+        "basis": "explicit",
+        "quote": "직접 만나 사과한다"
+      },
+      "optionB_meaning": {
+        "summary": "문자로 사과한다라는 선택",
+        "activity": "문자로 사과하기",
+        "basis": "explicit",
+        "quote": "문자로 사과한다"
+      },
+      "meaningful_difference": "대면과 문자 중 어떤 방식으로 사과할지 선택하는 차이",
+      "useful_comparison_axes": [
+        "대면 여부",
+        "의사소통의 즉시성"
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "친구에게 어떻게 사과할까?"
+        },
+        {
+          "input": "a",
+          "quote": "직접 만나 사과한다"
+        },
+        {
+          "input": "b",
+          "quote": "문자로 사과한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "질문은 두 가지 방법의 차이만 제시",
+          "추가 맥락 또는 선호도 불명확"
+        ]
+      }
+    }
+  },
+  "19": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 547,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 231,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 778
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "질문에 대한 두 대안의 비교와 그 의미를 제시한다. 각 옵션은 현재/미래의 응답 시점을 다르게 제시한다.",
+      "optionA_meaning": {
+        "summary": "지금 답장한다 라는 의사 결정",
+        "activity": "지금 답장하기",
+        "basis": "explicit",
+        "quote": "답장한다"
+      },
+      "optionB_meaning": {
+        "summary": "내일 답장한다 라는 의사 결정",
+        "activity": "내일 답장하기",
+        "basis": "explicit",
+        "quote": "내일 답장한다"
+      },
+      "meaningful_difference": "답장 시점을 다르고, 시간에 따른 행동의 시점을 제시한다.",
+      "useful_comparison_axes": [
+        "답장 시점",
+        "시간적 범주"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "답장한다"
+        },
+        {
+          "input": "b",
+          "quote": "내일 답장한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "옵션의 시점만 다를 뿐 다른 내용은 동일하다"
+        ]
+      }
+    }
+  },
+  "22": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 558,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 253,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 811
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "내일 발표와 친구 생일인 상황에서 두 선택지의 활동을 비교",
+      "optionA_meaning": {
+        "summary": "생일 모임 후 발표 연습",
+        "activity": "생일 모임 후 발표 연습",
+        "basis": "explicit",
+        "quote": "생일 모임 후 발표 연습"
+      },
+      "optionB_meaning": {
+        "summary": "모임은 빠지고 발표 연습",
+        "activity": "발표 연습",
+        "basis": "explicit",
+        "quote": "모임은 빠지고 발표 연습"
+      },
+      "meaningful_difference": "생일 모임 여부가 발표 연습 시점에 영향을 준다",
+      "useful_comparison_axes": [
+        "발표 시점의 변화",
+        "참가 여부의 차이"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "생일 모임 후 발표 연습"
+        },
+        {
+          "input": "b",
+          "quote": "모임은 빠지고 발표 연습"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 핵심 활동은 명확히 제시되어 있다",
+          "발표 연습 여부와 모임 여부의 관계만 다를 뿐 다른 조건은 제시되지 않았다"
+        ]
+      }
+    }
+  },
+  "23": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 557,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 253,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 810
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "비가 오는 상황에서 산책 중에 통화를 할지 여부를 판단하려는 맥락",
+      "optionA_meaning": {
+        "summary": "비 오는 날 우산을 쓰고 산책하며 통화",
+        "activity": "산책하며 통화",
+        "basis": "explicit",
+        "quote": "우산 쓰고 산책하며 통화"
+      },
+      "optionB_meaning": {
+        "summary": "집에서 통화",
+        "activity": "집에서 통화",
+        "basis": "explicit",
+        "quote": "집에서 통화"
+      },
+      "meaningful_difference": "A는 외부 환경(비)과 신체 활동을 병행하고, B는 실내에서만 통화를 한다",
+      "useful_comparison_axes": [
+        "외부/실내",
+        "동행 여부(산책 여부)"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "우산 쓰고 산책하며 통화"
+        },
+        {
+          "input": "b",
+          "quote": "집에서 통화"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택의 핵심 차이가 명시적으로 제시되어 있음",
+          "날씨와 위치의 차이가 직접적인 차이를 만듦"
+        ]
+      }
+    }
+  },
+  "24": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 553,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 261,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 814
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "질문은 일정 참여 방식의 선택으로, 늦게 가는지 여부를 다룸. 두 대안은 서로 배타적이며, 한 대안은 지각으로의 참여를, 다른 대안은 아예 불참을 뜻함.",
+      "optionA_meaning": {
+        "summary": "늦게 참석한다는 의미",
+        "activity": "참석하기",
+        "basis": "explicit",
+        "quote": "늦게 참석한다"
+      },
+      "optionB_meaning": {
+        "summary": "참석하지 않는다의미",
+        "activity": "참석하지 않기",
+        "basis": "explicit",
+        "quote": "참석하지 않는다"
+      },
+      "meaningful_difference": "A는 시간 문제로 지각을 허용하는 반면 B는 완전한 불참을 선택한다.",
+      "useful_comparison_axes": [
+        "참여 시점",
+        "참가 여부"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "늦게 참석한다"
+        },
+        {
+          "input": "b",
+          "quote": "참석하지 않는다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 표현이 각각의 선택지를 명확히 나타냄",
+          "질문과 옵션 간 의미 불일치 없음"
+        ]
+      }
+    }
+  },
+  "25": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 548,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 264,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 812
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "질문은 선택지의 상반된 행위(연락 여부)에 관한 negation과 확정의 대비를 다룬다. 두 옵션은 각각 ‘연락하지 않는다’와 ‘연락한다’의 단일 행위이다.",
+      "optionA_meaning": {
+        "summary": "연락하지 않는다의 의미",
+        "activity": "연락하지 않다",
+        "basis": "explicit",
+        "quote": "연락하지 않는다"
+      },
+      "optionB_meaning": {
+        "summary": "연락한다의 의미",
+        "activity": "연락한다",
+        "basis": "explicit",
+        "quote": "연락한다"
+      },
+      "meaningful_difference": "두 옵션은 연락 여부의 부정/확정이라는 정확한 대비를 보이고, 다른 요소나 조건은 제시되지 않았다.",
+      "useful_comparison_axes": [
+        "연락의 시점 여부",
+        "행위의 확정성 여부"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "연락하지 않는다"
+        },
+        {
+          "input": "b",
+          "quote": "연락한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "질문의 주제가 옵션의 직접적 대립임",
+          "두 옵션 간에 부정/확정만 존재"
+        ]
+      }
+    }
+  },
+  "26": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 545,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 212,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 757
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "주말에 할 활동으로 플로깅과 홈트 중 선택하는 상황",
+      "optionA_meaning": {
+        "summary": "플로깅을 할 것",
+        "activity": "플로깅",
+        "basis": "explicit",
+        "quote": "플로깅"
+      },
+      "optionB_meaning": {
+        "summary": "홈트를 할 것",
+        "activity": "홈트",
+        "basis": "explicit",
+        "quote": "홈트"
+      },
+      "meaningful_difference": "두 옵션은 활동 유형이 다르다. 플로깅은 밖에서 걷기 + 쓰레기 줍기, 홈트는 실내 운동.",
+      "useful_comparison_axes": [
+        "활동 장소",
+        "운동 형태"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "플로깅"
+        },
+        {
+          "input": "b",
+          "quote": "홈트"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지가 각각의 활동 이름으로 명확히 제시됨"
+        ]
+      }
+    }
+  },
+  "27": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 552,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 238,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 790
+    },
+    "model": "gpt-5-nano-2025-08-07",
+    "meaning": {
+      "situation": "질문: 두 옵션 중 어떤 것이 좋을지 판단하려는 상황. 각 옵션의 의미와 활동을 비교해야 함.",
+      "optionA_meaning": {
+        "summary": "옵션 A를 선택한다는 뜻",
+        "activity": "드르밈 체험",
+        "basis": "explicit",
+        "quote": "드르밈 체험"
+      },
+      "optionB_meaning": {
+        "summary": "옵션 B를 선택한다는 뜻",
+        "activity": "쀼라코 활동",
+        "basis": "explicit",
+        "quote": "쀼라코 활동"
+      },
+      "meaningful_difference": "두 옵션의 실제 활동 이름이 다르고, 구체적 내용은 제시되지 않음",
+      "useful_comparison_axes": [
+        "활동명",
+        "성격의 차이"
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "드르밈 체험"
+        },
+        {
+          "input": "b",
+          "quote": "쀼라코 활동"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 활동명이 명확히 제시되어 있음",
+          "추가 정보 없이도 비교 가능"
+        ]
+      }
+    }
+  }
+}

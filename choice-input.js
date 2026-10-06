@@ -47,7 +47,8 @@
     const animals = found === "daily" && /동물|판다|호랑이/.test(normalize(question + a + b));
     return {category: found || clarifiedCategory, intentA: animals ? "specific" : intent(a), intentB: animals ? "specific" : intent(b), clarified: !found};
   }
-  const api = {normalize, intent, inspect};
+  const actionCategories = (value) => actions.filter(([, pattern]) => pattern.test(normalize(value))).map(([name]) => name);
+  const api = {normalize, intent, inspect, actionCategories};
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   root.ChoiceInput = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);

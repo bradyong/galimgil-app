@@ -947,7 +947,7 @@ function inferCategory(question, choiceA, choiceB, profile) {
   const text = `${question} ${choiceA} ${choiceB}`.toLowerCase();
   if (profile.type !== "general") return profile.type;
   const semantic = analyzeQuestion(question, choiceA, choiceB, profile);
-  if (semantic && semantic.confidence >= 0.58) return semantic.category;
+  if (semantic && semantic.categoryRoutingConfidence >= 0.58) return semantic.category;
   const broadKind = inferBroadSemanticKind(question, choiceA, choiceB);
   if (broadKind) return broadKind;
   if (includesAny(text, ["점심", "저녁", "아침", "야식", "메뉴", "먹을", "뭐먹", "뭐 먹", "식사", "찌개", "라면", "밥", "국밥", "순대국", "순댓국", "뼈해장", "감자탕", "치킨", "피자", "햄버거", "버거", "배달", "돈까스", "냉면", "짜장", "짬뽕", "떡볶이", "초밥", "스시", "회", "사시미", "곱창", "삼겹살", "고기", "한우", "소고기"])) return "food";
@@ -1348,7 +1348,7 @@ function ensureSubjectInReason(reason, subjectProfile, winner, loser, question, 
   return cleanPlayTone(`${subjectAnchorLine(subjectProfile, winner, loser, question, seed)} ${reason}`);
 }
 
-function analyzeQuestion(question, choiceA, choiceB, profile = {}) {
+function classifyQuestion(question, choiceA, choiceB, profile = {}) {
   const { optionA, optionB } = splitChoiceText(question, choiceA, choiceB);
   const text = `${question || ""} ${optionA} ${optionB}`.toLowerCase();
   const compact = text.replace(/\s/g, "");
@@ -1567,6 +1567,7 @@ function inferredOptionProfile(option, category, question = "") {
   const optionCompact = optionRaw.replace(/\s/g, "");
   const questionCompact = String(question || "").toLowerCase().replace(/\s/g, "");
   const make = (features, caution, vibe) => ({ name, category, features, caution, vibe, inferred: true });
+  const fallbackMake = (...args) => ({ ...make(...args), genericFallback: true });
   const has = (words) => includesAny(optionCompact, words);
   const contextHas = (words) => includesAny(questionCompact, words);
   const associative = associativePropertyProfile(name, question);
@@ -1605,7 +1606,7 @@ function inferredOptionProfile(option, category, question = "") {
         "자연 환기"
       );
     }
-    return make(
+    return fallbackMake(
       contextHas(["휴가", "여름휴가", "여행", "해외", "국내"])
         ? [`${name}에서 휴가 느낌이 어떻게 살아나는지`, "숙소와 이동 동선이 만드는 피로도", "가서 쉬는지 돌아다니는지에 따라 달라지는 만족도", "돌아왔을 때 사진과 이야깃거리가 남는 정도"]
         : [`${name}에서 하루 공기가 바뀌는 점`, "도착하기까지의 이동과 비용", "가서 무엇을 할지에 따라 만족도가 달라지는 점", "돌아올 때 체력이 남는지가 중요한 점"],
@@ -1636,7 +1637,7 @@ function inferredOptionProfile(option, category, question = "") {
         "마시는 선택"
       );
     }
-    return make(
+    return fallbackMake(
       [`${name}을 골랐을 때 바로 떠오르는 식사 장면`, "먹고 난 뒤 배부름과 후회 정도", "지금 입맛과 귀찮음에 맞는지", "같이 먹는 메뉴나 상황에 따라 달라지는 점"],
       "맛만 보지 말고 먹고 난 뒤 몸이 어떨지도 같이 보면 좋아요.",
       "메뉴 후보"
@@ -1644,7 +1645,7 @@ function inferredOptionProfile(option, category, question = "") {
   }
 
   if (category === "shopping") {
-    return make(
+    return fallbackMake(
       [`${name}을 샀을 때 바로 쓰는 장면`, "가격과 실제 사용 빈도", "지름신이 지나간 뒤에도 필요할지", "신제품이나 할인 타이밍 때문에 생기는 후회 가능성"],
       "오늘 사고 싶은 마음과 한 달 뒤에도 잘 쓸 장면을 따로 봐야 해요.",
       "소비 판단"
@@ -1652,7 +1653,7 @@ function inferredOptionProfile(option, category, question = "") {
   }
 
   if (category === "relationship") {
-    return make(
+    return fallbackMake(
       [`${name}을 했을 때 상대 반응을 기다리는 시간`, "말하고 나서 마음속 소음이 줄어드는 점", "타이밍이 어긋나면 어색해질 수 있는 점", "혼자 상상만 키우지 않아도 되는 점"],
       "관계 선택은 내용보다 타이밍과 말투가 더 크게 작동할 수 있어요.",
       "관계 선택"
@@ -1662,7 +1663,7 @@ function inferredOptionProfile(option, category, question = "") {
   if (category === "chore") {
     const scenario = choreScenario(question, name, "");
     const semantic = semanticOptionTraits(`${name} ${(scenario && scenario.name) || ""}`, "chore");
-    return make(
+    return (scenario ? make : fallbackMake)(
       scenario ? scenario.features : semantic.traits,
       (scenario && scenario.caution) || semantic.caution || "전부 하려 하지 말고 눈에 보이는 한 장면부터 잡으면 좋아요.",
       (scenario && scenario.vibe) || semantic.vibe || "집안일"
@@ -1671,7 +1672,7 @@ function inferredOptionProfile(option, category, question = "") {
 
   if (category === "family") {
     const semantic = semanticOptionTraits(name, "family", "family_visit");
-    return make(
+    return fallbackMake(
       semantic.traits,
       semantic.caution || "가족 선택은 편안함과 예의를 같이 봐야 해요.",
       semantic.vibe || "가족 방문"
@@ -1686,14 +1687,14 @@ function inferredOptionProfile(option, category, question = "") {
         "이동 수단"
       );
     }
-    return make(
+    return fallbackMake(
       [`${name}을 골랐을 때 바로 달라지는 오늘 장면`, "끝나고 남는 피로감이나 개운함", "미루면 남는 찝찝함", "지금 시간과 몸 상태로 감당 가능한지"],
       "큰 의미를 붙이기보다 끝나고 내가 덜 투덜댈 쪽을 보면 좋아요.",
       "일상 판단"
     );
   }
 
-  return make(
+  return fallbackMake(
     [`${name}을 선택했을 때 바로 생기는 변화`, "끝나고 남는 기분", "비용이나 시간처럼 따라오는 현실 변수", "나중에 다시 떠올렸을 때 후회할 가능성"],
     "단어 자체보다 이 선택 뒤에 오는 하루를 같이 봐야 해요.",
     "추론 후보"
@@ -1707,6 +1708,7 @@ function analyzeOption(option, category, question = "") {
   if (found) {
     return {
       name: option,
+      evidence: { source: found.keys.some((key) => ChoiceInput.normalize(key) === ChoiceInput.normalize(option)) ? "feature-bank" : "substring-rule", matchedKeys: found.keys.filter((key) => text.includes(key)), features: [...found.features] },
       category: found.category,
       features: found.features,
       caution: found.caution,
@@ -1714,7 +1716,7 @@ function analyzeOption(option, category, question = "") {
     };
   }
   const inferred = inferredOptionProfile(option, category, question);
-  if (inferred) return inferred;
+  if (inferred) return { ...inferred, evidence: { source: inferred.genericFallback ? "fallback" : "inferred", features: inferred.genericFallback ? [] : [...inferred.features] } };
   const fallbackByCategory = {
     food: { features: [`${option}만의 맛 포인트`, "한 입 먹었을 때 바로 오는 반응", "오늘 입맛에 따라 만족도가 달라짐", "같이 먹는 사람이나 컨디션 영향을 받음"], caution: "속 상태와 자극 정도는 한 번 보고 고르는 게 좋아요.", vibe: "한 끼 만족" },
     childcare: { features: [`${option}에서 생기는 아이 반응`, "보호자가 봐야 하는 안전 변수", "아이 체력 소모", "돌아오는 길 컨디션"], caution: "아이가 지치기 전에 나올 수 있는지가 중요해요.", vibe: "아이 리듬" },
@@ -1732,7 +1734,39 @@ function analyzeOption(option, category, question = "") {
     daily: { features: [`${option}을 골랐을 때 달라지는 장면`, "하고 난 뒤의 마음", "미뤘을 때 남는 찝찝함", "오늘 감당 가능한 정도"], caution: "한 번에 크게 결정하기보다 작게 해보는 게 좋아요.", vibe: "일상 선택" }
   };
   const fallback = fallbackByCategory[category] || fallbackByCategory.daily;
-  return { name: option, category, features: fallback.features, caution: fallback.caution, vibe: fallback.vibe };
+  return { name: option, category, features: fallback.features, caution: fallback.caution, vibe: fallback.vibe, evidence: { source: "fallback", features: [] } };
+}
+
+function assessChoiceUnderstanding(question, a, b, category) {
+  const lookup = (value) => findFeatureEntry(value)?.item.category;
+  const interpreted = ChoiceInput.inspect(question, a, b, lookup);
+  const exact = (value) => optionFeatureBank.find((entry) => entry.keys.some((key) => ChoiceInput.normalize(key) === ChoiceInput.normalize(value)));
+  const pair = [exact(a), exact(b)];
+  const actionSets = [a, b].map(ChoiceInput.actionCategories);
+  const actions = [...new Set(actionSets.flat())];
+  const questionActions = ChoiceInput.actionCategories(question);
+  const intents = [ChoiceInput.intent(a), ChoiceInput.intent(b)];
+  const actionPair = actions.length === 1 && intents.includes("go") && intents.includes("skip")
+    && actionSets.every((set) => set.length <= 1);
+  const reasons = [];
+  if (interpreted.message) reasons.push("clarification-needed");
+  if (interpreted.category && interpreted.category !== category) reasons.push("category-conflict");
+  if (actions.length > 1 || questionActions.some((item) => actions.length && !actions.includes(item))) reasons.push("mixed-context");
+  if (/지만|[는인]데|더라도|다면|때문|대신/.test(question)) reasons.push("condition-scope-unverified");
+  if (/지\s*않|지\s*못|안\s|못\s/.test(question)) reasons.push("question-negation-unverified");
+  if (pair[0] && pair[1] && pair[0].category !== pair[1].category) reasons.push("option-meaning-conflict");
+  const concretePair = pair.every(Boolean) && pair[0].category === pair[1].category;
+  if (!concretePair && !actionPair) reasons.push("insufficient-grounded-contrast");
+  return { level: reasons.length ? "low" : "supported", reasons, actionPair, concretePair,
+    evidence: [analyzeOption(a, category, question).evidence, analyzeOption(b, category, question).evidence] };
+}
+
+function analyzeQuestion(question, a, b, profile = {}) {
+  const classified = classifyQuestion(question, a, b, profile);
+  const understanding = assessChoiceUnderstanding(question, a, b, classified.category);
+  // Legacy category routing is not a probability of understanding. Keep scoring unchanged.
+  const { confidence: categoryRoutingConfidence, ...analysis } = classified;
+  return { ...analysis, categoryRoutingConfidence, understanding };
 }
 
 function optionIntent(option) {
@@ -1973,10 +2007,13 @@ function contextualizeOption(option, category, question) {
   if (!scenario || intent === "specific") {
     return { ...base, subjectName: base.name, intent };
   }
-  if (intent === "skip") return skipFeaturesForScenario(option, scenario, category);
+  if (intent === "skip") return { ...skipFeaturesForScenario(option, scenario, category), evidence: base.evidence, featureSource: "scenario-rule" };
   return {
     name: option,
     category: scenario.category || category,
+    evidence: base.evidence,
+    featureSource: "scenario-rule",
+    reasonEvidence: { source: "scenario-rule", features: [...scenario.features], caution: scenario.caution },
     subjectName: scenario.name,
     intent: "go",
     features: scenario.features,
@@ -6610,7 +6647,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const questionAnalysis = analyzeQuestion(question, choiceA, choiceB, profile);
   const subjectProfile = (questionAnalysis && questionAnalysis.subjectProfile)
     || extractSubjectProfile(question, choiceA, choiceB, questionAnalysis ? questionAnalysis.category : "daily");
-  const category = questionAnalysis && questionAnalysis.confidence >= 0.58
+  const category = questionAnalysis && questionAnalysis.categoryRoutingConfidence >= 0.58
     ? questionAnalysis.category
     : inferCategory(question, choiceA, choiceB, profile);
   const a = contextualizeOption(choiceA, category, question);
@@ -6735,30 +6772,35 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const categoryFrame = selectCategoryFrame(category, question, seed, sign);
   const frameReason = categoryFrameReasonLine(categoryFrame, category, winner, loser, question);
   const intentReason = questionIntentContextLine(category, question, winner, loser, seed);
-  const selectedWhyBase = ensureSubjectInReason(whyByCategory[category] || defaultWhy, subjectProfile, winner, loser, question, seed);
-  const selectedWhy = compactResultReason(`${intentReason} ${frameReason} ${selectedWhyBase}`, intentReason ? 3 : 2);
+  // Do not revive generated category prose without evidence: it can invent context.
   const oppositeText = hasQuestionContext
     ? `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`
     : `반대로 <strong>${escapeHtml(loser.name)}</strong>는 ${featurePairText(loser.features[0], loser.features[1])} 장점이에요. ${escapeHtml(loser.caution)}`;
   const actionChoice = a.intent !== "specific" || b.intent !== "specific";
-  const safeWhy = winner.intent === "skip"
-    ? `오늘의 놀이 카드는 ‘${escapeHtml(winner.name)}’ 쪽으로 기울었어요. 실행을 미루거나 하지 않는 선택인 만큼, 다시 결정할 시점도 함께 정해두면 좋아요.`
-    : `오늘의 놀이 카드는 ‘${escapeHtml(winner.name)}’ 쪽으로 기울었어요. 실행하는 선택인 만큼, 필요한 시간과 부담을 먼저 확인하고 작게 시작해보세요.`;
   const neutralWhy = `오늘의 놀이 카드는 ‘${escapeHtml(winner.name)}’ 쪽이에요. 두 선택의 구체적인 장단점까지 확인된 것은 아니니, 지금 더 끌리는 쪽인지 가볍게 비교해보세요.`;
   const exactFeature = (name) => optionFeatureBank.find((entry) => entry.keys.some((key) => ChoiceInput.normalize(key) === ChoiceInput.normalize(name)));
   const knownWinner = exactFeature(winner.name), knownLoser = exactFeature(loser.name);
   const concreteWhy = knownWinner && knownLoser
     ? `‘${escapeHtml(winner.name)}’의 포인트는 ${escapeHtml(knownWinner.features.slice(0, 2).join(", "))}예요. ‘${escapeHtml(loser.name)}’의 ${escapeHtml(knownLoser.features[0])}보다 지금 더 끌리는지 비교해보세요.`
     : neutralWhy;
+  const understanding = questionAnalysis.understanding;
+  const execution = a.intent === "go" ? a : b.intent === "go" ? b : null;
+  const deferral = a.intent === "skip" ? a : b.intent === "skip" ? b : null;
+  const selectedWhy = understanding.level === "supported" && understanding.concretePair
+    ? concreteWhy
+    : understanding.level === "supported" && execution && deferral && execution.reasonEvidence
+      ? `‘${escapeHtml(execution.name)}’는 실행하는 선택으로, ${escapeHtml(execution.reasonEvidence.features.slice(0, 2).join(", "))}을 살펴볼 수 있어요. ‘${escapeHtml(deferral.name)}’는 그 실행을 미루거나 하지 않는 선택이에요. ${escapeHtml(execution.reasonEvidence.caution)}`
+      : `‘${escapeHtml(a.name)}’와 ‘${escapeHtml(b.name)}’를 비교하고 있어요.${question ? ` 고민은 “${escapeHtml(question)}”예요.` : ""} 아직 두 선택의 조건과 차이를 충분히 확인하지 못했어요. 놀이 결과를 실제 판단 근거로 단정하지 말아주세요.`;
   return {
     category,
+    understanding,
     recommendA,
     winner,
     loser,
     winnerScore,
     loserScore,
     advice: actionChoice ? "결정은 가볍게, 내 조건은 꼼꼼하게." : cleanPlayTone(shareLine),
-    why: actionChoice ? safeWhy : concreteWhy,
+    why: selectedWhy,
     opposite: oppositeText,
     fortune: actionChoice || category === "daily" ? `${escapeHtml(sign[0])}의 오늘 키워드는 ${cardLabels.map(escapeHtml).join(", ")}예요. 내 상황에 맞는 말만 골라 담아보세요.` : cleanPlayTone(fortune),
     zodiacCards: cardLabels,

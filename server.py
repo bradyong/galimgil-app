@@ -7,6 +7,8 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from cache_policy import representation
 from palm_limits import configured_limits
+from choice_meaning import RedisMeaningStore, resolve as resolve_choice_meaning
+from choice_runtime import ChoiceRuntime
 
 
 ROOT = pathlib.Path(__file__).resolve().parent
@@ -14,6 +16,7 @@ HOST = "0.0.0.0"
 PORT = int(os.getenv("PORT", "8787"))
 MAX_BODY = 16 * 1024 * 1024
 PALM_LIMITS = configured_limits()
+CHOICE_RUNTIME = ChoiceRuntime()
 
 
 PALM_PROMPT = """
@@ -82,6 +85,41 @@ class AppHandler(BaseHTTPRequestHandler):
         self.wfile.write(content)
 
     def do_POST(self):
+        if self.path in ('/api/choice-meaning-only', '/api/choice-play', '/api/choice-future'):
+            is_future = self.path == '/api/choice-future'
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 0 < length <= 24576:
+                    raise ValueError('body')
+                payload = json.loads(self.rfile.read(length))
+                ip = self.headers.get('X-Forwarded-For', '').split(',', 1)[0].strip() or self.client_address[0]
+                if is_future:
+                    result = CHOICE_RUNTIME.future(payload, ip)
+                elif self.path == '/api/choice-play':
+                    result = CHOICE_RUNTIME.finalize(payload)
+                else:
+                    result = CHOICE_RUNTIME.prepare(payload, ip)
+                json_response(self, 200, result)
+            except Exception:
+                json_response(self, 200, {'status': 'unavailable', 'future': '', 'source': 'EMPTY_SAFE_FALLBACK'}
+                              if is_future else {'status': 'unavailable', 'code': 'unavailable'})
+            return
+        if self.path == "/api/choice-meaning":
+            if os.getenv('CHOICE_AI_ENABLED') != '1' or not os.getenv('OPENAI_API_KEY'):
+                json_response(self, 200, {'status': 'confirmation', 'code': 'disabled'})
+                return
+            try:
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 0 < length <= 4096:
+                    raise ValueError('body')
+                payload = json.loads(self.rfile.read(length))
+                ip = self.headers.get('X-Forwarded-For', '').split(',', 1)[0].strip() or self.client_address[0]
+                result = resolve_choice_meaning(payload, ip, RedisMeaningStore())
+                # Only validated semantic content is public; usage stays in server cache.
+                json_response(self, 200, {k: v for k, v in result.items() if k in ('status', 'meaning', 'code')})
+            except Exception:
+                json_response(self, 200, {'status': 'confirmation', 'code': 'unavailable'})
+            return
         if self.path != "/api/palm-reading":
             self.send_error(404)
             return

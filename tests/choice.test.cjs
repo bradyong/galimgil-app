@@ -57,7 +57,7 @@ test('concrete food reason does not borrow snack template', () => assert.doesNot
 test('render escapes saved text', () => {
   const nodes = new Map();
   context.document = {getElementById: (id) => {
-    if (!nodes.has(id)) nodes.set(id, {classList:{add(){}}, addEventListener(){},scrollIntoView(){}});
+    if (!nodes.has(id)) nodes.set(id, {dataset:{},classList:{add(){}}, addEventListener(){},scrollIntoView(){}});
     return nodes.get(id);
   }};
   evaluate(`openChoiceCard({date:'today',choiceA:'<img src=x onerror=alert(1)>',choiceB:'B',details:{winner:'<script>x</script>',loser:'B',percent:55,why:'<img src=x>',cards:['<b>card</b>']}})`);

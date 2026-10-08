@@ -1,0 +1,27 @@
+{
+  "method": "Codex가 19건을 읽고 판정한 정성 검토. 독립 사용자 평가나 의미적 진실의 자동 증명이 아님. 상상 장면의 소품 자체는 허용하되 새 판단 근거/선호/비교 이점은 허용하지 않음.",
+  "old_overlap": [0,3,6,7,9,11,13,14,15,18,19,22,23,24,25,26],
+  "old_unsupported": [14,19],
+  "old_unsupported_notes": {"14":"손쉽게 여러 권을 넘긴다는 편의성 부가", "19":"상대가 곧 확인한다고 단정"},
+  "rows": {
+    "0": {"unsupported":true,"overlap":false,"noun_caption":false,"errors":["unsupported-reason"],"note":"쾌감이 앞섰다는 비교 근거는 확보되지 않음. 미래 장면의 놀이기구/아이스크림 결합도 어색함."},
+    "2": {"unsupported":true,"overlap":false,"noun_caption":false,"errors":["invented-preference"],"note":"동점인데 도로 정류장 경험을 더 좋아한다고 사용자 선호를 지어냄."},
+    "3": {"unsupported":false,"overlap":false,"noun_caption":true,"errors":["label-caption"],"note":"중고가 고른 쪽이라는 이유가 부자연스럽고, 캡처는 중고 보물이라는 라벨에 가까움. 포장 장면은 상상 소품으로 취급."},
+    "6": {"unsupported":false,"overlap":false,"noun_caption":false,"errors":[],"note":"운동/공부 연결은 유지. 헐헐대며 표현이 어색하고 드립은 약함. anchors의 추가적 활동은 허용 원문에 없어 자동 거절."},
+    "7": {"unsupported":false,"overlap":true,"noun_caption":true,"errors":["role-overlap","label-caption"],"note":"약속 잡기/행동 개시를 세 영역에서 재서술. 이유는 점수 방향과 맞지만 캡처가 명령 라벨 수준. 축 제목 anchor도 불허."},
+    "9": {"unsupported":true,"overlap":true,"noun_caption":true,"errors":["invented-preference","role-overlap","label-caption"],"note":"동점인데 매콤함이 당긴다는 선호 추가. 젓가락/소스가 미래와 캡처에서 반복됨."},
+    "11": {"unsupported":true,"overlap":true,"noun_caption":false,"errors":["unsupported-reason","role-overlap"],"note":"검증 의미에 없는 신선한 풀 향을 선택 이유로 추가. 미래와 캡처가 냄새 맡기로 겹침."},
+    "13": {"unsupported":true,"overlap":false,"noun_caption":false,"errors":["unsupported-comparison"],"note":"풍경을 더 많이 마주한다는 비교 이점은 제공되지 않음. 실제 사용 축은 장소인데 이유는 활동성으로 설명."},
+    "14": {"unsupported":true,"overlap":false,"noun_caption":true,"errors":["invented-fit","label-caption"],"note":"동점인데 기기 독서가 더 맞는다고 주장. 캡처는 독서 시간이라는 라벨."},
+    "15": {"unsupported":true,"overlap":false,"noun_caption":true,"errors":["unsupported-benefit","label-caption"],"note":"대여가 더 가볍다는 부담상 이점은 확인되지 않음. 캡처도 빌려 입는 날이라는 선택 재서술."},
+    "16": {"unsupported":true,"overlap":false,"noun_caption":false,"errors":["unsupported-reason"],"note":"작품 관람으로 감성이 찰랑할 것이라는 감정 예측을 이유에 사용. 이후 장면은 허용 가능한 상상."},
+    "17": {"unsupported":false,"overlap":false,"noun_caption":false,"errors":[],"note":"휴식/활동 차이는 저장된 의미 contrast에서 유래. 다만 실제 승부 근거가 없는 점을 밝히지 못함. contrast 전체를 anchor로 쓰며 자동 거절."},
+    "18": {"unsupported":false,"overlap":true,"noun_caption":false,"errors":["role-overlap"],"note":"직접 마주함/눈 맞춤/눈 보고 건넴이 반복되며 캡처가 별도 punchline이 아님."},
+    "19": {"unsupported":false,"overlap":false,"noun_caption":false,"errors":[],"note":"온도·별자리·카드 방향과 일치. 형식/근거는 허용하되 미래가 발송 이후보다 발송 직전이며 농담 자체는 약함."},
+    "22": {"unsupported":false,"overlap":false,"noun_caption":false,"errors":[],"note":"모임을 빠지고 연습하는 맥락 유지. 케이크는 상상 장면의 소품으로 취급. 축 제목 anchor로 자동 거절."},
+    "23": {"unsupported":true,"overlap":false,"noun_caption":true,"errors":["invented-preference","label-caption"],"note":"재밌게 느껴진다는 선호를 새로 부여. 미래의 구두 코르크창은 불필요하게 구체적이고 캡처는 통화 타임 라벨."},
+    "24": {"unsupported":false,"overlap":false,"noun_caption":false,"errors":[],"note":"늦게 참석한다는 선택 유지. 재밌게 밀렸다는 표현은 놀이 한 표로 해석, 의미 우위 주장은 없음. 미래 장면의 유머는 약함."},
+    "25": {"unsupported":false,"overlap":true,"noun_caption":false,"errors":["role-overlap"],"note":"실제 카드·별자리 방향과 일치. 다만 미래/캡처가 모두 보내기 행동의 반복이고 이후의 별도 장면이 아님."},
+    "26": {"unsupported":false,"overlap":false,"noun_caption":true,"errors":["label-caption"],"note":"쓰레기 줍기로 주변을 정리한다는 내용은 의미와 일치. 미래는 임의의 상상 소품 장면이며, 캡처는 줍줍 타임 라벨 수준."}
+  }
+}

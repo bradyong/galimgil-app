@@ -6640,7 +6640,75 @@ function scoreOption(analysis, category, question, mood, seed, sign, cards = [],
   return Math.max(35, Math.min(75, score));
 }
 
-function buildChoiceMeaning(question, choiceA, choiceB, category, understanding, clarification = null) {
+function inspectMeaningInput(question, a, b, category = "") {
+  const result = ChoiceInput.inspect(question, a, b, (option) => findFeatureEntry(option)?.item.category, category);
+  const scopeUnknown = [a, b].some((v) => ChoiceInput.intent(v) === "unclear");
+  if (result.needsCategory || (scopeUnknown && a.trim() && b.trim() && ChoiceInput.normalize(a) !== ChoiceInput.normalize(b))) {
+    return { category: category || "daily", intentA: ChoiceInput.intent(a), intentB: ChoiceInput.intent(b) };
+  }
+  return result;
+}
+
+function validatedAiMeaning(envelope, question, a, b) {
+  if (!envelope || envelope.binding !== JSON.stringify([question, a, b]) || envelope.version !== "semantic-v2") return null;
+  const m = envelope.meaning;
+  if (!m || m.uncertainty?.level !== "low" || !Array.isArray(m.useful_comparison_axes) || !m.useful_comparison_axes.length) return null;
+  const options = [m.optionA_meaning, m.optionB_meaning];
+  if (options.some((o, i) => !o || !["explicit", "general-meaning"].includes(o.basis) || !o.quote || ![a,b][i].includes(o.quote)
+    || [o.summary, o.activity].some(v => typeof v !== "string" || !v.trim() || v.length > 120))) return null;
+  if (options[0].summary === options[1].summary || typeof m.meaningful_difference !== "string" || !m.meaningful_difference) return null;
+  if (/(구체|내용|의미).{0,18}(없|않|불명|모르)|(?:이름|활동명).{0,8}다르/.test(m.meaningful_difference)) return null;
+  if (!Array.isArray(m.evidence) || m.evidence.some(e => !["question", "a", "b"].includes(e.input) || !e.quote || !({question,a,b}[e.input]).includes(e.quote))) return null;
+  const allowed = {cost:['high','low','other'],time:['high','low','other'],effort:['high','low','other'],comfort:['high','low','other'],stimulation:['high','low','other'],risk:['high','low','other'],immediacy:['now','later','other'],social:['high','low','other'],ownership:['own','rent','other'],activity:['active','rest','other'],setting:['indoor','outdoor','other'],experience:['observe','participate','other'],other:['other']};
+  if (!Array.isArray(m.decision_axes) || m.decision_axes.length > 3) return null;
+  for (const ax of m.decision_axes) {
+    if (!allowed[ax.id]?.includes(ax.valueA) || !allowed[ax.id]?.includes(ax.valueB) || !ax.a || !ax.b || ax.a === ax.b) return null;
+    if (['cost','time','effort','comfort','stimulation','risk','social'].includes(ax.id) && ax.basis !== 'explicit') return null;
+    if (!ax.quoteA || !ax.quoteB || (!a.includes(ax.quoteA) && !question.includes(ax.quoteA) && !(ax.basis==='general-meaning'&&options[0].summary.includes(ax.quoteA))) || (!b.includes(ax.quoteB) && !question.includes(ax.quoteB) && !(ax.basis==='general-meaning'&&options[1].summary.includes(ax.quoteB)))) return null;
+    if(['activity','experience'].includes(ax.id)&&ax.valueA!==ax.valueB&&options[0].activity===options[1].activity)return null;
+  }
+  for (let i=0;i<2;i++) {
+    const o=options[i],s=o.scene;
+    const useful=o.summary.split([a,b][i]).join('').replace(/옵션|선택|의미|뜻|방문|이용|한다|하기|하는|라는|것|[AB\s.,]/g,'');
+    if (useful.length<4 || !s || !Array.isArray(s.elements) || !s.elements.length || s.elements.length>3 || new Set(s.elements).size!==s.elements.length) return null;
+    const compact=s=>s.replace(/\s+/g,'');
+    const ground=[a,b][i]+o.summary+' '+o.activity+' '+m.decision_axes.map(ax=>ax[i===0?'a':'b']).join(' ');
+    if(s.elements.some(e=>typeof e!=='string'||!e||!compact(ground).includes(compact(e))))return null;
+    if(typeof s.future!=='string'||typeof s.capture!=='string'||s.future.length<10||s.future.length>120||s.capture.length<5||s.capture.length>55)return null;
+    if(!s.elements.some(e=>compact(s.future+s.capture).includes(compact(e)))||s.future.slice(0,10)===s.capture.slice(0,10))return null;
+  }
+  return m;
+}
+
+const meaningRequests = new Map();
+const confirmedMeanings = new Map();
+let meaningInputRevision = 0;
+async function requestChoiceMeaning(question, a, b, reasons, fetcher = globalThis.fetch) {
+  const binding = JSON.stringify([question, a, b]);
+  const key = `semantic-v2:${binding}`;
+  if (meaningRequests.has(key)) return meaningRequests.get(key);
+  const work = (async () => {
+    const savedCard = archive.find(item => item.question === question && item.choiceA === a && item.choiceB === b);
+    const saved = savedCard?.details?.meaning?.ai;
+    if (validatedAiMeaning(saved, question, a, b)) return saved;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 60000);
+    try {
+      const response = await fetcher("/api/choice-meaning", {method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question, a, b, reasons: reasons.length ? reasons : ["insufficient-grounded-contrast"]}), signal: controller.signal});
+      if (!response.ok) return null;
+      const result = await response.json();
+      const envelope = {binding, version: "semantic-v2", meaning: result.meaning, play_axes: result.play_axes, canonical_axes: result.canonical_axes};
+      return result.status === "ready" && validatedAiMeaning(envelope, question, a, b) ? envelope : null;
+    } catch (_) { return null; }
+    finally { clearTimeout(timer); }
+  })();
+  meaningRequests.set(key, work);
+  if (meaningRequests.size > 100) meaningRequests.delete(meaningRequests.keys().next().value);
+  return work;
+}
+
+function buildChoiceMeaning(question, choiceA, choiceB, category, understanding, clarification = null, ai = null) {
   const names = [choiceA, choiceB];
   const options = names.map((name) => contextualizeOption(name, category, question));
   const concrete = options.every((option) => option.evidence?.source === "feature-bank");
@@ -6669,7 +6737,7 @@ function buildChoiceMeaning(question, choiceA, choiceB, category, understanding,
   }
   const binding = JSON.stringify([question, choiceA, choiceB]);
   if (clarification && clarification.binding === binding) {
-    const values = [clarification.a, clarification.b, clarification.axis].map((value) => String(value || "").trim());
+    const values = [clarification.a, clarification.b, "두 선택의 실제 차이"].map((value) => String(value || "").trim());
     const valid = values.every((value) => value.length >= 2 && value.length <= 100)
       && ChoiceInput.normalize(values[0]) !== ChoiceInput.normalize(values[1])
       && values.slice(0, 2).every((value, index) => ChoiceInput.normalize(value) !== ChoiceInput.normalize(names[index]) && !/^(그거|저거|이거|모름|몰라|기타)$/.test(value));
@@ -6677,58 +6745,344 @@ function buildChoiceMeaning(question, choiceA, choiceB, category, understanding,
       meaning.options.forEach((option, index) => { option.meaning = values[index]; option.cue = values[index]; option.source = "user-confirmed"; });
       meaning.axes = [values[2]];
       meaning.uncertainties = ["사용자가 설명한 차이이며 외부 사실 검증은 하지 않음"];
+      meaning.confirmation = {binding, a: values[0], b: values[1]};
     }
   }
   if (meaning.options.every((option) => option.meaning) && meaning.options[0].meaning !== meaning.options[1].meaning) {
     meaning.status = "ready";
     meaning.differences = [{ axis: meaning.axes[0], a: meaning.options[0].meaning, b: meaning.options[1].meaning }];
   }
+  // AI cannot replace sufficient rule or user evidence, nor set scores or a winner.
+  const interpreted = meaning.status !== "ready" && validatedAiMeaning(ai, question, choiceA, choiceB);
+  if (interpreted) {
+    meaning.options = [interpreted.optionA_meaning, interpreted.optionB_meaning].map((o,i) => ({
+      name: names[i], meaning: o.summary, cue: o.activity, source: "ai-semantic", basis: o.basis, quote: o.quote
+    }));
+    meaning.axes = interpreted.useful_comparison_axes;
+    meaning.differences = [{axis: meaning.axes[0], a: meaning.options[0].meaning, b: meaning.options[1].meaning}];
+    meaning.contrast = interpreted.meaningful_difference;
+    meaning.decisionAxes = interpreted.decision_axes;
+    meaning.scoringPolicy = "validated-semantic-axes-only";
+    meaning.uncertainties = interpreted.uncertainty.reasons;
+    meaning.evidence = interpreted.evidence;
+    meaning.ai = ai;
+    meaning.status = "ready";
+  }
   meaning.id = `meaning-${hashText(JSON.stringify(meaning))}`;
   return meaning;
 }
 
-function meaningContent(meaning, recommendA, existing, seed) {
+function validatedWriting(writing, meaning) {
+  if (!writing || Object.keys(writing).sort().join(',') !== 'a,b') return null;
+  for (const side of ['a','b']) {
+    const w=writing[side], option=meaning.ai.meaning[side==='a'?'optionA_meaning':'optionB_meaning'];
+    if (!w || Object.keys(w).sort().join(',') !== 'anchors,capture,future,reason') return null;
+    if (['reason','future','capture'].some(k=>typeof w[k]!=='string')) return null;
+    if (w.reason.length<15 || w.reason.length>110 || w.future.length<12 || w.future.length>100 || w.capture.length<8 || w.capture.length>55) return null;
+    const ground=option.summary+' '+option.activity+' '+option.scene.elements.join(' ');
+    if (!Array.isArray(w.anchors) || !w.anchors.length || w.anchors.length>3 || w.anchors.some(a=>typeof a!=='string'||!a||!ground.includes(a))) return null;
+    const all=[w.reason,w.future,w.capture];
+    if (/\b(activity|observe|participate|setting|immediacy|ownership|indoor|outdoor)\b|<[^>]+>|\d/i.test(all.join(' '))) return null;
+    if (/것이다|하게 된다|예상된다|가능성이|할 수 있다/.test(w.future)) return null;
+    if (!/[.!?]|(?:요|네|지|다|군|걸|데|냐|까)$/.test(w.capture)) return null;
+    if (new Set(all).size!==3 || new Set(all.map(s=>s.slice(0,8))).size!==3) return null;
+  }
+  return writing;
+}
+
+function writeSemanticContent(meaning, recommendA, writing) {
+  const side=recommendA?'a':'b', other=recommendA?'b':'a';
+  const index=recommendA?0:1;
+  const option=meaning.ai.meaning[index===0?'optionA_meaning':'optionB_meaning'];
+  const alternative=meaning.ai.meaning[index===0?'optionB_meaning':'optionA_meaning'];
+  const checked=validatedWriting(writing,meaning), draft=checked?.[side];
+  const trace=meaning.decisionEvidence.traces[side], otherTrace=meaning.decisionEvidence.traces[other];
+  const phrase=(activity,name)=>/^[가-힣\s/·]+$/.test(activity)?activity.replace(/\//g,' · '):name;
+  const selected=phrase(option.activity,meaning.options[index].name);
+  const unselected=phrase(alternative.activity,meaning.options[1-index].name);
+  // Draft reasons may invent benefits; only grounded activities and score traces render.
+  const opening=(selected===unselected
+    ? `이번에는 ‘${meaning.options[index].name}’ 쪽으로 가볍게 기울었어요.`
+    : `‘${unselected}’ 대신 오늘의 한 표는 ‘${selected}’ 쪽이에요.`);
+  // Only code states the scoring basis; creative writing cannot claim a factual advantage.
+  const basis=trace.zodiac+trace.card>otherTrace.zodiac+otherTrace.card
+    ? ' 선택에 담긴 특징이 오늘 별 카드와 조금 더 맞물렸어요.'
+    : ' 우열을 정할 조건은 없어, 이번에는 놀이로 골라봤어요.';
+  return {meaningId:meaning.id,writerVersion:'writer-v1',writerStatus:checked?'accepted':'legacy-draft',writerPayload:checked,
+    reason:{meaningId:meaning.id,role:'comparison',text:escapeHtml(opening+basis)},
+    future:{meaningId:meaning.id,role:'imagined-aftermath',text:escapeHtml(draft?.future||option.scene.future)},
+    capture:{meaningId:meaning.id,role:'shareable-punchline',text:escapeHtml(draft?.capture||option.scene.capture)}};
+}
+
+function meaningContent(meaning, recommendA, existing, seed, writing = null) {
   if (meaning.status !== "ready") throw new Error("Meaning must be confirmed before generating content");
   const w = meaning.options[recommendA ? 0 : 1], l = meaning.options[recommendA ? 1 : 0];
   const name = escapeHtml(w.name), other = escapeHtml(l.name);
   const wm = escapeHtml(w.meaning), lm = escapeHtml(l.meaning), axis = escapeHtml(meaning.axes[0]);
   const cue = escapeHtml(w.cue);
-  const userProvided = w.source === "user-confirmed";
-  const why = `${userProvided ? "말씀한 차이: " : "선택의 차이: "}‘${name}’ ${wm} / ‘${other}’ ${lm}. 비교 기준: ${axis}.`;
+  if (meaning.ai) {
+    return writeSemanticContent(meaning, recommendA, writing);
+  }
+  const contrast = meaning.contrast
+    ? escapeHtml(meaning.contrast.replace(/[.!?。]+$/, ""))
+    : `‘${name}’ 쪽은 ${wm}, ‘${other}’ 쪽은 ${lm}`;
+  const why = `${contrast}. 이번 놀이 기울기는 ‘${name}’. 비교 기준: ${axis}.`;
   // Different roles consume the same evidence; fictional scenes never become scoring facts.
-  const future = existing.future || pick([
-    `미래의 나: “${cue}”까지는 계획이었지. 그 얘기를 세 번 하는 건 계획에 없었는데.`,
-    `미래의 나: ${name} 고른 뒤 “${cue}” 후기 작성 중. 반대편 ${other}의 후기도 슬쩍 궁금해졌다.`,
-    `미래의 나: “${cue}” 때문에 골랐다고 말했는데, 설명하다 보니 혼자 발표회를 열었네.`
-  ], hashText(`${meaning.id}:${seed}:future`));
-  const capture = existing.capture || pick([
-    `내 취향의 자막: “${cue}”. 반대 의견은 내일의 나에게.`,
-    `오늘 내 마음의 검색어는 “${cue}”. 검색 종료 버튼은 ${name}.`,
-    `“${cue}” 앞에서 내 취향이 들켰다. 해명은 안 하겠습니다.`
-  ], hashText(`${meaning.id}:${seed}:capture`));
+  const future = existing.future;
+  const capture = existing.capture;
   return { meaningId: meaning.id,
     reason: { meaningId: meaning.id, role: "comparison", text: why },
     future: { meaningId: meaning.id, role: "imagined-aftermath", text: future },
     capture: { meaningId: meaning.id, role: "shareable-punchline", text: capture } };
 }
 
-function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification = null) {
-  const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
-    (option) => findFeatureEntry(option)?.item.category, profile.type === "general" ? "" : profile.type);
+function assessDirectionalEvidence(understanding, meaning) {
+  if (meaning.status !== "ready") return { status: "needs-meaning" };
+  if (understanding.level === "supported" && !meaning.ai
+      && meaning.options?.every(o => ["feature-bank", "scenario-rule"].includes(o.source))) return { status: "existing-rule-path" };
+  return {status: "semantic-play"};
+}
+
+// Symbolic game weights over a closed axis vocabulary, never object-name rules.
+const semanticPlayAxes = {
+  activity: {active: ["energy", "action"], rest: ["relax", "comfort"]},
+  experience: {observe: [], participate: ["action"]},
+  setting: {indoor: [], outdoor: []},
+  immediacy: {now: ["action"], later: []},
+  ownership: {own: [], rent: []},
+  comfort: {high: ["comfort"], low: []}, stimulation: {high: ["fun", "energy"], low: ["soft"]},
+  cost: {high: [], low: ["practical"]}, time: {high: [], low: ["practical"]},
+  effort: {high: ["energy"], low: ["relax"]}, risk: {high: ["bold"], low: ["safe"]},
+  social: {high: ["social"], low: []}
+};
+
+function playTagEvidence(meaning, side, tag) {
+  const key = side === 'a' ? 'valueA' : 'valueB';
+  const quoteKey = side === 'a' ? 'quoteA' : 'quoteB';
+  const factual = ['comfort','stimulation','cost','time','effort','risk','social'];
+  const ax = (meaning.decisionAxes || []).find(ax =>
+    (!factual.includes(ax.id) || ax.basis === 'explicit') &&
+    semanticPlayAxes[ax.id]?.[ax[key]]?.includes(tag));
+  return ax ? {axis: ax.id, value: ax[key], quote: ax[quoteKey],
+    reason: `확인된 ${ax.label}의 ‘${ax[side]}’를 ${tag} 놀이 성향에 연결합니다.`} : null;
+}
+
+function validatedPlayAxes(meaning, rows) {
+  if (!Array.isArray(rows) || !rows.length || rows.length > 2) return null;
+  const allowed = new Set(Object.values(zodiacProfiles).flatMap(p => p.likes).concat([...cardTags(Object.values(zodiacProfiles).flatMap(p => p.traits))]));
+  const used = [], excluded = [];
+  for (const row of rows) {
+    if (!row || Object.keys(row).sort().join() !== 'a,b,label' || typeof row.label !== 'string' || !row.label || row.label.length > 50) return null;
+    const converted = {id: 'symbolic-association', label: row.label, basis: 'meaning-grounded-play-association'};
+    for (const [index, side] of ['a', 'b'].entries()) {
+      const item = row[side], option = meaning.ai.meaning[index === 0 ? 'optionA_meaning' : 'optionB_meaning'];
+      if (!item || Object.keys(item).sort().join() !== 'quote,tags,value'
+          || ['quote','value'].some(k => typeof item[k] !== 'string' || !item[k] || item[k].length > 120)
+          || ![meaning.options[index].name, option.summary, option.activity].some(text => text.includes(item.quote))
+          || !Array.isArray(item.tags) || item.tags.length > 2
+          || new Set(item.tags).size !== item.tags.length || item.tags.some(t => !allowed.has(t))) return null;
+      const reasons = [];
+      const filtered = item.tags.filter(tag => {
+        const evidence = playTagEvidence(meaning, side, tag);
+        if (evidence) reasons.push({tag, ...evidence});
+        else excluded.push({axis: row.label, side, tag, reason: '검증된 의미 축에서 직접 뒷받침되지 않는 연상이므로 제외', quote: item.quote});
+        return !!evidence;
+      });
+      converted['reasons' + side.toUpperCase()] = reasons;
+      converted[side] = item.value;
+      converted['quote' + side.toUpperCase()] = item.quote;
+      converted['tags' + side.toUpperCase()] = filtered;
+    }
+    if (row.a.value === row.b.value) return null;
+    used.push(converted);
+  }
+  return {used, excluded};
+}
+
+function legacySymbolicPlayScores(meaning, mood, sign, cards) {
+  const used = [], excluded = [];
+  const normalized = meaning.ai && validatedPlayAxes(meaning, meaning.ai.play_axes);
+  if (normalized) { used.push(...normalized.used); excluded.push(...normalized.excluded); }
+  for (const axis of normalized ? [] : meaning.decisionAxes || []) {
+    const values = semanticPlayAxes[axis.id];
+    // Unknown on either side is not permission to reward the other side.
+    if (!values || !Object.hasOwn(values, axis.valueA) || !Object.hasOwn(values, axis.valueB)
+        || axis.valueA === axis.valueB) {
+      excluded.push({...axis, reason: "unmapped-or-no-directional-contrast"});
+      continue;
+    }
+    const tagsA = values[axis.valueA].filter(t => playTagEvidence(meaning, 'a', t));
+    const tagsB = values[axis.valueB].filter(t => playTagEvidence(meaning, 'b', t));
+    used.push({...axis, tagsA, tagsB,
+      reasonsA: tagsA.map(tag => ({tag, ...playTagEvidence(meaning, 'a', tag)})),
+      reasonsB: tagsB.map(tag => ({tag, ...playTagEvidence(meaning, 'b', tag)}))});
+  }
+  const likes = (zodiacProfiles[sign[0]] || zodiacProfiles["황소자리"]).likes;
+  const cardLikes = [...cardTags(cards)];
+  const temperature = Math.max(-1, Math.min(1, (mood - 5.5) / 4.5));
+  const traces = {};
+  for (const side of ["a", "b"]) {
+    const tagKey = side === "a" ? "tagsA" : "tagsB";
+    const tags = [...new Set(used.flatMap(ax => ax[tagKey]))];
+    const warm = tags.filter(t => ["energy", "action", "fun", "adventure"].includes(t));
+    const cool = tags.filter(t => ["relax", "comfort", "soft"].includes(t));
+    const zodiacMatches = likes.filter(t => tags.includes(t));
+    const cardMatches = cardLikes.filter(t => tags.includes(t));
+    const moodBoost = Math.round(temperature * Math.sign(warm.length - cool.length) * 6 * 100) / 100;
+    const zodiac = Math.round(Math.min(14, zodiacMatches.length * 4) * 0.35 * 100) / 100;
+    const card = Math.round(Math.min(16, cardMatches.length * 5) * 0.4 * 100) / 100;
+    traces[side] = {base: 50, mood: moodBoost, zodiac, card, tags, warm, cool,
+      zodiacMatches, cardMatches, total: Math.round((50 + moodBoost + zodiac + card) * 100) / 100};
+  }
+  return {used, excluded, traces, inputs: {mood, sign: sign[0], cards}};
+}
+
+// Fixed game preferences, not claims about the options. No model-generated tags.
+const canonicalPlayConfig = {
+  activity: {values:['passive','active'], mood:6, low:['relax','comfort'], high:['action','energy']},
+  immediacy: {values:['later','now'], mood:6, low:['practical','safe'], high:['action','energy']},
+  setting: {values:['indoor','outdoor'], mood:4, low:['comfort','warmth'], high:['adventure','freedom']},
+  social: {values:['low','high'], mood:4, low:['focus','deep'], high:['social']},
+  effort: {values:['low','high'], mood:4, low:['relax','comfort'], high:['energy','result']},
+  pace: {values:['calm','dynamic'], mood:4, low:['relax','soft'], high:['energy','action']},
+  novelty: {values:['familiar','new'], mood:4, low:['comfort','safe'], high:['newness','variety']},
+  ownership: {values:['temporary','own'], mood:-3, low:['freedom','variety'], high:['responsibility','result']}
+};
+
+function canonicalAxesFor(meaning) {
+  const used=[], excluded=[];
+  const supplied=meaning.ai?.canonical_axes;
+  const candidates=Array.isArray(supplied)?supplied:(meaning.decisionAxes||[]).map(ax=>{
+    const row={...ax,explanation:ax.label,origin:'stored-enum'};
+    if(ax.id==='experience') {
+      row.id='activity';
+      row.valueA=({observe:'passive',participate:'active'})[ax.valueA];
+      row.valueB=({observe:'passive',participate:'active'})[ax.valueB];
+    }
+    if(ax.id==='activity') {
+      row.valueA=ax.valueA==='rest'?'passive':ax.valueA;
+      row.valueB=ax.valueB==='rest'?'passive':ax.valueB;
+    }
+    if(ax.id==='ownership') {
+      row.valueA=ax.valueA==='rent'?'temporary':ax.valueA;
+      row.valueB=ax.valueB==='rent'?'temporary':ax.valueB;
+    }
+    return row;
+  });
+  for(const row of candidates.slice(0,3)) {
+    if(!row || typeof row!=='object') { excluded.push({reason:'invalid-axis-object'});continue; }
+    const config=canonicalPlayConfig[row?.id];
+    let valid=config && config.values.includes(row.valueA) && config.values.includes(row.valueB)
+      && row.valueA!==row.valueB && !used.some(r=>r.id===row.id);
+    for(const [i,s] of ['A','B'].entries()) {
+      if(row?.id==='immediacy' && ChoiceInput.intent(meaning.options[i].name)==='skip') valid=false;
+      const texts=[meaning.situation,meaning.options[i].name];
+      if(!['effort','pace','novelty'].includes(row?.id)) texts.push(meaning.options[i].meaning,meaning.options[i].cue);
+      valid=valid && typeof row['quote'+s]==='string' && !!row['quote'+s]
+        && texts.some(t=>t.includes(row['quote'+s]));
+    }
+    if(!valid) { excluded.push({...row,reason:'unknown-equal-unquoted-or-duplicate-axis'});continue; }
+    used.push({...row,origin:row.origin||'normalized-canonical'});
+  }
+  return {used,excluded};
+}
+
+function semanticPlayScores(meaning, mood, sign, cards) {
+  const {used,excluded}=canonicalAxesFor(meaning);
+  const likes=(zodiacProfiles[sign[0]]||zodiacProfiles['황소자리']).likes;
+  const drawn=[...cardTags(cards)];
+  const temperature=Math.max(-1,Math.min(1,(mood-5.5)/4.5));
+  const round=v=>Math.round(v*100)/100;
+  const traces={};
+  for(const side of ['a','b']) {
+    const axes=used.map(axis=>{
+      const c=canonicalPlayConfig[axis.id],value=axis[side==='a'?'valueA':'valueB'];
+      const polarity=value===c.values[1]?1:-1;
+      const matches=source=>({low:c.low.filter(x=>source.includes(x)),high:c.high.filter(x=>source.includes(x))});
+      const zodiacMatches=matches(likes),cardMatches=matches(drawn);
+      const delta=m=>m.high.length-m.low.length;
+      return {id:axis.id,value,polarity,mood:round(polarity*temperature*c.mood),
+        zodiac:round(polarity*Math.max(-4.2,Math.min(4.2,delta(zodiacMatches)*1.4))),
+        card:round(polarity*Math.max(-4,Math.min(4,delta(cardMatches)*2))),
+        zodiacMatches,cardMatches,config:c};
+    });
+    const mean=k=>round(axes.reduce((s,a)=>s+a[k],0)/Math.max(1,axes.length));
+    const m=mean('mood'),z=mean('zodiac'),c=mean('card');
+    traces[side]={base:50,mood:m,zodiac:z,card:c,total:round(50+m+z+c),axes,tags:[]};
+  }
+  return {used,excluded,traces,inputs:{mood,sign:sign[0],cards},engine:'canonical-direct-v1',
+    tieReason:used.length?'balanced-play-influences':'no-distinguishing-canonical-axis'};
+}
+
+function semanticPlayNarrative(meaning, understanding, mood, sign, play = {}) {
+  const cards = zodiacCards(sign, Math.round(mood * 101));
+  const evidence = semanticPlayScores(meaning, mood, sign, cards);
+  const {a, b} = evidence.traces;
+  const tied = a.total === b.total;
+  let draw = null;
+  if (tied) {
+    if (typeof play.tieRoll === "number" && play.tieRoll >= 0 && play.tieRoll < 1) draw = play.tieRoll;
+    else if (globalThis.crypto?.getRandomValues) draw = globalThis.crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296;
+    else draw = Math.random();
+  }
+  const recommendA = tied ? draw < 0.5 : a.total > b.total;
+  const index = recommendA ? 0 : 1;
+  const options = meaning.options.map(o => ({name: o.name, features: [o.meaning]}));
+  const winner = options[index], loser = options[1 - index];
+  const winnerScore = tied ? 50 : Math.min(75, Math.max(51, Math.round(Math.max(a.total, b.total) / (a.total + b.total) * 100)));
+  meaning.scoringPolicy = "semantic-play-v1";
+  meaning.decisionEvidence = {source: "validated-meaning-play", ...evidence,
+    a: options[0].features, b: options[1].features,
+    excludedSources: ["category-fallback", "name-hash", "preferred"],
+    tieBreak: tied ? {method: "independent-random-draw", draw, semanticAdvantage: false} : null};
+  meaning.decision = {winner: winner.name, winnerScore, loserScore: 100 - winnerScore, lenses: []};
+  const scene = meaning.ai?.meaning[index === 0 ? "optionA_meaning" : "optionB_meaning"]?.scene;
+  const contrast = `‘${meaning.options[0].cue}’와 ‘${meaning.options[1].cue}’의 갈림길이에요.`;
+  const winnerTrace = recommendA ? a : b, loserTrace = recommendA ? b : a;
+  const influences = [["마음의 온도", "mood"], ["별자리 성향", "zodiac"], ["별 카드", "card"]]
+    .filter(([, key]) => winnerTrace[key] > loserTrace[key]).map(([label]) => label);
+  const why = contrast + (tied
+    ? ` 연결된 놀이 점수가 같아 이번에는 추첨으로 ‘${winner.name}’ 쪽을 골랐어요.`
+    : ` ${influences.join("·")}를 이 차이에 연결한 놀이 점수는 ‘${winner.name}’ 쪽이 높았어요.`);
+  // Reuse semantic-v2 scenes, not the discontinued Writer. Unknown meanings use
+  // the user's own expectation rather than inventing an ungrounded scene.
+  const future = scene?.future || `내가 기대한 건 ‘${meaning.options[index].meaning}’.`;
+  const capture = play.omitCapture ? "" : scene?.capture || `${winner.name} — ${meaning.options[index].cue}.`;
+  const content = {meaningId: meaning.id, writerVersion: "semantic-v2-play",
+    reason: {meaningId: meaning.id, role: "play-comparison", text: escapeHtml(why)},
+    future: {meaningId: meaning.id, role: "imagined-aftermath", text: escapeHtml(future)},
+    capture: {meaningId: meaning.id, role: "shareable-punchline", text: escapeHtml(capture)}};
+  return {category: "daily", understanding, meaning, content, recommendA, winner, loser,
+    winnerScore, loserScore: 100 - winnerScore, why: content.reason.text,
+    futureComment: content.future.text, advice: content.capture.text, zodiacCards: cards,
+    fortune: `${escapeHtml(sign[0])}의 오늘 키워드는 ${cards.map(escapeHtml).join(", ")}예요. 내 상황에 맞는 말만 골라 담아보세요.`,
+    resultTitle: `${escapeHtml(winner.name)} 쪽으로`, finalText: escapeHtml(why)};
+}
+
+function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification = null, ai = null, play = {}) {
+  const interpretation = inspectMeaningInput(question, choiceA, choiceB, profile.type === "general" ? "" : profile.type);
   if (interpretation.message) throw new Error(interpretation.message);
   const questionAnalysis = analyzeQuestion(question, choiceA, choiceB, profile);
   const subjectProfile = (questionAnalysis && questionAnalysis.subjectProfile)
     || extractSubjectProfile(question, choiceA, choiceB, questionAnalysis ? questionAnalysis.category : "daily");
-  const category = questionAnalysis && questionAnalysis.categoryRoutingConfidence >= 0.58
+  let category = questionAnalysis && questionAnalysis.categoryRoutingConfidence >= 0.58
     ? questionAnalysis.category
     : inferCategory(question, choiceA, choiceB, profile);
-  const meaning = buildChoiceMeaning(question, choiceA, choiceB, category, questionAnalysis.understanding, clarification);
-  if (meaning.status !== "ready") return { needsMeaning: true, meaning, understanding: questionAnalysis.understanding };
+  const semanticEnvelope = ai ? {binding:ai.binding,version:ai.version,meaning:ai.meaning,play_axes:ai.play_axes,canonical_axes:ai.canonical_axes} : null;
+  const meaning = buildChoiceMeaning(question, choiceA, choiceB, category, questionAnalysis.understanding, clarification, semanticEnvelope);
+  if (meaning.status !== "ready") return { needsMeaning: true, meaning, understanding: {
+    ...questionAnalysis.understanding, level: 'low', reasons: [...new Set([
+      ...questionAnalysis.understanding.reasons, 'insufficient-grounded-contrast'])]
+  }};
+  const basis = assessDirectionalEvidence(questionAnalysis.understanding, meaning);
+  if (basis.status === "semantic-play") return semanticPlayNarrative(meaning, questionAnalysis.understanding, mood, sign, play);
+  const semantic = !!meaning.ai;
+  if (semantic) category = "daily";
   const a = contextualizeOption(choiceA, category, question);
   const b = contextualizeOption(choiceB, category, question);
   a.intent = interpretation.intentA;
   b.intent = interpretation.intentB;
-  if (subjectProfile && subjectProfile.subject) {
+  if (!semantic && subjectProfile && subjectProfile.subject) {
     const subjectTraits = subjectProfile.traits || [];
     const pairSubject = String(subjectProfile.subject).includes(" / ");
     const associativePair = !!((subjectProfile.optionA_profile && subjectProfile.optionA_profile.associative) || (subjectProfile.optionB_profile && subjectProfile.optionB_profile.associative));
@@ -6741,7 +7095,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     a.subjectProfile = subjectProfile;
     b.subjectProfile = subjectProfile;
   }
-  if (questionAnalysis && questionAnalysis.category === category) {
+  if (!semantic && questionAnalysis && questionAnalysis.category === category) {
     if (Array.isArray(questionAnalysis.optionA_traits) && questionAnalysis.optionA_traits.length) {
       const mergedA = category === "travel"
         ? (a.features || []).concat(questionAnalysis.optionA_traits)
@@ -6766,12 +7120,25 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const primaryCard = cardLabels[0];
   const secondaryCard = cardLabels[1];
   const decisionLenses = selectDecisionLenses(category, question, seed, sign);
+  if (semantic) {
+    const tagMap={activity:{active:['energy','action'],rest:['relax','comfort']},immediacy:{now:['action'],later:['safe']},
+      comfort:{high:['comfort']},stimulation:{high:['fun']},cost:{low:['practical']},time:{low:['practical']},risk:{low:['safe']}};
+    [a,b].forEach((option,index)=>{
+      const side=index===0?'a':'b',value=index===0?'valueA':'valueB';
+      option.features=meaning.decisionAxes.map(ax=>`${ax.label}: ${ax[side]}`);
+      option.semanticAxes=meaning.decisionAxes;
+      option.semanticTags=[...new Set(meaning.decisionAxes.flatMap(ax=>tagMap[ax.id]?.[ax[value]]||[]))];
+      option.subjectName=option.name;option.subjectProfile=null;option.vibe='';option.caution='';
+      option.evidence={source:'validated-semantic-axes',features:[...option.features]};
+    });
+  }
   // Shared context carries existing rule evidence separately from user descriptions.
   meaning.decisionEvidence = { a: [...a.features], b: [...b.features], source: "existing-rule-features" };
-  let aScore = scoreOption({ ...a, features: meaning.decisionEvidence.a }, category, meaning.situation, mood, seed, sign, cardLabels, decisionLenses);
-  let bScore = scoreOption({ ...b, features: meaning.decisionEvidence.b }, category, meaning.situation, mood, seed, sign, cardLabels, decisionLenses);
-  if (profile.forced === "A") aScore = Math.max(aScore, bScore + 12);
-  if (profile.forced === "B") bScore = Math.max(bScore, aScore + 12);
+  let aScore = scoreOption(a, category, meaning.situation, mood, seed, sign, cardLabels, decisionLenses);
+  let bScore = scoreOption(b, category, meaning.situation, mood, seed, sign, cardLabels, decisionLenses);
+  if (semantic) meaning.decisionEvidence={a:[...a.features],b:[...b.features],source:'validated-semantic-axes',axes:meaning.decisionAxes,traces:{a:a.scoreTrace,b:b.scoreTrace}};
+  if (!semantic && profile.forced === "A") aScore = Math.max(aScore, bScore + 12);
+  if (!semantic && profile.forced === "B") bScore = Math.max(bScore, aScore + 12);
   const recommendA = aScore > bScore || (aScore === bScore && ChoiceInput.normalize(a.name) < ChoiceInput.normalize(b.name));
   const winner = recommendA ? a : b;
   const loser = recommendA ? b : a;
@@ -6781,7 +7148,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const uncertaintyWords = ["모르", "애매", "고민", "반반", "불안", "혹시", "잘"];
   const strongContextWords = ["고장", "아프", "마감", "시험", "화질", "비", "춥", "숙취", "해장", "돈", "비싸", "내일", "너무"];
   const uncertainty = includesAny(question, uncertaintyWords);
-  const strongContext = includesAny(question, strongContextWords) || profile.forced;
+  const strongContext = !semantic && (includesAny(question, strongContextWords) || profile.forced);
   let winnerScore = 55;
   if (scoreGap <= 3 || uncertainty) {
     winnerScore = 51 + ((seed + rawWinnerScore) % 4);
@@ -6843,7 +7210,7 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
     place: categoryRealityReason("place", winner, loser, question, cardLabels, sign, seed),
     daily: categoryRealityReason("daily", winner, loser, question, cardLabels, sign, seed)
   };
-  const shareLine = shareableAdvice(category, winner, loser, question, seed, sign);
+  const shareLine = play.omitCapture ? "" : shareableAdvice(category, winner, loser, question, seed, sign);
   const lensReason = decisionLensReasonLine(decisionLenses, winner, loser, category, question, seed);
   const categoryFrame = selectCategoryFrame(category, question, seed, sign);
   const frameReason = categoryFrameReasonLine(categoryFrame, category, winner, loser, question);
@@ -6859,9 +7226,9 @@ function buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, s
   const sharedLoser = { ...loser, name: meaning.options[recommendA ? 1 : 0].name, features: meaning.decisionEvidence[recommendA ? "b" : "a"] };
   meaning.decision = { winner: sharedWinner.name, winnerScore, loserScore, lenses: decisionLenses };
   const content = meaningContent(meaning, recommendA, {
-    future: preserveFun ? cleanPlayTone(futureComment(category, sharedWinner, meaning.situation, seed, sign)) : "",
-    capture: preserveFun ? cleanPlayTone(shareableAdvice(category, sharedWinner, sharedLoser, meaning.situation, seed, sign)) : ""
-  }, seed);
+    future: !semantic ? cleanPlayTone(futureComment(preserveFun || understanding.level === 'supported' ? category : 'daily', sharedWinner, meaning.situation, seed, sign)) : "",
+    capture: !semantic && !play.omitCapture ? cleanPlayTone(shareableAdvice(preserveFun || understanding.level === 'supported' ? category : 'daily', sharedWinner, sharedLoser, meaning.situation, seed, sign)) : ""
+  }, seed, ai?.writer);
   return {
     category,
     understanding,
@@ -6964,7 +7331,7 @@ function renderArchive() {
       <h3>${escapeHtml(card.question)}</h3>
       ${card.choiceA && card.choiceB ? `<p><strong>A:</strong> ${escapeHtml(card.choiceA)} · <strong>B:</strong> ${escapeHtml(card.choiceB)}</p>` : ""}
       <p>${escapeHtml(card.recommended || card.choice)}</p>
-      ${card.advice ? `<p><strong>한 줄 조언:</strong> ${escapeHtml(card.advice)}</p>` : ""}
+      ${card.details?.future ? `<p><strong>미래의 나:</strong> ${escapeHtml(card.details.future)}</p>` : ""}
       ${card.outcome ? `<p><strong>체크인:</strong> ${escapeHtml(card.outcome)}</p>` : ""}
       ${card.memo ? `<p><strong>메모:</strong> ${escapeHtml(card.memo)}</p>` : ""}
       ${card.details ? `<button type="button" class="secondary-button" data-open-card="${index}">결과 다시보기</button>` : ""}
@@ -7015,6 +7382,16 @@ function downloadLatestCard(selectedCard = null) {
     return;
   }
   const card = selectedCard && selectedCard.createdAt ? selectedCard : archive[0];
+  if (card.details) {
+    const imageData = createChoiceShareImage(card).toDataURL("image/png");
+    const filename = `galimgil-card-${todayKey()}.png`;
+    if (window.GalimgilAndroid && typeof window.GalimgilAndroid.saveImage === "function") {
+      window.GalimgilAndroid.saveImage(imageData, filename);
+    } else {
+      const link = document.createElement("a");link.download=filename;link.href=imageData;link.click();
+    }
+    return;
+  }
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
   canvas.height = 1920;
@@ -7123,13 +7500,98 @@ function plainResultText(value) {
   return String(value || "").replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 }
 
+function captureOriginalContext(question, a, b) {
+  const original = String(question || "").trim();
+  // Quote complete source spans only; never strip negation or infer a category.
+  const sentence = original.split(/[.!?。！？\n]/u).find(part => part.trim())?.trim() || "";
+  if (!sentence || [a, b].some(option => option && sentence.includes(option))) return "";
+  if (/(?:^|\s)(?:안|못)(?:\s|$)|않|아니|없/u.test(sentence)) return sentence.length <= 48 ? sentence : "";
+  const boundary = sentence.match(/^.{2,26}?(?:에서|에는|엔|동안|전에|후에|마다|보니|는데|지만|때)(?=\s|$)/u);
+  return boundary ? boundary[0] : sentence.length <= 48 ? sentence : "";
+}
+
+function capturePatternIndex(binding, count) {
+  // Renderer-only FNV-1a: stable text selection without touching the score seed.
+  let hash = 2166136261;
+  for (const char of binding) hash = Math.imul(hash ^ char.codePointAt(0), 16777619) >>> 0;
+  hash = Math.imul(hash ^ (hash >>> 16), 0x85ebca6b);
+  hash = Math.imul(hash ^ (hash >>> 13), 0xc2b2ae35);
+  return ((hash ^ (hash >>> 16)) >>> 0) % count;
+}
+
+function captureSelectionPatterns(winner, context = "") {
+  if (context) return [
+    `‘${context}’ 편의 일정표에 ‘${winner}’ 체크 완료.`,
+    `‘${context}’ 계획서, ‘${winner}’ 밑줄만큼은 진심.`,
+    `‘${context}’ 편 엔딩 크레딧에 ‘${winner}’ 올립니다.`,
+    `‘${context}’ 이야기의 이번 주연은 ‘${winner}’.`,
+    `‘${context}’ 안건은 ‘${winner}’로 회의록에 도장 쾅.`,
+    `‘${context}’ 고민 회의는 ‘${winner}’ 한 표로 폐회.`,
+    `‘${context}’ 메모에 남은 동그라미 하나, ‘${winner}’.`,
+    `‘${context}’ 한 페이지에 ‘${winner}’로 선택의 흔적 남김.`,
+    `‘${context}’ 편의 제목은 ‘${winner}’로 일단 저장.`,
+    `‘${context}’ 장면의 선택 자막은 ‘${winner}’로 갑니다.`
+  ];
+  return [
+    `오늘의 한 표 ‘${winner}’, 이 캡처를 결정문으로 제출합니다.`,
+    `‘${winner}’ 한 표로 고민 회의는 여기서 폐회합니다.`,
+    `오늘의 갈림길 도장은 ‘${winner}’에 쾅.`,
+    `고민의 엔딩 크레딧, 오늘 주연은 ‘${winner}’.`,
+    `‘${winner}’ 쪽 한 표를 캡처해서 증거 확보 끝.`,
+    `오늘의 선택 봉투에서 나온 ‘${winner}’에 일단 박수부터.`
+  ];
+}
+
+function safeLegacyCapture(text, winner) {
+  // Closed, name-bound forms: no category facts, inferred properties or loser cues.
+  return [
+    `인생은 몰라도 오늘은 ${winner}입니다.`,
+    `오늘의 나는 ${winner} 쪽으로 살짝 기울었습니다.`,
+    `입은 ${winner}이라고 했고 자존심만 늦게 인정했습니다.`
+  ].includes(text);
+}
+
+function restoredChoiceCapture(narrative, seed, sign, input = {}) {
+  if (narrative.needsMeaning || narrative.meaningUnavailable || !narrative.winner?.name) {
+    return {text: "", source: "EMPTY_SAFE_FALLBACK"};
+  }
+  const a = input.a ?? narrative.meaning?.options?.[0]?.name ?? narrative.winner.name;
+  const b = input.b ?? narrative.meaning?.options?.[1]?.name ?? narrative.loser?.name;
+  const winner = narrative.winner.name;
+  if (winner !== a && winner !== b) return {text: "", source: "INVALID_WINNER_BINDING"};
+  const question = input.question ?? narrative.meaning?.situation ?? "";
+  const localSupported = !narrative.runtimeMeaning && !narrative.meaning?.ai &&
+    narrative.understanding?.level === "supported" && narrative.meaning?.status === "ready" &&
+    narrative.meaning?.options?.length === 2 &&
+    narrative.meaning.options.every(option => option.source === "feature-bank");
+  const candidate = localSupported ? plainResultText(cleanPlayTone(shareableAdvice(narrative.category,
+    narrative.winner, narrative.loser, question, seed, sign))) : "";
+  if (safeLegacyCapture(candidate, winner)) return {text: candidate, source: "EXISTING"};
+  // Selection-only punchlines also work for verified-axis results; no extra fact is needed.
+  const context = captureOriginalContext(question, a, b);
+  const patterns = captureSelectionPatterns(winner, context);
+  const binding = JSON.stringify([question, [a, b].sort(), winner]);
+  const pattern = capturePatternIndex(binding, patterns.length);
+  return {
+    text: patterns[pattern], source: "LOCAL_SELECTION", pattern,
+    evidence: {winner, kind: "selection-only", context, contextSource: context ? "original-question" : null},
+    legacyRejected: Boolean(candidate)
+  };
+}
+
+function choiceShareText(card) {
+  const d = card.details;
+  return ["[갈림길 선택 놀이]", card.question, `A: ${card.choiceA}`, `B: ${card.choiceB}`, card.recommended,
+    d.percent === null ? "" : `놀이 기울기: ${d.winner} ${d.percent}% / ${d.loser} ${100-d.percent}%`, d.why,
+    `별 한 스푼: ${d.cards.join(" · ")}`, `별의 한마디: ${d.fortune || ""}`,
+    d.future ? `미래의 나 댓글: ${d.future}` : "",
+    card.advice ? `캡처 한 줄: ${card.advice}` : "",
+    "놀이용 결과이며 실제 성공 확률이 아닙니다."].filter(Boolean).join("\n");
+}
+
 function openChoiceCard(card, freshResult = false) {
   if (!card || !card.details) return;
   const d = card.details;
-  const text = ["[갈림길 선택 놀이]", card.question, `A: ${card.choiceA}`, `B: ${card.choiceB}`, card.recommended, d.why,
-    `별 한 스푼: ${d.cards.join(" · ")}`, `별의 한마디: ${d.fortune || ""}`,
-    `미래의 나 댓글: ${d.future || ""}`, `캡처 한 줄: ${card.advice || ""}`,
-    "놀이용 결과이며 실제 성공 확률이 아닙니다."].join("\n");
   showResult(document.getElementById("choiceResult"), `
     <div class="report-hero">
       <span>${escapeHtml(card.date)} · 오늘의 갈림길</span>
@@ -7137,23 +7599,24 @@ function openChoiceCard(card, freshResult = false) {
       <p>${escapeHtml(card.choiceA)} vs ${escapeHtml(card.choiceB)}</p>
     </div>
     <p class="result-reason">${escapeHtml(d.why)}</p>
-    <p class="result-balance">놀이 기울기 · ${escapeHtml(d.winner)} ${d.percent}% / ${escapeHtml(d.loser)} ${100 - d.percent}%</p>
-    <p class="fine-print">별자리와 선택 규칙으로 만든 놀이용 수치이며 실제 성공 확률이 아니에요.</p>
+    <p class="result-balance">${d.percent === null ? "내가 확인한 기준으로 고른 선택" : `놀이 기울기 · ${escapeHtml(d.winner)} ${d.percent}% / ${escapeHtml(d.loser)} ${100 - d.percent}%`}</p>
+    <p class="fine-print">${d.percent === null ? "별 카드는 재미로만 보세요. 선택 근거와 점수에는 사용하지 않았어요." : "별자리와 선택 규칙으로 만든 놀이용 수치이며 실제 성공 확률이 아니에요."}</p>
     <div class="result-extras">
       <section class="report-section"><h4>별 한 스푼</h4><p class="zodiac-card-row">${d.cards.map((name) => `<span>${escapeHtml(name)}</span>`).join("")}</p></section>
       <section class="report-section"><h4>별의 한마디</h4><p>${escapeHtml(d.fortune)}</p></section>
-      <section class="report-section"><h4>미래의 나 댓글</h4><blockquote class="advice-quote">${escapeHtml(d.future)}</blockquote></section>
-      <section class="report-section" data-ad-result-end><h4>캡처 한 줄</h4><blockquote class="advice-quote">${escapeHtml(card.advice)}</blockquote></section>
+      <section class="report-section" data-future-section ${d.future ? "" : "hidden"}><h4>미래의 나 댓글</h4><blockquote class="advice-quote">${escapeHtml(d.future || "")}</blockquote></section>
+      ${card.advice ? `<section class="report-section" data-capture-section><h4>캡처 한 줄</h4><blockquote class="advice-quote">${escapeHtml(card.advice)}</blockquote></section>` : ""}
     </div>
-    <div class="share-actions">
+    <div class="share-actions" data-ad-result-end>
       <button class="secondary-button" id="downloadChoiceButton" type="button">이미지 저장</button>
       <button class="ghost-button" id="choiceShareButton" type="button">결과 공유</button>
     </div>
     <button class="wide-button new-choice-button" id="newChoiceButton" type="button">다른 고민하기</button>`);
   document.getElementById("downloadChoiceButton").addEventListener("click", () => downloadLatestCard(card));
-  document.getElementById("choiceShareButton").addEventListener("click", () => shareText(text, "갈림길 선택 카드"));
+  document.getElementById("choiceResult").dataset.cardId = card.createdAt;
+  document.getElementById("choiceShareButton").addEventListener("click", () => shareText(choiceShareText(card), "갈림길 선택 카드"));
   const startNextQuestion = () => {
-    ["questionInput", "choiceA", "choiceB", "choiceContext", "meaningA", "meaningB", "meaningAxis"].forEach((id) => { document.getElementById(id).value = ""; });
+    ["questionInput", "choiceA", "choiceB", "choiceContext", "meaningA", "meaningB"].forEach((id) => { document.getElementById(id).value = ""; });
     document.getElementById("choiceMeaningRow").hidden = true;
     document.getElementById("choiceFeedback").textContent = "";
     document.getElementById("choiceContextRow").hidden = true;
@@ -7203,7 +7666,7 @@ document.getElementById("moodInput").addEventListener("input", (event) => {
     document.getElementById("choiceResult").classList.remove("show");
     document.getElementById("choiceFeedback").textContent = "";
     document.getElementById("choiceContext").value = "";
-    ["meaningA", "meaningB", "meaningAxis"].forEach((field) => { document.getElementById(field).value = ""; });
+    ["meaningA", "meaningB"].forEach((field) => { document.getElementById(field).value = ""; });
     document.getElementById("choiceMeaningRow").hidden = true;
     document.getElementById("choiceContextRow").hidden = true;
     document.querySelectorAll("[data-choice-context]").forEach((chip) => chip.setAttribute("aria-pressed", "false"));
@@ -7221,11 +7684,11 @@ document.querySelectorAll("[data-choice-context]").forEach((chip) => {
   });
 });
 
-["meaningA", "meaningB", "meaningAxis"].forEach((id, index, fields) => {
+["meaningA", "meaningB"].forEach((id, index, fields) => {
   document.getElementById(id).addEventListener("keydown", (event) => {
     if (event.key !== "Enter" || event.isComposing || event.keyCode === 229) return;
     event.preventDefault();
-    if (index < 2) document.getElementById(fields[index + 1]).focus();
+    if (index < fields.length - 1) document.getElementById(fields[index + 1]).focus();
     else document.getElementById("choiceForm").requestSubmit();
   });
 });
@@ -7238,8 +7701,11 @@ document.querySelector("[data-scroll-target]")?.addEventListener("click", () => 
   document.getElementById("choiceA").scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
-document.getElementById("choiceForm").addEventListener("submit", (event) => {
+document.getElementById("choiceForm").addEventListener("input", () => { meaningInputRevision++; });
+document.getElementById("choiceForm").addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (document.getElementById("choiceSubmitButton").disabled) return;
+  const inputRevision = meaningInputRevision;
   const question = document.getElementById("questionInput").value.trim();
   const choiceA = document.getElementById("choiceA").value.trim();
   const choiceB = document.getElementById("choiceB").value.trim();
@@ -7249,8 +7715,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     document.getElementById("choiceResult").scrollIntoView({behavior: "smooth", block: "start"});
     return;
   }
-  const interpretation = ChoiceInput.inspect(question, choiceA, choiceB,
-    (option) => findFeatureEntry(option)?.item.category, document.getElementById("choiceContext").value);
+  const interpretation = inspectMeaningInput(question, choiceA, choiceB, document.getElementById("choiceContext").value);
   document.getElementById("choiceFeedback").textContent = interpretation.needsCategory
     ? "어떤 종류의 선택인가요?" : interpretation.message || "";
   if (interpretation.message) {
@@ -7289,29 +7754,43 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     const profile = choiceProfile(question, choiceA, choiceB);
     if (profile.type !== interpretation.category) profile.forced = null;
     profile.type = interpretation.category;
-    const clarification = {
+    const binding = JSON.stringify([question, choiceA, choiceB]);
+    const savedConfirmation = archive.find(item => item.question === question && item.choiceA === choiceA && item.choiceB === choiceB)?.details?.meaning?.confirmation;
+    const clarification = !document.getElementById("choiceMeaningRow").hidden ? {
       binding: JSON.stringify([question, choiceA, choiceB]),
       a: document.getElementById("meaningA").value,
-      b: document.getElementById("meaningB").value,
-      axis: document.getElementById("meaningAxis").value
-    };
-    const narrative = buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification);
+      b: document.getElementById("meaningB").value
+    } : savedConfirmation || null;
+    document.getElementById("choiceMeaningRow").hidden = true;
+    let narrative = buildChoiceNarrative(question, choiceA, choiceB, mood, sign, profile, seed, clarification, null, {omitCapture:true});
+    narrative = await ChoiceRuntimeUI.resolve({question,a:choiceA,b:choiceB,mood,sign,local:narrative,clarification,archive});
+    if (inputRevision !== meaningInputRevision || document.getElementById("questionInput").value.trim() !== question || document.getElementById("choiceA").value.trim() !== choiceA || document.getElementById("choiceB").value.trim() !== choiceB) {
+      loader.classList.remove("show");
+      submitButtons.forEach(button => {button.disabled = false; button.textContent = "분석하기";});
+      return;
+    }
+    if (narrative.meaningUnavailable) {
+      loader.classList.remove("show");
+      document.getElementById("choiceMeaningRow").hidden = true;
+      document.getElementById("choiceFeedback").textContent = "의미 확인 응답을 받지 못했어요. 잠시 후 다시 시도해주세요.";
+      submitButtons.forEach(button => {button.disabled = false; button.textContent = "분석하기";});
+      return;
+    }
     if (narrative.needsMeaning) {
       loader.classList.remove("show");
       document.getElementById("choiceContextRow").hidden = true;
       document.getElementById("choiceMeaningRow").hidden = false;
       document.getElementById("meaningALabel").textContent = `A · ${choiceA}`;
       document.getElementById("meaningBLabel").textContent = `B · ${choiceB}`;
-      document.getElementById("choiceFeedback").textContent = "두 선택은 어떻게 다른가요? 각각 기대하는 점과 비교할 기준을 짧게 알려주세요.";
+      document.getElementById("choiceFeedback").textContent = "A와 B가 어떤 건지 짧게 알려주세요. 선택은 갈림길이 할게요.";
       submitButtons.forEach((button) => { button.disabled = false; button.textContent = "분석하기"; });
       document.getElementById("meaningA").focus({ preventScroll: true });
-      document.getElementById("choiceMeaningRow").scrollIntoView({ behavior: "instant", block: "center" });
       return;
     }
     document.getElementById("choiceMeaningRow").hidden = true;
     const recommendA = narrative.recommendA;
     const recommended = narrative.winner.name;
-    const adviceLine = narrative.advice;
+    const capture = restoredChoiceCapture(narrative, seed, sign, {question, a:choiceA, b:choiceB});
 
     archive.unshift({
       date: new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric" }).format(new Date()),
@@ -7320,12 +7799,15 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
       choiceA,
       choiceB,
       recommended: `추천: ${recommendA ? "A" : "B"} · ${recommended}`,
-      advice: plainResultText(adviceLine),
+      advice: capture.text,
       details: {
         winner: recommended, loser: narrative.loser.name, percent: narrative.winnerScore,
         why: plainResultText(narrative.why), fortune: plainResultText(narrative.fortune),
         future: plainResultText(narrative.futureComment), cards: narrative.zodiacCards,
-        meaning: narrative.meaning, contentSources: narrative.content
+        meaning: narrative.meaning, runtimeMeaning: narrative.runtimeMeaning || null,
+        scoreSource: narrative.scoreSource || "EXISTING_RULE",
+        futureStatus: narrative.runtimeMeaning ? "pending" : "existing",
+        contentSources: {reason:narrative.content.reason,future:narrative.content.future,capture}
       },
       sign: signName,
       mood,
@@ -7339,6 +7821,7 @@ document.getElementById("choiceForm").addEventListener("submit", (event) => {
     setTimeout(() => {
       loader.classList.remove("show");
       if (document.getElementById("choiceA").value.trim() === choiceA && document.getElementById("choiceB").value.trim() === choiceB && document.getElementById("questionInput").value.trim() === question) openChoiceCard(createdCard, true);
+      ChoiceRuntimeUI.future(createdCard,archive).catch(() => {});
       submitButtons.forEach((button) => {
         button.disabled = false;
         button.textContent = "분석하기";

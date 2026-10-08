@@ -1,0 +1,3514 @@
+{
+  "0": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1274,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 735,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 2009
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "여가 장소 선택: 외출해 놀 곳을 고르는 상황",
+      "optionA_meaning": {
+        "summary": "동물들을 관찰하고 시설을 걷거나 구경하는 장소(동물원 방문)",
+        "activity": "동물 관찰하기",
+        "basis": "general-meaning",
+        "quote": "동물원",
+        "scene": {
+          "elements": [
+            "동물원",
+            "동물"
+          ],
+          "future": "동물원에서 코끼리 우리를 오래 바라보며 주변을 느긋하게 산책하게 된다.",
+          "capture": "코끼리 보며 멍 때리기"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "놀이기구와 탈거리가 있는 곳에서 놀이기구를 타거나 체험하는 장소(놀이동산 방문)",
+        "activity": "놀이기구 타기",
+        "basis": "general-meaning",
+        "quote": "놀이동산",
+        "scene": {
+          "elements": [
+            "놀이동산",
+            "놀이기구"
+          ],
+          "future": "놀이동산에서 롤러코스터 줄을 보고 마음을 다잡고 소리치며 탑승하게 된다.",
+          "capture": "롤러코스터 소리 한 번"
+        }
+      },
+      "meaningful_difference": "동물원은 주로 동물을 '관찰'하는 경험을 제공하는 장소이고, 놀이동산은 놀이기구를 '체험'하며 활동적으로 움직이는 장소라는 점에서 경험의 성격(관찰 vs 체험)이 다르다.",
+      "useful_comparison_axes": [
+        "activity",
+        "experience"
+      ],
+      "decision_axes": [
+        {
+          "id": "activity",
+          "label": "활동 성격",
+          "a": "동물 관찰하기",
+          "b": "놀이기구 타기",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "동물원",
+          "quoteB": "놀이동산"
+        },
+        {
+          "id": "experience",
+          "label": "체험 방식",
+          "a": "observe",
+          "b": "participate",
+          "valueA": "observe",
+          "valueB": "participate",
+          "basis": "general-meaning",
+          "quoteA": "동물원",
+          "quoteB": "놀이동산"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "어디 놀러갈까?"
+        },
+        {
+          "input": "a",
+          "quote": "동물원"
+        },
+        {
+          "input": "b",
+          "quote": "놀이동산"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 일반적 의미(동물 관찰 vs 놀이기구 체험)는 명확함",
+          "구체적 시설 구성이나 추가 요구조건은 주어지지 않음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "여가 장소 선택: 외출해 놀 곳을 고르는 상황",
+      "optionA_meaning": {
+        "summary": "동물들을 관찰하고 시설을 걷거나 구경하는 장소(동물원 방문)",
+        "activity": "동물 관찰하기",
+        "basis": "general-meaning",
+        "quote": "동물원",
+        "scene": {
+          "elements": [
+            "동물원",
+            "동물"
+          ],
+          "future": "동물원에서 코끼리 우리를 오래 바라보며 주변을 느긋하게 산책하게 된다.",
+          "capture": "코끼리 보며 멍 때리기"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "놀이기구와 탈거리가 있는 곳에서 놀이기구를 타거나 체험하는 장소(놀이동산 방문)",
+        "activity": "놀이기구 타기",
+        "basis": "general-meaning",
+        "quote": "놀이동산",
+        "scene": {
+          "elements": [
+            "놀이동산",
+            "놀이기구"
+          ],
+          "future": "놀이동산에서 롤러코스터 줄을 보고 마음을 다잡고 소리치며 탑승하게 된다.",
+          "capture": "롤러코스터 소리 한 번"
+        }
+      },
+      "meaningful_difference": "동물원은 주로 동물을 '관찰'하는 경험을 제공하는 장소이고, 놀이동산은 놀이기구를 '체험'하며 활동적으로 움직이는 장소라는 점에서 경험의 성격(관찰 vs 체험)이 다르다.",
+      "useful_comparison_axes": [
+        "activity",
+        "experience"
+      ],
+      "decision_axes": [
+        {
+          "id": "activity",
+          "label": "활동 성격",
+          "a": "동물 관찰하기",
+          "b": "놀이기구 타기",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "동물원",
+          "quoteB": "놀이동산"
+        },
+        {
+          "id": "experience",
+          "label": "체험 방식",
+          "a": "observe",
+          "b": "participate",
+          "valueA": "observe",
+          "valueB": "participate",
+          "basis": "general-meaning",
+          "quoteA": "동물원",
+          "quoteB": "놀이동산"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "어디 놀러갈까?"
+        },
+        {
+          "input": "a",
+          "quote": "동물원"
+        },
+        {
+          "input": "b",
+          "quote": "놀이동산"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 일반적 의미(동물 관찰 vs 놀이기구 체험)는 명확함",
+          "구체적 시설 구성이나 추가 요구조건은 주어지지 않음"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "2": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1272,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 529,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1801
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "퇴근길 이동수단 선택",
+      "optionA_meaning": {
+        "summary": "도로 위 노선을 따라 정해진 정류장에 정차하며 승·하차로 목적지에 가는 대중교통 수단을 뜻함.",
+        "activity": "버스 타기",
+        "basis": "general-meaning",
+        "quote": "버스",
+        "scene": {
+          "elements": [
+            "정류장",
+            "도로 위"
+          ],
+          "future": "정류장에서 내릴 준비를 하며 휴대폰을 슬쩍 확인하게 될 것이다.",
+          "capture": "도로 위에서 창밖을 바라보며 한숨 돌림"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "지하 터널을 따라 노선에 맞춰 역을 지나며 승·하차로 목적지에 가는 대중교통 수단을 뜻함.",
+        "activity": "지하철 타기",
+        "basis": "general-meaning",
+        "quote": "지하철",
+        "scene": {
+          "elements": [
+            "역",
+            "터널"
+          ],
+          "future": "역 계단을 올라 출구를 찾다가 목적지 방향을 다시 확인할 것이다.",
+          "capture": "터널을 달리는 칸 안에서 이어폰에 집중"
+        }
+      },
+      "meaningful_difference": "두 옵션은 이동 경로의 공간적 특성(도로 위 vs 지하 터널)과 승·하차 지점의 형태(정류장 vs 역)에서 실제 경험이 달라진다.",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "주행 공간",
+          "a": "도로 위",
+          "b": "지하 터널",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "버스",
+          "quoteB": "지하철"
+        },
+        {
+          "id": "activity",
+          "label": "이동 방식",
+          "a": "정류장 중심의 승·하차",
+          "b": "역 중심의 승·하차",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "버스",
+          "quoteB": "지하철"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "퇴근길 어떻게 갈까?"
+        },
+        {
+          "input": "a",
+          "quote": "버스"
+        },
+        {
+          "input": "b",
+          "quote": "지하철"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "입력된 선택지가 단어 하나로 명확하며 일반적 의미로 해석 가능함",
+          "질문 자체는 구체 조건(시간·노선 등)을 제공하지 않아 세부 비교는 제한됨"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "퇴근길 이동수단 선택",
+      "optionA_meaning": {
+        "summary": "도로 위 노선을 따라 정해진 정류장에 정차하며 승·하차로 목적지에 가는 대중교통 수단을 뜻함.",
+        "activity": "버스 타기",
+        "basis": "general-meaning",
+        "quote": "버스",
+        "scene": {
+          "elements": [
+            "정류장",
+            "도로 위"
+          ],
+          "future": "정류장에서 내릴 준비를 하며 휴대폰을 슬쩍 확인하게 될 것이다.",
+          "capture": "도로 위에서 창밖을 바라보며 한숨 돌림"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "지하 터널을 따라 노선에 맞춰 역을 지나며 승·하차로 목적지에 가는 대중교통 수단을 뜻함.",
+        "activity": "지하철 타기",
+        "basis": "general-meaning",
+        "quote": "지하철",
+        "scene": {
+          "elements": [
+            "역",
+            "터널"
+          ],
+          "future": "역 계단을 올라 출구를 찾다가 목적지 방향을 다시 확인할 것이다.",
+          "capture": "터널을 달리는 칸 안에서 이어폰에 집중"
+        }
+      },
+      "meaningful_difference": "두 옵션은 이동 경로의 공간적 특성(도로 위 vs 지하 터널)과 승·하차 지점의 형태(정류장 vs 역)에서 실제 경험이 달라진다.",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "주행 공간",
+          "a": "도로 위",
+          "b": "지하 터널",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "버스",
+          "quoteB": "지하철"
+        },
+        {
+          "id": "activity",
+          "label": "이동 방식",
+          "a": "정류장 중심의 승·하차",
+          "b": "역 중심의 승·하차",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "버스",
+          "quoteB": "지하철"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "퇴근길 어떻게 갈까?"
+        },
+        {
+          "input": "a",
+          "quote": "버스"
+        },
+        {
+          "input": "b",
+          "quote": "지하철"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "입력된 선택지가 단어 하나로 명확하며 일반적 의미로 해석 가능함",
+          "질문 자체는 구체 조건(시간·노선 등)을 제공하지 않아 세부 비교는 제한됨"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "3": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1278,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 562,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1840
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "어떤 노트북을 살까? 중고노트북 vs 새노트북",
+      "optionA_meaning": {
+        "summary": "이미 사용된 상태의 노트북을 구입하는 선택으로, 제품이 이전 소유자에게서 넘어온 상태임을 뜻한다.",
+        "activity": "중고 노트북 사기",
+        "basis": "general-meaning",
+        "quote": "중고노트북",
+        "scene": {
+          "elements": [
+            "중고노트북",
+            "구입"
+          ],
+          "future": "중고노트북을 들고 집에 와서 제품 상태를 하나씩 확인하며 웃게 될 것이다.",
+          "capture": "구입한 중고노트북"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "공장에서 새로 제조된 상태의 노트북을 구입하는 선택으로, 사용 흔적 없이 새 제품을 받는 것을 의미한다.",
+        "activity": "새 노트북 사기",
+        "basis": "general-meaning",
+        "quote": "새노트북",
+        "scene": {
+          "elements": [
+            "새노트북",
+            "구입"
+          ],
+          "future": "새노트북을 포장 채로 열어보고 사용법을 하나씩 시험해보며 즐거워할 것이다.",
+          "capture": "포장된 새노트북"
+        }
+      },
+      "meaningful_difference": "중고는 '이미 사용된 제품'을 구입하는 행위, 새는 '사용 흔적 없는 신제품'을 구입하는 행위로 차별화된다.",
+      "useful_comparison_axes": [
+        "ownership",
+        "condition"
+      ],
+      "decision_axes": [
+        {
+          "id": "ownership",
+          "label": "소유 형태",
+          "a": "이미 다른 사람 소유였던 제품을 사는 것",
+          "b": "공장에서 나온 새 제품을 사는 것",
+          "valueA": "other",
+          "valueB": "own",
+          "basis": "general-meaning",
+          "quoteA": "중고노트북",
+          "quoteB": "새노트북"
+        },
+        {
+          "id": "experience",
+          "label": "사용 경험의 성격",
+          "a": "이전 사용 흔적이 있는 제품을 사용하는 경험",
+          "b": "새제품을 처음 사용하는 경험",
+          "valueA": "other",
+          "valueB": "participate",
+          "basis": "general-meaning",
+          "quoteA": "중고노트북",
+          "quoteB": "새노트북"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "어떤 노트북을 살까?"
+        },
+        {
+          "input": "a",
+          "quote": "중고노트북"
+        },
+        {
+          "input": "b",
+          "quote": "새노트북"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "옵션 단어들이 직접적이고 일반적 의미로 해석 가능함",
+          "특이한 신조어나 불분명한 지시 대상이 없음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "어떤 노트북을 살까? 중고노트북 vs 새노트북",
+      "optionA_meaning": {
+        "summary": "이미 사용된 상태의 노트북을 구입하는 선택으로, 제품이 이전 소유자에게서 넘어온 상태임을 뜻한다.",
+        "activity": "중고 노트북 사기",
+        "basis": "general-meaning",
+        "quote": "중고노트북",
+        "scene": {
+          "elements": [
+            "중고노트북",
+            "구입"
+          ],
+          "future": "중고노트북을 들고 집에 와서 제품 상태를 하나씩 확인하며 웃게 될 것이다.",
+          "capture": "구입한 중고노트북"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "공장에서 새로 제조된 상태의 노트북을 구입하는 선택으로, 사용 흔적 없이 새 제품을 받는 것을 의미한다.",
+        "activity": "새 노트북 사기",
+        "basis": "general-meaning",
+        "quote": "새노트북",
+        "scene": {
+          "elements": [
+            "새노트북",
+            "구입"
+          ],
+          "future": "새노트북을 포장 채로 열어보고 사용법을 하나씩 시험해보며 즐거워할 것이다.",
+          "capture": "포장된 새노트북"
+        }
+      },
+      "meaningful_difference": "중고는 '이미 사용된 제품'을 구입하는 행위, 새는 '사용 흔적 없는 신제품'을 구입하는 행위로 차별화된다.",
+      "useful_comparison_axes": [
+        "ownership",
+        "condition"
+      ],
+      "decision_axes": [
+        {
+          "id": "ownership",
+          "label": "소유 형태",
+          "a": "이미 다른 사람 소유였던 제품을 사는 것",
+          "b": "공장에서 나온 새 제품을 사는 것",
+          "valueA": "other",
+          "valueB": "own",
+          "basis": "general-meaning",
+          "quoteA": "중고노트북",
+          "quoteB": "새노트북"
+        },
+        {
+          "id": "experience",
+          "label": "사용 경험의 성격",
+          "a": "이전 사용 흔적이 있는 제품을 사용하는 경험",
+          "b": "새제품을 처음 사용하는 경험",
+          "valueA": "other",
+          "valueB": "participate",
+          "basis": "general-meaning",
+          "quoteA": "중고노트북",
+          "quoteB": "새노트북"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "어떤 노트북을 살까?"
+        },
+        {
+          "input": "a",
+          "quote": "중고노트북"
+        },
+        {
+          "input": "b",
+          "quote": "새노트북"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "옵션 단어들이 직접적이고 일반적 의미로 해석 가능함",
+          "특이한 신조어나 불분명한 지시 대상이 없음"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "6": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1281,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 765,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 2046
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "피곤한 상태에서 운동과 공부를 병행할지 아니면 쉬어야 할지 고민하는 상황",
+      "optionA_meaning": {
+        "summary": "피곤한 상태임에도 불구하고 신체 활동을 하고 이어서 학습을 진행하겠다는 선택",
+        "activity": "운동하고 공부하기",
+        "basis": "explicit",
+        "quote": "운동하고 공부한다",
+        "scene": {
+          "elements": [
+            "운동",
+            "공부"
+          ],
+          "future": "운동을 먼저 한 뒤 몸이 떨릴 만큼 피곤해도 책상에 앉아 공부를 이어갈 가능성이 있다.",
+          "capture": "운동 후에도 공부하겠다는 의지를 보여줌"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "피곤함을 이유로 신체적·정신적 활동을 중단하고 휴식을 취하겠다는 선택",
+        "activity": "쉬기",
+        "basis": "explicit",
+        "quote": "쉰다",
+        "scene": {
+          "elements": [
+            "쉰다",
+            "휴식"
+          ],
+          "future": "피곤함을 풀기 위해 잠시 쉬면서 컨디션을 회복하려는 모습이 예상된다.",
+          "capture": "활동을 중단하고 휴식을 선택함"
+        }
+      },
+      "meaningful_difference": "A는 피곤한 상태에서 운동을 한 뒤 바로 공부까지 이어가는 '추가적 활동'을 포함하고, B는 모든 활동을 중단하고 휴식을 택하는 점에서 활동 유무와 연속성에서 차이가 있다.",
+      "useful_comparison_axes": [
+        "activity",
+        "effort"
+      ],
+      "decision_axes": [
+        {
+          "id": "activity",
+          "label": "활동 여부 및 유형",
+          "a": "운동 후 공부까지 이어가는 활동 유지",
+          "b": "활동을 중단하고 휴식",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "운동하고 공부한다",
+          "quoteB": "쉰다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "피곤한데 운동하고 공부할까 쉴까?"
+        },
+        {
+          "input": "a",
+          "quote": "운동하고 공부한다"
+        },
+        {
+          "input": "b",
+          "quote": "쉰다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 의미가 명확하게 제시되어 있음",
+          "특별한 불명확한 용어나 모호한 참조가 없음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "피곤한 상태에서 운동과 공부를 병행할지 아니면 쉬어야 할지 고민하는 상황",
+      "optionA_meaning": {
+        "summary": "피곤한 상태임에도 불구하고 신체 활동을 하고 이어서 학습을 진행하겠다는 선택",
+        "activity": "운동하고 공부하기",
+        "basis": "explicit",
+        "quote": "운동하고 공부한다",
+        "scene": {
+          "elements": [
+            "운동",
+            "공부"
+          ],
+          "future": "운동을 먼저 한 뒤 몸이 떨릴 만큼 피곤해도 책상에 앉아 공부를 이어갈 가능성이 있다.",
+          "capture": "운동 후에도 공부하겠다는 의지를 보여줌"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "피곤함을 이유로 신체적·정신적 활동을 중단하고 휴식을 취하겠다는 선택",
+        "activity": "쉬기",
+        "basis": "explicit",
+        "quote": "쉰다",
+        "scene": {
+          "elements": [
+            "쉰다",
+            "휴식"
+          ],
+          "future": "피곤함을 풀기 위해 잠시 쉬면서 컨디션을 회복하려는 모습이 예상된다.",
+          "capture": "활동을 중단하고 휴식을 선택함"
+        }
+      },
+      "meaningful_difference": "A는 피곤한 상태에서 운동을 한 뒤 바로 공부까지 이어가는 '추가적 활동'을 포함하고, B는 모든 활동을 중단하고 휴식을 택하는 점에서 활동 유무와 연속성에서 차이가 있다.",
+      "useful_comparison_axes": [
+        "activity",
+        "effort"
+      ],
+      "decision_axes": [
+        {
+          "id": "activity",
+          "label": "활동 여부 및 유형",
+          "a": "운동 후 공부까지 이어가는 활동 유지",
+          "b": "활동을 중단하고 휴식",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "운동하고 공부한다",
+          "quoteB": "쉰다"
+        },
+        {
+          "id": "effort",
+          "label": "필요한 노력의 정도",
+          "a": "운동과 공부를 연속으로 수행하는 높은 노력",
+          "b": "활동을 중단해 노력을 줄이는 선택",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "운동하고 공부한다",
+          "quoteB": "쉰다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "피곤한데 운동하고 공부할까 쉴까?"
+        },
+        {
+          "input": "a",
+          "quote": "운동하고 공부한다"
+        },
+        {
+          "input": "b",
+          "quote": "쉰다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 의미가 명확하게 제시되어 있음",
+          "특별한 불명확한 용어나 모호한 참조가 없음"
+        ]
+      }
+    },
+    "discarded_axes": [
+      {
+        "id": "effort",
+        "label": "필요한 노력의 정도",
+        "a": "운동과 공부를 연속으로 수행하는 높은 노력",
+        "b": "활동을 중단해 노력을 줄이는 선택",
+        "valueA": "other",
+        "valueB": "other",
+        "basis": "general-meaning",
+        "quoteA": "운동하고 공부한다",
+        "quoteB": "쉰다"
+      }
+    ]
+  },
+  "7": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1284,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 493,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1777
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "연락과 약속 확정 여부를 묻는 선택",
+      "optionA_meaning": {
+        "summary": "직접 연락을 해서 약속을 확정하는 행동을 의미한다.",
+        "activity": "약속 잡기",
+        "basis": "explicit",
+        "quote": "연락하고 약속 잡는다",
+        "scene": {
+          "elements": [
+            "연락",
+            "약속 잡는다"
+          ],
+          "future": "연락 후 약속을 실제로 정하고 일정이 확정되는 장면을 상상하게 된다.",
+          "capture": "약속 잡는다"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "즉시 연락하지 않고 더 고민하거나 시간을 두고 결정하는 행동을 의미한다.",
+        "activity": "더 생각하기",
+        "basis": "explicit",
+        "quote": "더 생각한다",
+        "scene": {
+          "elements": [
+            "더 생각한다"
+          ],
+          "future": "더 생각한 뒤 결정 시점이 늦춰지거나 추가 정보를 모으는 상황을 상상하게 된다.",
+          "capture": "더 생각한다"
+        }
+      },
+      "meaningful_difference": "직접 연락해 약속을 확정하느냐(행동·즉시성) vs 지금은 결정을 미루고 더 검토하느냐(숙고·지연)로 갈린다.",
+      "useful_comparison_axes": [
+        "immediacy",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "immediacy",
+          "label": "결정의 즉시성",
+          "a": "now",
+          "b": "later",
+          "valueA": "now",
+          "valueB": "later",
+          "basis": "explicit",
+          "quoteA": "연락하고 약속 잡는다",
+          "quoteB": "더 생각한다"
+        },
+        {
+          "id": "experience",
+          "label": "행동 vs 숙고",
+          "a": "participate",
+          "b": "other",
+          "valueA": "participate",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "연락하고 약속 잡는다",
+          "quoteB": "더 생각한다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "연락하고 약속을 잡을까 더 생각할까?"
+        },
+        {
+          "input": "a",
+          "quote": "연락하고 약속 잡는다"
+        },
+        {
+          "input": "b",
+          "quote": "더 생각한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 문장이 명확하고 직관적인 의미 차이가 드러남",
+          "불분명한 용어나 모호한 대상을 포함하지 않음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "연락과 약속 확정 여부를 묻는 선택",
+      "optionA_meaning": {
+        "summary": "직접 연락을 해서 약속을 확정하는 행동을 의미한다.",
+        "activity": "약속 잡기",
+        "basis": "explicit",
+        "quote": "연락하고 약속 잡는다",
+        "scene": {
+          "elements": [
+            "연락",
+            "약속 잡는다"
+          ],
+          "future": "연락 후 약속을 실제로 정하고 일정이 확정되는 장면을 상상하게 된다.",
+          "capture": "약속 잡는다"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "즉시 연락하지 않고 더 고민하거나 시간을 두고 결정하는 행동을 의미한다.",
+        "activity": "더 생각하기",
+        "basis": "explicit",
+        "quote": "더 생각한다",
+        "scene": {
+          "elements": [
+            "더 생각한다"
+          ],
+          "future": "더 생각한 뒤 결정 시점이 늦춰지거나 추가 정보를 모으는 상황을 상상하게 된다.",
+          "capture": "더 생각한다"
+        }
+      },
+      "meaningful_difference": "직접 연락해 약속을 확정하느냐(행동·즉시성) vs 지금은 결정을 미루고 더 검토하느냐(숙고·지연)로 갈린다.",
+      "useful_comparison_axes": [
+        "immediacy",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "immediacy",
+          "label": "결정의 즉시성",
+          "a": "now",
+          "b": "later",
+          "valueA": "now",
+          "valueB": "later",
+          "basis": "explicit",
+          "quoteA": "연락하고 약속 잡는다",
+          "quoteB": "더 생각한다"
+        },
+        {
+          "id": "activity",
+          "label": "행동 vs 숙고",
+          "a": "participate",
+          "b": "other",
+          "valueA": "participate",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "연락하고 약속 잡는다",
+          "quoteB": "더 생각한다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "연락하고 약속을 잡을까 더 생각할까?"
+        },
+        {
+          "input": "a",
+          "quote": "연락하고 약속 잡는다"
+        },
+        {
+          "input": "b",
+          "quote": "더 생각한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 문장이 명확하고 직관적인 의미 차이가 드러남",
+          "불분명한 용어나 모호한 대상을 포함하지 않음"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "9": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1273,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 559,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1832
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "간식 선택: 어떤 길거리 음식 간식을 먹을지 질문",
+      "optionA_meaning": {
+        "summary": "매콤한 소스에 버무린 떡과 어묵 등을 젓가락이나 포크로 집어 먹는 길거리 분식",
+        "activity": "떡볶이 먹기",
+        "basis": "general-meaning",
+        "quote": "떡볶이",
+        "scene": {
+          "elements": [
+            "떡",
+            "소스"
+          ],
+          "future": "떡을 집어먹다보니 손에 소스가 묻어 손수건을 찾게 된다.",
+          "capture": "소스 묻은 손으로 떡 한입"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "고기나 내장 등을 섞어 만든 순대를 썰어 소스나 소금에 찍어 먹는 길거리 분식",
+        "activity": "순대 먹기",
+        "basis": "general-meaning",
+        "quote": "순대",
+        "scene": {
+          "elements": [
+            "순대"
+          ],
+          "future": "순대를 썰어 접시에 담으니 한 점씩 찍어 먹게 된다.",
+          "capture": "한 점씩 찍어 먹는 순대"
+        }
+      },
+      "meaningful_difference": "두 선택은 음식 종류와 먹는 방식(떡을 젓가락으로 집어 소스를 묻혀 먹는 행위 vs 순대를 썰어 한 점씩 찍어 먹는 행위)이 다르다.",
+      "useful_comparison_axes": [
+        "activity",
+        "setting"
+      ],
+      "decision_axes": [
+        {
+          "id": "activity",
+          "label": "행동 유형",
+          "a": "떡을 집어먹기",
+          "b": "순대를 썰어 찍어 먹기",
+          "valueA": "active",
+          "valueB": "active",
+          "basis": "general-meaning",
+          "quoteA": "떡볶이",
+          "quoteB": "순대"
+        },
+        {
+          "id": "setting",
+          "label": "식사 형태/장소 연상",
+          "a": "분식 떡과 소스의 즉석 섭취 연상",
+          "b": "썰어 접시에 담아 한 점씩 먹는 연상",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "떡볶이",
+          "quoteB": "순대"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "간식 뭐 먹지?"
+        },
+        {
+          "input": "a",
+          "quote": "떡볶이"
+        },
+        {
+          "input": "b",
+          "quote": "순대"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션은 일반적 한국어 단어로 의미가 명확함",
+          "질문의 맥락(간식 선택)만 있어 추가 정보 불필요"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "간식 선택: 어떤 길거리 음식 간식을 먹을지 질문",
+      "optionA_meaning": {
+        "summary": "매콤한 소스에 버무린 떡과 어묵 등을 젓가락이나 포크로 집어 먹는 길거리 분식",
+        "activity": "떡볶이 먹기",
+        "basis": "general-meaning",
+        "quote": "떡볶이",
+        "scene": {
+          "elements": [
+            "떡",
+            "소스"
+          ],
+          "future": "떡을 집어먹다보니 손에 소스가 묻어 손수건을 찾게 된다.",
+          "capture": "소스 묻은 손으로 떡 한입"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "고기나 내장 등을 섞어 만든 순대를 썰어 소스나 소금에 찍어 먹는 길거리 분식",
+        "activity": "순대 먹기",
+        "basis": "general-meaning",
+        "quote": "순대",
+        "scene": {
+          "elements": [
+            "순대",
+            "썰기"
+          ],
+          "future": "순대를 썰어 접시에 담으니 한 점씩 찍어 먹게 된다.",
+          "capture": "한 점씩 찍어 먹는 순대"
+        }
+      },
+      "meaningful_difference": "두 선택은 음식 종류와 먹는 방식(떡을 젓가락으로 집어 소스를 묻혀 먹는 행위 vs 순대를 썰어 한 점씩 찍어 먹는 행위)이 다르다.",
+      "useful_comparison_axes": [
+        "activity",
+        "setting"
+      ],
+      "decision_axes": [
+        {
+          "id": "activity",
+          "label": "행동 유형",
+          "a": "떡을 집어먹기",
+          "b": "순대를 썰어 찍어 먹기",
+          "valueA": "active",
+          "valueB": "active",
+          "basis": "general-meaning",
+          "quoteA": "떡볶이",
+          "quoteB": "순대"
+        },
+        {
+          "id": "setting",
+          "label": "식사 형태/장소 연상",
+          "a": "분식 떡과 소스의 즉석 섭취 연상",
+          "b": "썰어 접시에 담아 한 점씩 먹는 연상",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "떡볶이",
+          "quoteB": "순대"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "간식 뭐 먹지?"
+        },
+        {
+          "input": "a",
+          "quote": "떡볶이"
+        },
+        {
+          "input": "b",
+          "quote": "순대"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션은 일반적 한국어 단어로 의미가 명확함",
+          "질문의 맥락(간식 선택)만 있어 추가 정보 불필요"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "11": {
+    "status": "confirmation",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1271,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 535,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1806
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "오늘 마실 차 종류 선택",
+      "optionA_meaning": {
+        "summary": "카페인이 적은 전통적인 잎차인 녹차를 마시는 선택",
+        "activity": "차 마시기",
+        "basis": "general-meaning",
+        "quote": "녹차",
+        "scene": {
+          "elements": [
+            "녹차",
+            "차 마시기"
+          ],
+          "future": "녹차를 탕관에 우려놓고 한 모금씩 음미하며 오후를 보낼 것이다.",
+          "capture": "차광 속의 녹차"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "발효 또는 산화 과정을 거친 홍차를 마시는 선택",
+        "activity": "차 마시기",
+        "basis": "general-meaning",
+        "quote": "홍차",
+        "scene": {
+          "elements": [
+            "홍차",
+            "차 마시기"
+          ],
+          "future": "홍차를 주전자로 우려 진한 향을 맡으며 한 컵을 즐길 것이다.",
+          "capture": "찻잔과 홍차"
+        }
+      },
+      "meaningful_difference": "두 옵션은 차의 종류(녹차 vs 홍차)와 제조/가공 방식(비발효 vs 산화/발효 차이)라는 본질적 차이가 있음",
+      "useful_comparison_axes": [
+        "stimulation",
+        "experience"
+      ],
+      "decision_axes": [],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "오늘 마실 차는?"
+        },
+        {
+          "input": "a",
+          "quote": "녹차"
+        },
+        {
+          "input": "b",
+          "quote": "홍차"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "단어들이 일반 명사로 명확하여 의미가 분명함",
+          "특이한 신조어나 애매한 지시어가 없어 해석 불확실성이 적음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "오늘 마실 차 종류 선택",
+      "optionA_meaning": {
+        "summary": "카페인이 적은 전통적인 잎차인 녹차를 마시는 선택",
+        "activity": "차 마시기",
+        "basis": "general-meaning",
+        "quote": "녹차",
+        "scene": {
+          "elements": [
+            "녹차",
+            "차 마시기"
+          ],
+          "future": "녹차를 탕관에 우려놓고 한 모금씩 음미하며 오후를 보낼 것이다.",
+          "capture": "차광 속의 녹차"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "발효 또는 산화 과정을 거친 홍차를 마시는 선택",
+        "activity": "차 마시기",
+        "basis": "general-meaning",
+        "quote": "홍차",
+        "scene": {
+          "elements": [
+            "홍차",
+            "차 마시기"
+          ],
+          "future": "홍차를 주전자로 우려 진한 향을 맡으며 한 컵을 즐길 것이다.",
+          "capture": "찻잔과 홍차"
+        }
+      },
+      "meaningful_difference": "두 옵션은 차의 종류(녹차 vs 홍차)와 제조/가공 방식(비발효 vs 산화/발효 차이)라는 본질적 차이가 있음",
+      "useful_comparison_axes": [
+        "stimulation",
+        "experience"
+      ],
+      "decision_axes": [
+        {
+          "id": "stimulation",
+          "label": "기운/자극 수준",
+          "a": "녹차는 상대적으로 카페인과 자극이 더 낮음",
+          "b": "홍차는 상대적으로 카페인과 자극이 더 셀 수 있음",
+          "valueA": "low",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "녹차",
+          "quoteB": "홍차"
+        },
+        {
+          "id": "experience",
+          "label": "음용 경험",
+          "a": "녹차는 잎의 신선함과 깨끗한 맛을 관찰하는 경험",
+          "b": "홍차는 진한 향과 맛을 참여해 즐기는 경험",
+          "valueA": "observe",
+          "valueB": "participate",
+          "basis": "general-meaning",
+          "quoteA": "녹차",
+          "quoteB": "홍차"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "오늘 마실 차는?"
+        },
+        {
+          "input": "a",
+          "quote": "녹차"
+        },
+        {
+          "input": "b",
+          "quote": "홍차"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "단어들이 일반 명사로 명확하여 의미가 분명함",
+          "특이한 신조어나 애매한 지시어가 없어 해석 불확실성이 적음"
+        ]
+      }
+    },
+    "discarded_axes": [
+      {
+        "id": "stimulation",
+        "label": "기운/자극 수준",
+        "a": "녹차는 상대적으로 카페인과 자극이 더 낮음",
+        "b": "홍차는 상대적으로 카페인과 자극이 더 셀 수 있음",
+        "valueA": "low",
+        "valueB": "other",
+        "basis": "general-meaning",
+        "quoteA": "녹차",
+        "quoteB": "홍차"
+      },
+      {
+        "id": "experience",
+        "label": "음용 경험",
+        "a": "녹차는 잎의 신선함과 깨끗한 맛을 관찰하는 경험",
+        "b": "홍차는 진한 향과 맛을 참여해 즐기는 경험",
+        "valueA": "observe",
+        "valueB": "participate",
+        "basis": "general-meaning",
+        "quoteA": "녹차",
+        "quoteB": "홍차"
+      }
+    ]
+  },
+  "13": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1273,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 734,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 2007
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "출근할 때 어떤 이동수단을 쓸지 묻는 상황",
+      "optionA_meaning": {
+        "summary": "출근할 때 자전거를 타고 이동하는 선택",
+        "activity": "자전거 타기",
+        "basis": "general-meaning",
+        "quote": "자전거",
+        "scene": {
+          "elements": [
+            "자전거",
+            "출근"
+          ],
+          "future": "자전거를 타고 출근길에 나서면 바람에 머리카락이 날리며 상쾌함을 느낄 수 있다.",
+          "capture": "헬멧 쓴 채로 출근 중"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "출근할 때 지하철을 이용해 이동하는 선택",
+        "activity": "지하철 이용하기",
+        "basis": "general-meaning",
+        "quote": "지하철",
+        "scene": {
+          "elements": [
+            "지하철",
+            "출근"
+          ],
+          "future": "지하철을 타고 출근하면 역 플랫폼에서 사람 흐름에 섞여 이동하게 될 것이다.",
+          "capture": "스마트폰 들여다보며 지하철 대기"
+        }
+      },
+      "meaningful_difference": "자전거는 개인 이동 수단으로 직접 이동(활동적)하는 반면, 지하철은 대중교통으로 타인과 함께 이동(관찰적)이란 점에서 활동 방식과 설정이 다르다.",
+      "useful_comparison_axes": [
+        "activity",
+        "setting"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "이동 환경",
+          "a": "야외에서 주행하는 설정",
+          "b": "지하·실내 환경인 지하철 설정",
+          "valueA": "outdoor",
+          "valueB": "indoor",
+          "basis": "general-meaning",
+          "quoteA": "자전거",
+          "quoteB": "지하철"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "출근 이동수단은?"
+        },
+        {
+          "input": "a",
+          "quote": "자전거"
+        },
+        {
+          "input": "b",
+          "quote": "지하철"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 기본 의미가 일상적이고 명확함",
+          "구체적 조건(거리·시간 등)은 질문에 없음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "출근할 때 어떤 이동수단을 쓸지 묻는 상황",
+      "optionA_meaning": {
+        "summary": "출근할 때 자전거를 타고 이동하는 선택",
+        "activity": "자전거 타기",
+        "basis": "general-meaning",
+        "quote": "자전거",
+        "scene": {
+          "elements": [
+            "자전거",
+            "출근"
+          ],
+          "future": "자전거를 타고 출근길에 나서면 바람에 머리카락이 날리며 상쾌함을 느낄 수 있다.",
+          "capture": "헬멧 쓴 채로 출근 중"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "출근할 때 지하철을 이용해 이동하는 선택",
+        "activity": "지하철 이용하기",
+        "basis": "general-meaning",
+        "quote": "지하철",
+        "scene": {
+          "elements": [
+            "지하철",
+            "출근"
+          ],
+          "future": "지하철을 타고 출근하면 역 플랫폼에서 사람 흐름에 섞여 이동하게 될 것이다.",
+          "capture": "스마트폰 들여다보며 지하철 대기"
+        }
+      },
+      "meaningful_difference": "자전거는 개인 이동 수단으로 직접 이동(활동적)하는 반면, 지하철은 대중교통으로 타인과 함께 이동(관찰적)이란 점에서 활동 방식과 설정이 다르다.",
+      "useful_comparison_axes": [
+        "activity",
+        "setting"
+      ],
+      "decision_axes": [
+        {
+          "id": "activity",
+          "label": "활동성",
+          "a": "직접 페달을 밟아 이동하는 활동적 수단",
+          "b": "대중교통을 타고 이동하는 관찰적 수단",
+          "valueA": "active",
+          "valueB": "observe",
+          "basis": "general-meaning",
+          "quoteA": "자전거",
+          "quoteB": "지하철"
+        },
+        {
+          "id": "setting",
+          "label": "이동 환경",
+          "a": "야외에서 주행하는 설정",
+          "b": "지하·실내 환경인 지하철 설정",
+          "valueA": "outdoor",
+          "valueB": "indoor",
+          "basis": "general-meaning",
+          "quoteA": "자전거",
+          "quoteB": "지하철"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "출근 이동수단은?"
+        },
+        {
+          "input": "a",
+          "quote": "자전거"
+        },
+        {
+          "input": "b",
+          "quote": "지하철"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 기본 의미가 일상적이고 명확함",
+          "구체적 조건(거리·시간 등)은 질문에 없음"
+        ]
+      }
+    },
+    "discarded_axes": [
+      {
+        "id": "activity",
+        "label": "활동성",
+        "a": "직접 페달을 밟아 이동하는 활동적 수단",
+        "b": "대중교통을 타고 이동하는 관찰적 수단",
+        "valueA": "active",
+        "valueB": "observe",
+        "basis": "general-meaning",
+        "quoteA": "자전거",
+        "quoteB": "지하철"
+      }
+    ]
+  },
+  "14": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1277,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 544,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1821
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "독서용 도구 선택 상황",
+      "optionA_meaning": {
+        "summary": "화면 기반 장치로 전자책을 읽는 기기(특정 단말기). 전자파일을 표시하고 배터리/기기 기능을 사용해 독서를 함.",
+        "activity": "전자책 읽기",
+        "basis": "general-meaning",
+        "quote": "전자책 단말기",
+        "scene": {
+          "elements": [
+            "전자책 단말기"
+          ],
+          "future": "전자책 단말기로 파일을 열어 여러 권을 손쉽게 넘겨보며 밤새 읽게 될 것이다.",
+          "capture": "배터리도 확인한 독서"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "종이 인쇄물 형태의 책을 직접 손으로 넘기며 읽는 전통적 독서 매체.",
+        "activity": "종이책 읽기",
+        "basis": "explicit",
+        "quote": "종이책",
+        "scene": {
+          "elements": [
+            "종이책"
+          ],
+          "future": "종이책을 탁자에 펼쳐 두고 책장을 넘기며 여유롭게 읽을 것이다.",
+          "capture": "넘기는 손맛이 있는 독서"
+        }
+      },
+      "meaningful_difference": "전자적 화면 기기(파일·기기 기능 사용) 대 물리적 인쇄물(종이책을 손으로 넘김)으로 읽기 매체와 읽기 방식이 다름",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "읽기 매체 유형(설정)",
+          "a": "화면 기반 기기",
+          "b": "종이 인쇄 매체",
+          "valueA": "indoor",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "전자책 단말기",
+          "quoteB": "종이책"
+        },
+        {
+          "id": "activity",
+          "label": "독서 방식",
+          "a": "전자파일을 기기로 읽음",
+          "b": "종이를 손으로 넘기며 읽음",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "전자책 단말기",
+          "quoteB": "종이책"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "독서용으로 무엇을 살까?"
+        },
+        {
+          "input": "a",
+          "quote": "전자책 단말기"
+        },
+        {
+          "input": "b",
+          "quote": "종이책"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 단어와 의미가 명확함",
+          "불명확한 신조어나 애매한 참조가 없음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "독서용 도구 선택 상황",
+      "optionA_meaning": {
+        "summary": "화면 기반 장치로 전자책을 읽는 기기(특정 단말기). 전자파일을 표시하고 배터리/기기 기능을 사용해 독서를 함.",
+        "activity": "전자책 읽기",
+        "basis": "general-meaning",
+        "quote": "전자책 단말기",
+        "scene": {
+          "elements": [
+            "전자책 단말기",
+            "전원·배터리"
+          ],
+          "future": "전자책 단말기로 파일을 열어 여러 권을 손쉽게 넘겨보며 밤새 읽게 될 것이다.",
+          "capture": "배터리도 확인한 독서"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "종이 인쇄물 형태의 책을 직접 손으로 넘기며 읽는 전통적 독서 매체.",
+        "activity": "종이책 읽기",
+        "basis": "explicit",
+        "quote": "종이책",
+        "scene": {
+          "elements": [
+            "종이책",
+            "책장을 넘기기"
+          ],
+          "future": "종이책을 탁자에 펼쳐 두고 책장을 넘기며 여유롭게 읽을 것이다.",
+          "capture": "넘기는 손맛이 있는 독서"
+        }
+      },
+      "meaningful_difference": "전자적 화면 기기(파일·기기 기능 사용) 대 물리적 인쇄물(종이책을 손으로 넘김)으로 읽기 매체와 읽기 방식이 다름",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "읽기 매체 유형(설정)",
+          "a": "화면 기반 기기",
+          "b": "종이 인쇄 매체",
+          "valueA": "indoor",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "전자책 단말기",
+          "quoteB": "종이책"
+        },
+        {
+          "id": "activity",
+          "label": "독서 방식",
+          "a": "전자파일을 기기로 읽음",
+          "b": "종이를 손으로 넘기며 읽음",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "전자책 단말기",
+          "quoteB": "종이책"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "독서용으로 무엇을 살까?"
+        },
+        {
+          "input": "a",
+          "quote": "전자책 단말기"
+        },
+        {
+          "input": "b",
+          "quote": "종이책"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 단어와 의미가 명확함",
+          "불명확한 신조어나 애매한 참조가 없음"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "15": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1274,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 489,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1763
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "옷을 어떻게 마련할까?",
+      "optionA_meaning": {
+        "summary": "필요한 옷을 빌려서 일시적으로 사용한다는 의미",
+        "activity": "옷을 대여하기",
+        "basis": "general-meaning",
+        "quote": "대여한다",
+        "scene": {
+          "elements": [
+            "옷",
+            "대여"
+          ],
+          "future": "대여한 옷이 다음 행사에도 어울릴지 시험해 볼 것이다.",
+          "capture": "임시로 빌린 옷"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "필요한 옷을 구입하여 소유하고 장기간 사용하는다는 의미",
+        "activity": "옷을 구매하기",
+        "basis": "general-meaning",
+        "quote": "구매한다",
+        "scene": {
+          "elements": [
+            "옷",
+            "구매"
+          ],
+          "future": "구매한 옷을 자주 입을 수 있게 옷장에 걸어둘 것이다.",
+          "capture": "영구 소유한 옷"
+        }
+      },
+      "meaningful_difference": "대여는 일시적 사용을 위해 빌리는 행위이고, 구매는 소유하여 장기간 사용하는 행위로 차이가 있음",
+      "useful_comparison_axes": [
+        "ownership",
+        "immediacy"
+      ],
+      "decision_axes": [
+        {
+          "id": "ownership",
+          "label": "소유 여부",
+          "a": "빌린 상태로 일시 사용",
+          "b": "구매로 영구 소유",
+          "valueA": "other",
+          "valueB": "own",
+          "basis": "general-meaning",
+          "quoteA": "대여한다",
+          "quoteB": "구매한다"
+        },
+        {
+          "id": "immediacy",
+          "label": "즉시성/일시성",
+          "a": "일시적 사용 목적",
+          "b": "장기간 보유 목적",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "대여한다",
+          "quoteB": "구매한다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "옷을 어떻게 마련할까?"
+        },
+        {
+          "input": "a",
+          "quote": "대여한다"
+        },
+        {
+          "input": "b",
+          "quote": "구매한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "문장이 짧고 선택지 단어들의 일반적 의미가 분명함",
+          "특정 조건(예: 임대기간, 새상품 여부)이 질문에 없어서 세부는 불명확함"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "옷을 어떻게 마련할까?",
+      "optionA_meaning": {
+        "summary": "필요한 옷을 빌려서 일시적으로 사용한다는 의미",
+        "activity": "옷을 대여하기",
+        "basis": "general-meaning",
+        "quote": "대여한다",
+        "scene": {
+          "elements": [
+            "옷",
+            "대여"
+          ],
+          "future": "대여한 옷이 다음 행사에도 어울릴지 시험해 볼 것이다.",
+          "capture": "임시로 빌린 옷"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "필요한 옷을 구입하여 소유하고 장기간 사용하는다는 의미",
+        "activity": "옷을 구매하기",
+        "basis": "general-meaning",
+        "quote": "구매한다",
+        "scene": {
+          "elements": [
+            "옷",
+            "구매"
+          ],
+          "future": "구매한 옷을 자주 입을 수 있게 옷장에 걸어둘 것이다.",
+          "capture": "영구 소유한 옷"
+        }
+      },
+      "meaningful_difference": "대여는 일시적 사용을 위해 빌리는 행위이고, 구매는 소유하여 장기간 사용하는 행위로 차이가 있음",
+      "useful_comparison_axes": [
+        "ownership",
+        "immediacy"
+      ],
+      "decision_axes": [
+        {
+          "id": "ownership",
+          "label": "소유 여부",
+          "a": "빌린 상태로 일시 사용",
+          "b": "구매로 영구 소유",
+          "valueA": "other",
+          "valueB": "own",
+          "basis": "general-meaning",
+          "quoteA": "대여한다",
+          "quoteB": "구매한다"
+        },
+        {
+          "id": "immediacy",
+          "label": "즉시성/일시성",
+          "a": "일시적 사용 목적",
+          "b": "장기간 보유 목적",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "대여한다",
+          "quoteB": "구매한다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "옷을 어떻게 마련할까?"
+        },
+        {
+          "input": "a",
+          "quote": "대여한다"
+        },
+        {
+          "input": "b",
+          "quote": "구매한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "문장이 짧고 선택지 단어들의 일반적 의미가 분명함",
+          "특정 조건(예: 임대기간, 새상품 여부)이 질문에 없어서 세부는 불명확함"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "16": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1273,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 755,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 2028
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "주말 외출 장소를 고르는 상황으로, 미술관 방문 vs 수족관 방문을 비교함.",
+      "optionA_meaning": {
+        "summary": "실내에 전시된 미술 작품을 관람하러 가는 것.",
+        "activity": "미술 작품 관람하기",
+        "basis": "general-meaning",
+        "quote": "미술관",
+        "scene": {
+          "elements": [
+            "전시된 미술 작품",
+            "실내"
+          ],
+          "future": "전시된 미술 작품을 천천히 보며 작품 해설을 읽다가 새로운 관심 분야를 발견할 수 있다.",
+          "capture": "작품과 마주한 진지한 표정"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "수조 안의 해양 생물과 수중 전시를 관찰하러 가는 것.",
+        "activity": "수중 생물 관찰하기",
+        "basis": "general-meaning",
+        "quote": "수족관",
+        "scene": {
+          "elements": [
+            "수조",
+            "수중 생물"
+          ],
+          "future": "수조를 들여다보며 수중 생물의 움직임을 관찰하다가 특별한 종을 발견할 수도 있다.",
+          "capture": "수조를 응시하는 호기심 어린 표정"
+        }
+      },
+      "meaningful_difference": "미술관은 실내 전시된 미술 작품을 보는 활동이고, 수족관은 수조 속 해양 생물을 관찰하는 활동으로 '전시물의 종류'와 '관찰 대상'이 다르다.",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "장소 유형",
+          "a": "실내 전시 공간",
+          "b": "수조가 있는 전시 공간(실내 포함)",
+          "valueA": "indoor",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "실내",
+          "quoteB": "수조"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "이번 주말 어디 갈까?"
+        },
+        {
+          "input": "a",
+          "quote": "미술관"
+        },
+        {
+          "input": "b",
+          "quote": "수족관"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 핵심 단어가 일반적 명사여서 의미가 분명함",
+          "구체적 조건(전시 내용, 운영 여부 등)은 질문에 없어 추정하지 않음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "주말 외출 장소를 고르는 상황으로, 미술관 방문 vs 수족관 방문을 비교함.",
+      "optionA_meaning": {
+        "summary": "실내에 전시된 미술 작품을 관람하러 가는 것.",
+        "activity": "미술 작품 관람하기",
+        "basis": "general-meaning",
+        "quote": "미술관",
+        "scene": {
+          "elements": [
+            "전시된 미술 작품",
+            "실내"
+          ],
+          "future": "전시된 미술 작품을 천천히 보며 작품 해설을 읽다가 새로운 관심 분야를 발견할 수 있다.",
+          "capture": "작품과 마주한 진지한 표정"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "수조 안의 해양 생물과 수중 전시를 관찰하러 가는 것.",
+        "activity": "수중 생물 관찰하기",
+        "basis": "general-meaning",
+        "quote": "수족관",
+        "scene": {
+          "elements": [
+            "수조",
+            "수중 생물"
+          ],
+          "future": "수조를 들여다보며 수중 생물의 움직임을 관찰하다가 특별한 종을 발견할 수도 있다.",
+          "capture": "수조를 응시하는 호기심 어린 표정"
+        }
+      },
+      "meaningful_difference": "미술관은 실내 전시된 미술 작품을 보는 활동이고, 수족관은 수조 속 해양 생물을 관찰하는 활동으로 '전시물의 종류'와 '관찰 대상'이 다르다.",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "장소 유형",
+          "a": "실내 전시 공간",
+          "b": "수조가 있는 전시 공간(실내 포함)",
+          "valueA": "indoor",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "실내",
+          "quoteB": "수조"
+        },
+        {
+          "id": "activity",
+          "label": "주된 활동",
+          "a": "전시된 미술 작품을 관람",
+          "b": "수중 생물을 관찰",
+          "valueA": "observe",
+          "valueB": "observe",
+          "basis": "general-meaning",
+          "quoteA": "전시된 미술 작품",
+          "quoteB": "수중 생물"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "이번 주말 어디 갈까?"
+        },
+        {
+          "input": "a",
+          "quote": "미술관"
+        },
+        {
+          "input": "b",
+          "quote": "수족관"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션의 핵심 단어가 일반적 명사여서 의미가 분명함",
+          "구체적 조건(전시 내용, 운영 여부 등)은 질문에 없어 추정하지 않음"
+        ]
+      }
+    },
+    "discarded_axes": [
+      {
+        "id": "experience",
+        "label": "주된 활동",
+        "a": "전시된 미술 작품을 관람",
+        "b": "수중 생물을 관찰",
+        "valueA": "observe",
+        "valueB": "observe",
+        "basis": "general-meaning",
+        "quoteA": "전시된 미술 작품",
+        "quoteB": "수중 생물"
+      }
+    ]
+  },
+  "17": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1268,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 540,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1808
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "휴가 목적지 선택: 바다 vs 산",
+      "optionA_meaning": {
+        "summary": "해변이나 해안 지역으로 가서 바다 풍경과 관련 활동을 경험하는 여행 목적지 선택",
+        "activity": "바다 보기/즐기기",
+        "basis": "general-meaning",
+        "quote": "바다",
+        "scene": {
+          "elements": [
+            "바다",
+            "해변"
+          ],
+          "future": "바다가 보이는 곳에서 모래를 밟고 낮잠을 자게 될 것이다. 해변에서 조용히 파도 소리를 들으며 멍 때리게 된다.",
+          "capture": "해변의 모래에 발자국 남기기"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "산악 지역으로 가서 산 풍경과 관련 활동을 경험하는 여행 목적지 선택",
+        "activity": "등산/산행하기",
+        "basis": "general-meaning",
+        "quote": "산",
+        "scene": {
+          "elements": [
+            "산"
+          ],
+          "future": "산 중턱에서 맑은 공기를 들이마시며 작은 정상 표지판을 발견하게 될 것이다. 등산로에서 간단히 도시락을 꺼내 먹게 된다.",
+          "capture": "등산로에 지도를 펼쳐 놓기"
+        }
+      },
+      "meaningful_difference": "해변(바다)과 산은 환경·활동 유형(휴식 위주 vs 활동 위주)과 설정(해안 vs 고지대)에서 실질적으로 다르다.",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "환경 설정",
+          "a": "해안/바다",
+          "b": "고지대/산",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "바다",
+          "quoteB": "산"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "휴가 목적지는?"
+        },
+        {
+          "input": "a",
+          "quote": "바다"
+        },
+        {
+          "input": "b",
+          "quote": "산"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "단어 '바다'와 '산'의 일반적 의미가 명확함",
+          "질문과 선택지가 구체적 명칭 없이 단어 하나로 제시되어 있음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "휴가 목적지 선택: 바다 vs 산",
+      "optionA_meaning": {
+        "summary": "해변이나 해안 지역으로 가서 바다 풍경과 관련 활동을 경험하는 여행 목적지 선택",
+        "activity": "바다 보기/즐기기",
+        "basis": "general-meaning",
+        "quote": "바다",
+        "scene": {
+          "elements": [
+            "바다",
+            "해변"
+          ],
+          "future": "바다가 보이는 곳에서 모래를 밟고 낮잠을 자게 될 것이다. 해변에서 조용히 파도 소리를 들으며 멍 때리게 된다.",
+          "capture": "해변의 모래에 발자국 남기기"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "산악 지역으로 가서 산 풍경과 관련 활동을 경험하는 여행 목적지 선택",
+        "activity": "등산/산행하기",
+        "basis": "general-meaning",
+        "quote": "산",
+        "scene": {
+          "elements": [
+            "산",
+            "등산로"
+          ],
+          "future": "산 중턱에서 맑은 공기를 들이마시며 작은 정상 표지판을 발견하게 될 것이다. 등산로에서 간단히 도시락을 꺼내 먹게 된다.",
+          "capture": "등산로에 지도를 펼쳐 놓기"
+        }
+      },
+      "meaningful_difference": "해변(바다)과 산은 환경·활동 유형(휴식 위주 vs 활동 위주)과 설정(해안 vs 고지대)에서 실질적으로 다르다.",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "환경 설정",
+          "a": "해안/바다",
+          "b": "고지대/산",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "바다",
+          "quoteB": "산"
+        },
+        {
+          "id": "activity",
+          "label": "주된 활동 유형",
+          "a": "바다 보기/해변 휴식",
+          "b": "등산/산행",
+          "valueA": "rest",
+          "valueB": "active",
+          "basis": "general-meaning",
+          "quoteA": "바다 보기/즐기기",
+          "quoteB": "등산/산행하기"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "휴가 목적지는?"
+        },
+        {
+          "input": "a",
+          "quote": "바다"
+        },
+        {
+          "input": "b",
+          "quote": "산"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "단어 '바다'와 '산'의 일반적 의미가 명확함",
+          "질문과 선택지가 구체적 명칭 없이 단어 하나로 제시되어 있음"
+        ]
+      }
+    },
+    "discarded_axes": [
+      {
+        "id": "activity",
+        "label": "주된 활동 유형",
+        "a": "바다 보기/해변 휴식",
+        "b": "등산/산행",
+        "valueA": "rest",
+        "valueB": "active",
+        "basis": "general-meaning",
+        "quoteA": "바다 보기/즐기기",
+        "quoteB": "등산/산행하기"
+      }
+    ]
+  },
+  "18": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1280,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 504,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1784
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "친구에게 사과하는 방법을 고르는 상황",
+      "optionA_meaning": {
+        "summary": "대면으로 친구를 직접 만나서 말로 사과하고 상황을 바로 마주한다.",
+        "activity": "직접 만나서 말하기",
+        "basis": "explicit",
+        "quote": "직접 만나 사과한다",
+        "scene": {
+          "elements": [
+            "직접 만나",
+            "사과한다"
+          ],
+          "future": "직접 만나면 얼굴을 맞대고 어색함을 풀며 사과의 말을 전하게 될 것이다.",
+          "capture": "사과한다 — 진심은 보이는 법"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "대면 대신 문자 메시지로 사과의 내용을 전하고 비대면으로 상황을 정리한다.",
+        "activity": "문자로 사과하기",
+        "basis": "explicit",
+        "quote": "문자로 사과한다",
+        "scene": {
+          "elements": [
+            "문자로",
+            "사과한다"
+          ],
+          "future": "문자로 보내면 곧장 문장으로 감정을 전하고 상대의 답장을 기다리게 될 것이다.",
+          "capture": "문자로 — 글로 전하는 미안함"
+        }
+      },
+      "meaningful_difference": "직접 만나서 대면으로 말하는지 아니면 비대면인 문자로 전달하는지의 차이",
+      "useful_comparison_axes": [
+        "immediacy",
+        "setting"
+      ],
+      "decision_axes": [
+        {
+          "id": "immediacy",
+          "label": "즉시성/방식",
+          "a": "직접 만나서 바로 말로 사과",
+          "b": "문자로 문장으로 사과 보내기",
+          "valueA": "now",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "직접 만나 사과한다",
+          "quoteB": "문자로 사과한다"
+        },
+        {
+          "id": "setting",
+          "label": "상황/장소",
+          "a": "대면으로 얼굴을 마주함",
+          "b": "비대면으로 문자 메시지",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "직접 만나",
+          "quoteB": "문자로"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "친구에게 어떻게 사과할까?"
+        },
+        {
+          "input": "a",
+          "quote": "직접 만나 사과한다"
+        },
+        {
+          "input": "b",
+          "quote": "문자로 사과한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 핵심 행위(대면 vs 문자)가 명확하게 주어짐"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "친구에게 사과하는 방법을 고르는 상황",
+      "optionA_meaning": {
+        "summary": "대면으로 친구를 직접 만나서 말로 사과하고 상황을 바로 마주한다.",
+        "activity": "직접 만나서 말하기",
+        "basis": "explicit",
+        "quote": "직접 만나 사과한다",
+        "scene": {
+          "elements": [
+            "직접 만나",
+            "사과한다"
+          ],
+          "future": "직접 만나면 얼굴을 맞대고 어색함을 풀며 사과의 말을 전하게 될 것이다.",
+          "capture": "사과한다 — 진심은 보이는 법"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "대면 대신 문자 메시지로 사과의 내용을 전하고 비대면으로 상황을 정리한다.",
+        "activity": "문자로 사과하기",
+        "basis": "explicit",
+        "quote": "문자로 사과한다",
+        "scene": {
+          "elements": [
+            "문자로",
+            "사과한다"
+          ],
+          "future": "문자로 보내면 곧장 문장으로 감정을 전하고 상대의 답장을 기다리게 될 것이다.",
+          "capture": "문자로 — 글로 전하는 미안함"
+        }
+      },
+      "meaningful_difference": "직접 만나서 대면으로 말하는지 아니면 비대면인 문자로 전달하는지의 차이",
+      "useful_comparison_axes": [
+        "immediacy",
+        "setting"
+      ],
+      "decision_axes": [
+        {
+          "id": "immediacy",
+          "label": "즉시성/방식",
+          "a": "직접 만나서 바로 말로 사과",
+          "b": "문자로 문장으로 사과 보내기",
+          "valueA": "now",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "직접 만나 사과한다",
+          "quoteB": "문자로 사과한다"
+        },
+        {
+          "id": "setting",
+          "label": "상황/장소",
+          "a": "대면으로 얼굴을 마주함",
+          "b": "비대면으로 문자 메시지",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "직접 만나",
+          "quoteB": "문자로"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "친구에게 어떻게 사과할까?"
+        },
+        {
+          "input": "a",
+          "quote": "직접 만나 사과한다"
+        },
+        {
+          "input": "b",
+          "quote": "문자로 사과한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 핵심 행위(대면 vs 문자)가 명확하게 주어짐"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "19": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1275,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 400,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1675
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "누군가에게 언제 답장할지 결정하려는 질문",
+      "optionA_meaning": {
+        "summary": "지금 즉시 답장을 보내는 행위로, 현재 시점에 메시지에 응답함을 뜻함",
+        "activity": "답장하기",
+        "basis": "explicit",
+        "quote": "답장한다",
+        "scene": {
+          "elements": [
+            "지금"
+          ],
+          "future": "지금 메시지에 바로 답장을 보내면 상대가 곧 확인할 것이다.",
+          "capture": "즉시 답장"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "답장을 미루어 다음 날에 보내는 것으로, 현 시점에는 답장을 하지 않고 시간을 둔 뒤 응답함",
+        "activity": "답장하기",
+        "basis": "explicit",
+        "quote": "내일 답장한다",
+        "scene": {
+          "elements": [
+            "내일"
+          ],
+          "future": "내일에 답장하면 오늘은 답장을 하지 않은 상태로 남아 있을 것이다.",
+          "capture": "다음날 답장"
+        }
+      },
+      "meaningful_difference": "두 선택은 응답 시점이 즉시(지금)인지 지연(내일)인지로만 차이남",
+      "useful_comparison_axes": [
+        "immediacy",
+        "immediacy"
+      ],
+      "decision_axes": [
+        {
+          "id": "immediacy",
+          "label": "응답 시점",
+          "a": "지금 바로 응답함",
+          "b": "다음 날에 응답함",
+          "valueA": "now",
+          "valueB": "later",
+          "basis": "explicit",
+          "quoteA": "답장한다",
+          "quoteB": "내일 답장한다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "지금 답장할까?"
+        },
+        {
+          "input": "a",
+          "quote": "답장한다"
+        },
+        {
+          "input": "b",
+          "quote": "내일 답장한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "의미와 시점이 명확하게 주어짐"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "누군가에게 언제 답장할지 결정하려는 질문",
+      "optionA_meaning": {
+        "summary": "지금 즉시 답장을 보내는 행위로, 현재 시점에 메시지에 응답함을 뜻함",
+        "activity": "답장하기",
+        "basis": "explicit",
+        "quote": "답장한다",
+        "scene": {
+          "elements": [
+            "지금"
+          ],
+          "future": "지금 메시지에 바로 답장을 보내면 상대가 곧 확인할 것이다.",
+          "capture": "즉시 답장"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "답장을 미루어 다음 날에 보내는 것으로, 현 시점에는 답장을 하지 않고 시간을 둔 뒤 응답함",
+        "activity": "답장하기",
+        "basis": "explicit",
+        "quote": "내일 답장한다",
+        "scene": {
+          "elements": [
+            "내일"
+          ],
+          "future": "내일에 답장하면 오늘은 답장을 하지 않은 상태로 남아 있을 것이다.",
+          "capture": "다음날 답장"
+        }
+      },
+      "meaningful_difference": "두 선택은 응답 시점이 즉시(지금)인지 지연(내일)인지로만 차이남",
+      "useful_comparison_axes": [
+        "immediacy",
+        "immediacy"
+      ],
+      "decision_axes": [
+        {
+          "id": "immediacy",
+          "label": "응답 시점",
+          "a": "지금 바로 응답함",
+          "b": "다음 날에 응답함",
+          "valueA": "now",
+          "valueB": "later",
+          "basis": "explicit",
+          "quoteA": "답장한다",
+          "quoteB": "내일 답장한다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "지금 답장할까?"
+        },
+        {
+          "input": "a",
+          "quote": "답장한다"
+        },
+        {
+          "input": "b",
+          "quote": "내일 답장한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "의미와 시점이 명확하게 주어짐"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "22": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1286,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 543,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1829
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "내일 발표 일정과 친구 생일 모임이 겹침",
+      "optionA_meaning": {
+        "summary": "친구 생일 모임에 참석한 다음, 모임이 끝난 뒤에 발표 연습을 한다는 의미",
+        "activity": "발표 연습하기",
+        "basis": "explicit",
+        "quote": "생일 모임 후 발표 연습",
+        "scene": {
+          "elements": [
+            "생일 모임",
+            "발표 연습"
+          ],
+          "future": "생일 모임에 갔다가 끝난 뒤 발표 연습으로 넘어가게 될 것이다.",
+          "capture": "모임 끝나고 연습 시작"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "친구 생일 모임 참석을 건너뛰고 대신 발표 연습을 집중적으로 한다는 의미",
+        "activity": "발표 연습하기",
+        "basis": "explicit",
+        "quote": "모임은 빠지고 발표 연습",
+        "scene": {
+          "elements": [
+            "모임은 빠지고",
+            "발표 연습"
+          ],
+          "future": "모임을 빠지고 발표 연습에 바로 전념하게 될 것이다.",
+          "capture": "모임 없이 연습 집중"
+        }
+      },
+      "meaningful_difference": "두 선택은 모임 참석 여부와 그에 따른 연습 시점/연결 방식(모임 뒤 연습 vs 모임 없이 곧바로 연습)이 다르다.",
+      "useful_comparison_axes": [
+        "social",
+        "immediacy"
+      ],
+      "decision_axes": [
+        {
+          "id": "social",
+          "label": "친목/사회적 참여",
+          "a": "모임에 참석함",
+          "b": "모임에 불참함",
+          "valueA": "high",
+          "valueB": "low",
+          "basis": "explicit",
+          "quoteA": "생일 모임 후 발표 연습",
+          "quoteB": "모임은 빠지고"
+        },
+        {
+          "id": "immediacy",
+          "label": "연습 시작 시점",
+          "a": "모임 후에 연습 시작",
+          "b": "모임 없이 바로 연습",
+          "valueA": "later",
+          "valueB": "now",
+          "basis": "explicit",
+          "quoteA": "생일 모임 후 발표 연습",
+          "quoteB": "모임은 빠지고 발표 연습"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "내일 발표지만 친구 생일이야"
+        },
+        {
+          "input": "a",
+          "quote": "생일 모임 후 발표 연습"
+        },
+        {
+          "input": "b",
+          "quote": "모임은 빠지고 발표 연습"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "옵션들 문장이 명확하게 모임 참석 여부와 연습 시점을 나타냄",
+          "특이한 용어·모호한 참조 없음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "내일 발표 일정과 친구 생일 모임이 겹침",
+      "optionA_meaning": {
+        "summary": "친구 생일 모임에 참석한 다음, 모임이 끝난 뒤에 발표 연습을 한다는 의미",
+        "activity": "발표 연습하기",
+        "basis": "explicit",
+        "quote": "생일 모임 후 발표 연습",
+        "scene": {
+          "elements": [
+            "생일 모임",
+            "발표 연습"
+          ],
+          "future": "생일 모임에 갔다가 끝난 뒤 발표 연습으로 넘어가게 될 것이다.",
+          "capture": "모임 끝나고 연습 시작"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "친구 생일 모임 참석을 건너뛰고 대신 발표 연습을 집중적으로 한다는 의미",
+        "activity": "발표 연습하기",
+        "basis": "explicit",
+        "quote": "모임은 빠지고 발표 연습",
+        "scene": {
+          "elements": [
+            "모임은 빠지고",
+            "발표 연습"
+          ],
+          "future": "모임을 빠지고 발표 연습에 바로 전념하게 될 것이다.",
+          "capture": "모임 없이 연습 집중"
+        }
+      },
+      "meaningful_difference": "두 선택은 모임 참석 여부와 그에 따른 연습 시점/연결 방식(모임 뒤 연습 vs 모임 없이 곧바로 연습)이 다르다.",
+      "useful_comparison_axes": [
+        "social",
+        "immediacy"
+      ],
+      "decision_axes": [
+        {
+          "id": "social",
+          "label": "친목/사회적 참여",
+          "a": "모임에 참석함",
+          "b": "모임에 불참함",
+          "valueA": "high",
+          "valueB": "low",
+          "basis": "explicit",
+          "quoteA": "생일 모임 후 발표 연습",
+          "quoteB": "모임은 빠지고"
+        },
+        {
+          "id": "immediacy",
+          "label": "연습 시작 시점",
+          "a": "모임 후에 연습 시작",
+          "b": "모임 없이 바로 연습",
+          "valueA": "later",
+          "valueB": "now",
+          "basis": "explicit",
+          "quoteA": "생일 모임 후 발표 연습",
+          "quoteB": "모임은 빠지고 발표 연습"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "내일 발표지만 친구 생일이야"
+        },
+        {
+          "input": "a",
+          "quote": "생일 모임 후 발표 연습"
+        },
+        {
+          "input": "b",
+          "quote": "모임은 빠지고 발표 연습"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "옵션들 문장이 명확하게 모임 참석 여부와 연습 시점을 나타냄",
+          "특이한 용어·모호한 참조 없음"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "23": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1285,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 739,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 2024
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "비 오는 상황에서 산책 중 통화할지 집에서 통화할지 선택",
+      "optionA_meaning": {
+        "summary": "비 오는 날에 우산을 쓰고 밖으로 나가 산책하는 동안 통화한다는 의미.",
+        "activity": "우산 쓰고 산책하며 통화하기",
+        "basis": "explicit",
+        "quote": "우산 쓰고 산책하며 통화",
+        "scene": {
+          "elements": [
+            "우산",
+            "산책"
+          ],
+          "future": "우산을 들고 산책길을 걷다보니 통화 중에 비 소리가 배경이 되어 생각이 정리된다.",
+          "capture": "산책 중 우산 속의 작은 통화"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "비 오는 날 밖에 나가지 않고 집 안에 머물면서 통화한다는 의미.",
+        "activity": "집에서 통화하기",
+        "basis": "explicit",
+        "quote": "집에서 통화",
+        "scene": {
+          "elements": [
+            "집",
+            "통화"
+          ],
+          "future": "집 안에 앉아 창밖 비를 보며 통화하니 목소리에 집중할 수 있다.",
+          "capture": "창문 너머 비와 함께한 통화"
+        }
+      },
+      "meaningful_difference": "한쪽은 '우산을 쓰고 밖에서 산책하면서 통화'하는 이동적·외부 경험이고, 다른 쪽은 '집 안에 머물며 통화'하는 정적인·실내 경험으로 차이가 있다.",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "장소 (실내/실외)",
+          "a": "실외에서 우산을 쓰고 산책",
+          "b": "집 안에서 머물며 통화",
+          "valueA": "outdoor",
+          "valueB": "indoor",
+          "basis": "explicit",
+          "quoteA": "우산 쓰고 산책하며 통화",
+          "quoteB": "집에서 통화"
+        },
+        {
+          "id": "activity",
+          "label": "활동 성격 (이동/정지)",
+          "a": "산책하면서 통화하는 이동적 활동",
+          "b": "집에 머물며 통화하는 정적 활동",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "산책",
+          "quoteB": "집에서 통화"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "우산 쓰고 산책하며 통화"
+        },
+        {
+          "input": "b",
+          "quote": "집에서 통화"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "둘 옵션의 표현이 명확하고 상반되지 않음",
+          "모호한 용어 또는 동의어가 없음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "비 오는 상황에서 산책 중 통화할지 집에서 통화할지 선택",
+      "optionA_meaning": {
+        "summary": "비 오는 날에 우산을 쓰고 밖으로 나가 산책하는 동안 통화한다는 의미.",
+        "activity": "우산 쓰고 산책하며 통화하기",
+        "basis": "explicit",
+        "quote": "우산 쓰고 산책하며 통화",
+        "scene": {
+          "elements": [
+            "우산",
+            "산책"
+          ],
+          "future": "우산을 들고 산책길을 걷다보니 통화 중에 비 소리가 배경이 되어 생각이 정리된다.",
+          "capture": "산책 중 우산 속의 작은 통화"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "비 오는 날 밖에 나가지 않고 집 안에 머물면서 통화한다는 의미.",
+        "activity": "집에서 통화하기",
+        "basis": "explicit",
+        "quote": "집에서 통화",
+        "scene": {
+          "elements": [
+            "집",
+            "통화"
+          ],
+          "future": "집 안에 앉아 창밖 비를 보며 통화하니 목소리에 집중할 수 있다.",
+          "capture": "창문 너머 비와 함께한 통화"
+        }
+      },
+      "meaningful_difference": "한쪽은 '우산을 쓰고 밖에서 산책하면서 통화'하는 이동적·외부 경험이고, 다른 쪽은 '집 안에 머물며 통화'하는 정적인·실내 경험으로 차이가 있다.",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "장소 (실내/실외)",
+          "a": "실외에서 우산을 쓰고 산책",
+          "b": "집 안에서 머물며 통화",
+          "valueA": "outdoor",
+          "valueB": "indoor",
+          "basis": "explicit",
+          "quoteA": "우산 쓰고 산책하며 통화",
+          "quoteB": "집에서 통화"
+        },
+        {
+          "id": "activity",
+          "label": "활동 성격 (이동/정지)",
+          "a": "산책하면서 통화하는 이동적 활동",
+          "b": "집에 머물며 통화하는 정적 활동",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "산책",
+          "quoteB": "집에서 통화"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "a",
+          "quote": "우산 쓰고 산책하며 통화"
+        },
+        {
+          "input": "b",
+          "quote": "집에서 통화"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "둘 옵션의 표현이 명확하고 상반되지 않음",
+          "모호한 용어 또는 동의어가 없음"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "24": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1281,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 571,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1852
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "질문은 '안 가는 게 아니라 늦게 가려는데?'로, 참석 여부와 시간(늦게감 vs 불참)을 대비함.",
+      "optionA_meaning": {
+        "summary": "정해진 모임에 아예 안 가는 게 아니라 예정된 시간보다 늦게 도착해 참석하겠다는 뜻.",
+        "activity": "늦게 참석하기",
+        "basis": "explicit",
+        "quote": "늦게 참석한다",
+        "scene": {
+          "elements": [
+            "늦게 참석한다"
+          ],
+          "future": "'늦게 참석한다'고 말하면 입장할 때 눈치 보일 수 있지만 바로 자리 잡으려 애쓸 것이다.",
+          "capture": "눈치 보며 자리 찾음"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "모임에 아예 참석하지 않겠다는 뜻으로, 방문 자체를 하지 않겠다는 선택을 명확히 함.",
+        "activity": "참석하지 않기",
+        "basis": "explicit",
+        "quote": "참석하지 않는다",
+        "scene": {
+          "elements": [
+            "참석하지 않는다"
+          ],
+          "future": "'참석하지 않는다'고 통보하면 그날 일정에서 모임을 빼고 다른 일을 할 것이다.",
+          "capture": "불참 통보"
+        }
+      },
+      "meaningful_difference": "두 선택은 같은 모임에 대한 태도에서 '지각해서 참석' 대 '아예 불참'으로 행동(참여 여부)과 현장 도착 여부가 달라짐.",
+      "useful_comparison_axes": [
+        "immediacy",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "immediacy",
+          "label": "도착 시점",
+          "a": "나중에 도착(지각)",
+          "b": "도착하지 않음",
+          "valueA": "later",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "늦게 참석한다",
+          "quoteB": "참석하지 않는다"
+        },
+        {
+          "id": "experience",
+          "label": "참여 여부",
+          "a": "참석(참여)",
+          "b": "불참(참여하지 않음)",
+          "valueA": "participate",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "늦게 참석한다",
+          "quoteB": "참석하지 않는다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "안 가는 게 아니라 늦게 가려는데?"
+        },
+        {
+          "input": "a",
+          "quote": "늦게 참석한다"
+        },
+        {
+          "input": "b",
+          "quote": "참석하지 않는다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 문구가 명확히 서로 반대되는 행동을 표현함",
+          "질문은 늦게 가려는 의도를 묻는 것으로 의미 범위가 분명함"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "질문은 '안 가는 게 아니라 늦게 가려는데?'로, 참석 여부와 시간(늦게감 vs 불참)을 대비함.",
+      "optionA_meaning": {
+        "summary": "정해진 모임에 아예 안 가는 게 아니라 예정된 시간보다 늦게 도착해 참석하겠다는 뜻.",
+        "activity": "늦게 참석하기",
+        "basis": "explicit",
+        "quote": "늦게 참석한다",
+        "scene": {
+          "elements": [
+            "늦게 참석한다",
+            "모임에 참석"
+          ],
+          "future": "'늦게 참석한다'고 말하면 입장할 때 눈치 보일 수 있지만 바로 자리 잡으려 애쓸 것이다.",
+          "capture": "눈치 보며 자리 찾음"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "모임에 아예 참석하지 않겠다는 뜻으로, 방문 자체를 하지 않겠다는 선택을 명확히 함.",
+        "activity": "참석하지 않기",
+        "basis": "explicit",
+        "quote": "참석하지 않는다",
+        "scene": {
+          "elements": [
+            "참석하지 않는다",
+            "모임에 불참"
+          ],
+          "future": "'참석하지 않는다'고 통보하면 그날 일정에서 모임을 빼고 다른 일을 할 것이다.",
+          "capture": "불참 통보"
+        }
+      },
+      "meaningful_difference": "두 선택은 같은 모임에 대한 태도에서 '지각해서 참석' 대 '아예 불참'으로 행동(참여 여부)과 현장 도착 여부가 달라짐.",
+      "useful_comparison_axes": [
+        "immediacy",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "immediacy",
+          "label": "도착 시점",
+          "a": "나중에 도착(지각)",
+          "b": "도착하지 않음",
+          "valueA": "later",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "늦게 참석한다",
+          "quoteB": "참석하지 않는다"
+        },
+        {
+          "id": "activity",
+          "label": "참여 여부",
+          "a": "참석(참여)",
+          "b": "불참(참여하지 않음)",
+          "valueA": "participate",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "늦게 참석한다",
+          "quoteB": "참석하지 않는다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "안 가는 게 아니라 늦게 가려는데?"
+        },
+        {
+          "input": "a",
+          "quote": "늦게 참석한다"
+        },
+        {
+          "input": "b",
+          "quote": "참석하지 않는다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 문구가 명확히 서로 반대되는 행동을 표현함",
+          "질문은 늦게 가려는 의도를 묻는 것으로 의미 범위가 분명함"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "25": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1276,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 759,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 2035
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "누군가에게 연락을 할지 말지 묻는 질문: '연락하지 않을 수 없을까?'",
+      "optionA_meaning": {
+        "summary": "상대에게 연락을 하지 않는 상태를 유지하는 것, 즉 연락을 전혀 하지 않음.",
+        "activity": "연락하지 않기",
+        "basis": "explicit",
+        "quote": "연락하지 않는다",
+        "scene": {
+          "elements": [
+            "연락하지 않는다",
+            "연락"
+          ],
+          "future": "연락하지 않는다 선택 후 '연락' 없이 지내며 가끔 생각나도 행동으로 옮기지 않을 것이다.",
+          "capture": "연락 없이 견뎌보기"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "상대에게 실제로 연락을 취하는 행위 — 메시지·통화 등으로 소통을 시도함.",
+        "activity": "연락하기",
+        "basis": "explicit",
+        "quote": "연락한다",
+        "scene": {
+          "elements": [
+            "연락한다",
+            "연락"
+          ],
+          "future": "연락한다 선택 후 직접 메시지나 통화를 시도해 상황을 확인하거나 말문을 열 것이다.",
+          "capture": "먼저 연락해보기"
+        }
+      },
+      "meaningful_difference": "한쪽은 소통을 전혀 하지 않고 관망하는 태도(연락하지 않는 것), 다른 쪽은 적극적으로 소통을 시도하는 행위(연락하는 것)로, 행동의 유무가 핵심 차이다.",
+      "useful_comparison_axes": [
+        "activity",
+        "immediacy"
+      ],
+      "decision_axes": [
+        {
+          "id": "activity",
+          "label": "행동 유무",
+          "a": "연락을 하지 않는 소극적 상태",
+          "b": "실제로 연락을 시도하는 적극적 행동",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "연락하지 않는다",
+          "quoteB": "연락한다"
+        },
+        {
+          "id": "immediacy",
+          "label": "즉시성",
+          "a": "즉시 연락하지 않는 상태(연락을 하지 않음)",
+          "b": "즉시 연락을 취함(연락함)",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "연락하지 않는다",
+          "quoteB": "연락한다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "연락하지 않을 수 없을까?"
+        },
+        {
+          "input": "a",
+          "quote": "연락하지 않는다"
+        },
+        {
+          "input": "b",
+          "quote": "연락한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 행위(연락함/연락하지 않음)가 명확히 표현되어 있음",
+          "불명확한 고유어나 모호한 용어가 없음"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "누군가에게 연락을 할지 말지 묻는 질문: '연락하지 않을 수 없을까?'",
+      "optionA_meaning": {
+        "summary": "상대에게 연락을 하지 않는 상태를 유지하는 것, 즉 연락을 전혀 하지 않음.",
+        "activity": "연락하지 않기",
+        "basis": "explicit",
+        "quote": "연락하지 않는다",
+        "scene": {
+          "elements": [
+            "연락하지 않는다",
+            "연락"
+          ],
+          "future": "연락하지 않는다 선택 후 '연락' 없이 지내며 가끔 생각나도 행동으로 옮기지 않을 것이다.",
+          "capture": "연락 없이 견뎌보기"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "상대에게 실제로 연락을 취하는 행위 — 메시지·통화 등으로 소통을 시도함.",
+        "activity": "연락하기",
+        "basis": "explicit",
+        "quote": "연락한다",
+        "scene": {
+          "elements": [
+            "연락한다",
+            "연락"
+          ],
+          "future": "연락한다 선택 후 직접 메시지나 통화를 시도해 상황을 확인하거나 말문을 열 것이다.",
+          "capture": "먼저 연락해보기"
+        }
+      },
+      "meaningful_difference": "한쪽은 소통을 전혀 하지 않고 관망하는 태도(연락하지 않는 것), 다른 쪽은 적극적으로 소통을 시도하는 행위(연락하는 것)로, 행동의 유무가 핵심 차이다.",
+      "useful_comparison_axes": [
+        "activity",
+        "immediacy"
+      ],
+      "decision_axes": [
+        {
+          "id": "activity",
+          "label": "행동 유무",
+          "a": "연락을 하지 않는 소극적 상태",
+          "b": "실제로 연락을 시도하는 적극적 행동",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "explicit",
+          "quoteA": "연락하지 않는다",
+          "quoteB": "연락한다"
+        },
+        {
+          "id": "immediacy",
+          "label": "즉시성",
+          "a": "즉시 연락하지 않는 상태(연락을 하지 않음)",
+          "b": "즉시 연락을 취함(연락함)",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "연락하지 않는다",
+          "quoteB": "연락한다"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "연락하지 않을 수 없을까?"
+        },
+        {
+          "input": "a",
+          "quote": "연락하지 않는다"
+        },
+        {
+          "input": "b",
+          "quote": "연락한다"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 선택지의 행위(연락함/연락하지 않음)가 명확히 표현되어 있음",
+          "불명확한 고유어나 모호한 용어가 없음"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "26": {
+    "status": "ready",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1273,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 495,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1768
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "주말에 할 활동을 정하려는 질문",
+      "optionA_meaning": {
+        "summary": "야외에서 걷거나 달리며 쓰레기를 줍는 활동을 뜻함",
+        "activity": "쓰레기 줍기/플로깅하기",
+        "basis": "general-meaning",
+        "quote": "플로깅",
+        "scene": {
+          "elements": [
+            "플로깅",
+            "야외"
+          ],
+          "future": "플로깅 후에 줍은 쓰레기를 분류하며 뿌듯함을 느낄 것이다.",
+          "capture": "줍은 쓰레기와 운동화 발자국"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "집에서 운동 기구나 동작으로 체력을 기르는 활동을 뜻함",
+        "activity": "집에서 운동하기",
+        "basis": "general-meaning",
+        "quote": "홈트",
+        "scene": {
+          "elements": [
+            "홈트",
+            "집"
+          ],
+          "future": "홈트하고 땀을 닦으며 편안하게 쉰 뒤 기분전환이 될 것이다.",
+          "capture": "운동 매트 위에서 땀"
+        }
+      },
+      "meaningful_difference": "야외에서 쓰레기를 줍는 활동(플로깅)과 집 안에서 운동하는 활동(홈트)으로 장소와 행위 목적이 다름",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "장소",
+          "a": "야외",
+          "b": "집",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "플로깅",
+          "quoteB": "홈트"
+        },
+        {
+          "id": "activity",
+          "label": "행동 유형",
+          "a": "쓰레기 줍기와 운동 병행",
+          "b": "집에서 운동만 하기",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "플로깅",
+          "quoteB": "홈트"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "주말에는 뭐 할까?"
+        },
+        {
+          "input": "a",
+          "quote": "플로깅"
+        },
+        {
+          "input": "b",
+          "quote": "홈트"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션은 일상 용어로 의미가 분명함",
+          "입력에 모호한 용어나 신조어가 없어 추가 추정 불필요"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "주말에 할 활동을 정하려는 질문",
+      "optionA_meaning": {
+        "summary": "야외에서 걷거나 달리며 쓰레기를 줍는 활동을 뜻함",
+        "activity": "쓰레기 줍기/플로깅하기",
+        "basis": "general-meaning",
+        "quote": "플로깅",
+        "scene": {
+          "elements": [
+            "플로깅",
+            "야외"
+          ],
+          "future": "플로깅 후에 줍은 쓰레기를 분류하며 뿌듯함을 느낄 것이다.",
+          "capture": "줍은 쓰레기와 운동화 발자국"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "집에서 운동 기구나 동작으로 체력을 기르는 활동을 뜻함",
+        "activity": "집에서 운동하기",
+        "basis": "general-meaning",
+        "quote": "홈트",
+        "scene": {
+          "elements": [
+            "홈트",
+            "집"
+          ],
+          "future": "홈트하고 땀을 닦으며 편안하게 쉰 뒤 기분전환이 될 것이다.",
+          "capture": "운동 매트 위에서 땀"
+        }
+      },
+      "meaningful_difference": "야외에서 쓰레기를 줍는 활동(플로깅)과 집 안에서 운동하는 활동(홈트)으로 장소와 행위 목적이 다름",
+      "useful_comparison_axes": [
+        "setting",
+        "activity"
+      ],
+      "decision_axes": [
+        {
+          "id": "setting",
+          "label": "장소",
+          "a": "야외",
+          "b": "집",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "플로깅",
+          "quoteB": "홈트"
+        },
+        {
+          "id": "activity",
+          "label": "행동 유형",
+          "a": "쓰레기 줍기와 운동 병행",
+          "b": "집에서 운동만 하기",
+          "valueA": "other",
+          "valueB": "other",
+          "basis": "general-meaning",
+          "quoteA": "플로깅",
+          "quoteB": "홈트"
+        }
+      ],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "주말에는 뭐 할까?"
+        },
+        {
+          "input": "a",
+          "quote": "플로깅"
+        },
+        {
+          "input": "b",
+          "quote": "홈트"
+        }
+      ],
+      "uncertainty": {
+        "level": "low",
+        "reasons": [
+          "두 옵션은 일상 용어로 의미가 분명함",
+          "입력에 모호한 용어나 신조어가 없어 추가 추정 불필요"
+        ]
+      }
+    },
+    "discarded_axes": []
+  },
+  "27": {
+    "status": "confirmation",
+    "code": "uncertain",
+    "usage": {
+      "input_tokens": 1280,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1152
+      },
+      "output_tokens": 639,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 1919
+    },
+    "model": "gpt-5-mini-2025-08-07",
+    "meaning": {
+      "situation": "사용자가 두 가지 이름(또는 활동) 중 어느 것이 더 좋은지 묻지만, 각 명칭이 생소하여 구체적 의미가 불분명함.",
+      "optionA_meaning": {
+        "summary": "옵션 A는 '드르밈 체험'이라는 활동을 이름으로 제시하지만, 해당 용어의 구체적 행위나 맥락이 불명확함.",
+        "activity": "드르밈 체험하기",
+        "basis": "unknown",
+        "quote": "드르밈 체험",
+        "scene": {
+          "elements": [
+            "드르밈",
+            "체험"
+          ],
+          "future": "드르밈을 직접 겪어보니 뭔지 설명할 말문이 막혔지만 웃음이 터졌다.",
+          "capture": "의미불명 체험의 순간"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "옵션 B는 '쀼라코 활동'이라는 이름을 제시하나, 그 활동의 내용이나 범위가 명확하지 않아 해석이 불가능함.",
+        "activity": "쀼라코 활동하기",
+        "basis": "unknown",
+        "quote": "쀼라코 활동",
+        "scene": {
+          "elements": [
+            "쀼라코",
+            "활동"
+          ],
+          "future": "쀼라코를 해보려 했지만 정확한 방법을 몰라 우왕좌왕하다가 결국 새로운 방식으로 웃음을 만들었다.",
+          "capture": "정체불명 활동의 기록"
+        }
+      },
+      "meaningful_difference": "두 옵션은 고유 명칭(단어)이 다르고 각각 '체험' 또는 '활동'이라는 표현을 사용하지만, 둘 다 구체적 행위·맥락이 제공되지 않아 실제 차이는 불명확함.",
+      "useful_comparison_axes": [
+        "activity",
+        "other"
+      ],
+      "decision_axes": [],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "둘 중 뭐가 좋을까?"
+        },
+        {
+          "input": "a",
+          "quote": "드르밈 체험"
+        },
+        {
+          "input": "b",
+          "quote": "쀼라코 활동"
+        }
+      ],
+      "uncertainty": {
+        "level": "high",
+        "reasons": [
+          "옵션 명칭이 생소하여 단어가 가리키는 구체적 행위나 맥락을 알 수 없음",
+          "각 항목에 대해 내용·범위·부정(negation) 등 추가 정보가 없어 비교할 근거가 부족함"
+        ]
+      }
+    },
+    "raw_meaning": {
+      "situation": "사용자가 두 가지 이름(또는 활동) 중 어느 것이 더 좋은지 묻지만, 각 명칭이 생소하여 구체적 의미가 불분명함.",
+      "optionA_meaning": {
+        "summary": "옵션 A는 '드르밈 체험'이라는 활동을 이름으로 제시하지만, 해당 용어의 구체적 행위나 맥락이 불명확함.",
+        "activity": "드르밈 체험하기",
+        "basis": "unknown",
+        "quote": "드르밈 체험",
+        "scene": {
+          "elements": [
+            "드르밈",
+            "체험"
+          ],
+          "future": "드르밈을 직접 겪어보니 뭔지 설명할 말문이 막혔지만 웃음이 터졌다.",
+          "capture": "의미불명 체험의 순간"
+        }
+      },
+      "optionB_meaning": {
+        "summary": "옵션 B는 '쀼라코 활동'이라는 이름을 제시하나, 그 활동의 내용이나 범위가 명확하지 않아 해석이 불가능함.",
+        "activity": "쀼라코 활동하기",
+        "basis": "unknown",
+        "quote": "쀼라코 활동",
+        "scene": {
+          "elements": [
+            "쀼라코",
+            "활동"
+          ],
+          "future": "쀼라코를 해보려 했지만 정확한 방법을 몰라 우왕좌왕하다가 결국 새로운 방식으로 웃음을 만들었다.",
+          "capture": "정체불명 활동의 기록"
+        }
+      },
+      "meaningful_difference": "두 옵션은 고유 명칭(단어)이 다르고 각각 '체험' 또는 '활동'이라는 표현을 사용하지만, 둘 다 구체적 행위·맥락이 제공되지 않아 실제 차이는 불명확함.",
+      "useful_comparison_axes": [
+        "activity",
+        "other"
+      ],
+      "decision_axes": [],
+      "evidence": [
+        {
+          "input": "question",
+          "quote": "둘 중 뭐가 좋을까?"
+        },
+        {
+          "input": "a",
+          "quote": "드르밈 체험"
+        },
+        {
+          "input": "b",
+          "quote": "쀼라코 활동"
+        }
+      ],
+      "uncertainty": {
+        "level": "high",
+        "reasons": [
+          "옵션 명칭이 생소하여 단어가 가리키는 구체적 행위나 맥락을 알 수 없음",
+          "각 항목에 대해 내용·범위·부정(negation) 등 추가 정보가 없어 비교할 근거가 부족함"
+        ]
+      }
+    },
+    "discarded_axes": []
+  }
+}

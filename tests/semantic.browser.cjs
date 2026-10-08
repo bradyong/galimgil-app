@@ -1,6 +1,6 @@
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const assert=require('node:assert/strict');
-const responses=require('./fixtures/semantic-responses.json');
+const responses=require('./fixtures/semantic-v2-responses.json');
 (async()=>{
  const browser=await chromium.launch({channel:'msedge',headless:true});
  try{

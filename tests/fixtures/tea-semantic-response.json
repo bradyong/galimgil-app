@@ -1,0 +1,136 @@
+{
+  "status": "ready",
+  "meaning": {
+    "situation": "오늘 마실 차를 고르는 질문",
+    "optionA_meaning": {
+      "summary": "카페인 있는 '녹차' 차 종류 제시",
+      "activity": "차 마시기",
+      "basis": "general-meaning",
+      "quote": "녹차",
+      "scene": {
+        "elements": [
+          "녹차"
+        ],
+        "future": "녹차 잔에 우러난 초록빛 잔뜩 보일 것이다",
+        "capture": "초록빛 찻잎 한 모금"
+      }
+    },
+    "optionB_meaning": {
+      "summary": "카페인 있는 '홍차' 차 종류 제시",
+      "activity": "차 마시기",
+      "basis": "general-meaning",
+      "quote": "홍차",
+      "scene": {
+        "elements": [
+          "홍차"
+        ],
+        "future": "홍차 잔에서 진한 빛깔이 퍼져 나올 것이다",
+        "capture": "진한 홍차 향기 한 모금"
+      }
+    },
+    "meaningful_difference": "두 선택은 차의 종류(녹차 vs 홍차)로 맛과 색·향의 차이를 가짐",
+    "useful_comparison_axes": [
+      "experience",
+      "stimulation"
+    ],
+    "decision_axes": [],
+    "evidence": [
+      {
+        "input": "question",
+        "quote": "오늘 마실 차는?"
+      },
+      {
+        "input": "a",
+        "quote": "녹차"
+      },
+      {
+        "input": "b",
+        "quote": "홍차"
+      }
+    ],
+    "uncertainty": {
+      "level": "low",
+      "reasons": [
+        "단어들이 일반명사라 기본 의미로 해석 가능",
+        "선택지에 추가 정보(조제법 등) 없음"
+      ]
+    }
+  },
+  "play_axes": [
+    {
+      "label": "첫인상",
+      "a": {
+        "value": "초록빛 잔(녹차)",
+        "quote": "녹차",
+        "tags": [
+          "relax",
+          "soft"
+        ]
+      },
+      "b": {
+        "value": "진한 빛깔(홍차)",
+        "quote": "홍차",
+        "tags": [
+          "bold",
+          "energy"
+        ]
+      }
+    },
+    {
+      "label": "향기와 맛",
+      "a": {
+        "value": "은은한 풀향과 부드러움",
+        "quote": "녹차",
+        "tags": [
+          "soft",
+          "relax"
+        ]
+      },
+      "b": {
+        "value": "강한 향과 진한 맛",
+        "quote": "홍차",
+        "tags": [
+          "bold",
+          "energy"
+        ]
+      }
+    }
+  ],
+  "discarded_axes": [
+    {
+      "id": "experience",
+      "label": "경험 초점",
+      "a": "관찰 위주의 잔잔한 차 경험",
+      "b": "참여적이고 진한 차 경험",
+      "valueA": "observe",
+      "valueB": "participate",
+      "basis": "general-meaning",
+      "quoteA": "녹차",
+      "quoteB": "홍차"
+    },
+    {
+      "id": "stimulation",
+      "label": "자극 수준",
+      "a": "부드럽고 은은한 자극",
+      "b": "진하고 뚜렷한 자극",
+      "valueA": "low",
+      "valueB": "high",
+      "basis": "general-meaning",
+      "quoteA": "녹차",
+      "quoteB": "홍차"
+    }
+  ],
+  "usage": {
+    "input_tokens": 1807,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 583,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 2390
+  },
+  "cost": 0.00161775
+}

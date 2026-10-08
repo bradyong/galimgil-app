@@ -1,0 +1,84 @@
+{
+  "6": {
+    "canonical_axes": [
+      {
+        "id": "activity",
+        "valueA": "active",
+        "valueB": "passive",
+        "quoteA": "운동하고 공부하기",
+        "quoteB": "쉬기",
+        "explanation": "A는 신체 활동과 학습을 수행하는 적극적 행동이고, B는 활동을 중단하고 휴식하는 수동적 선택이다."
+      }
+    ],
+    "excluded": []
+  },
+  "15": {
+    "canonical_axes": [
+      {
+        "id": "ownership",
+        "valueA": "temporary",
+        "valueB": "own",
+        "quoteA": "필요한 옷을 빌려서 일시적으로 사용한다는 의미",
+        "quoteB": "필요한 옷을 구입하여 소유하고 장기간 사용하는다는 의미",
+        "explanation": "대여는 일시적 사용(임시 소유), 구매는 영구적 소유(장기간 사용)으로 소유 상태가 대조됩니다."
+      }
+    ],
+    "excluded": []
+  },
+  "24": {
+    "canonical_axes": [],
+    "excluded": [
+      {
+        "id": "immediacy",
+        "valueA": "later",
+        "valueB": "now",
+        "quoteA": "정해진 모임에 아예 안 가는 게 아니라 예정된 시간보다 늦게 도착해 참석하겠다는 뜻.",
+        "quoteB": "모임에 아예 참석하지 않겠다는 뜻으로, 방문 자체를 하지 않겠다는 선택을 명확히 함.",
+        "explanation": "A는 '늦게 도착해 참석'으로 나중에 가는 행위(later), B는 아예 참석하지 않으므로 '지금/지금에 해당하는 참석 없음'으로 대비(now)."
+      }
+    ]
+  },
+  "25": {
+    "canonical_axes": [
+      {
+        "id": "activity",
+        "valueA": "passive",
+        "valueB": "active",
+        "quoteA": "상대에게 연락을 하지 않는 상태를 유지하는 것, 즉 연락을 전혀 하지 않음.",
+        "quoteB": "상대에게 실제로 연락을 취하는 행위 — 메시지·통화 등으로 소통을 시도함.",
+        "explanation": "연락하지 않음은 행동을 보류(방관)하는 수동적 상태이고, 연락함은 직접 행위를 수행하는 적극적 선택이다."
+      }
+    ],
+    "excluded": []
+  },
+  "26": {
+    "canonical_axes": [
+      {
+        "id": "setting",
+        "valueA": "outdoor",
+        "valueB": "indoor",
+        "quoteA": "야외에서 걷거나 달리며 쓰레기를 줍는 활동을 뜻함",
+        "quoteB": "집에서 운동 기구나 동작으로 체력을 기르는 활동을 뜻함",
+        "explanation": "플로깅은 야외에서, 홈트는 집(실내)에서 행하는 활동으로 대비됨"
+      }
+    ],
+    "excluded": [
+      {
+        "id": "activity",
+        "valueA": "acting or participating",
+        "valueB": "acting or participating",
+        "quoteA": "쓰레기 줍기/플로깅하기",
+        "quoteB": "집에서 운동하기",
+        "explanation": "두 선택지 모두 직접 행동하여 참여하는 활동(플로깅은 쓰레기 줍기, 홈트는 집에서 운동)"
+      },
+      {
+        "id": "social",
+        "valueA": "low",
+        "valueB": "low",
+        "quoteA": "야외에서 걷거나 달리며 쓰레기를 줍는 활동을 뜻함",
+        "quoteB": "집에서 운동 기구나 동작으로 체력을 기르는 활동을 뜻함",
+        "explanation": "두 활동 모두 설명에 단독 행동을 가리키며 상호작용이나 다수 참여를 명시하지 않음"
+      }
+    ]
+  }
+}

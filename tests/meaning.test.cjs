@@ -12,7 +12,7 @@ function load(file) {
    const i=ChoiceInput.inspect(f.q,f.a,f.b,x=>findFeatureEntry(x)?.item.category,f.category||'daily');
    if(i.message) throw new Error(i.message);
    const p=choiceProfile(f.q,f.a,f.b); if(p.type!==i.category)p.forced=null;p.type=i.category;
-   const confirmation=confirmed ? {binding:f.overrideBinding||JSON.stringify([f.q,f.a,f.b]),a:f.meanings[0],b:f.meanings[1],axis:f.axis}:null;
+   const confirmation=confirmed ? {binding:f.overrideBinding||JSON.stringify([f.q,f.a,f.b]),a:f.meanings[0],b:f.meanings[1],axis:f.axis,preferred:'a',criterion:f.axis}:null;
    return buildChoiceNarrative(f.q,f.a,f.b,6,signs[0],p,seed,confirmation);
   })()`,c);
  };
@@ -63,7 +63,7 @@ for(const fixture of fixtures) test(`shared evidence and roles: ${fixture.a}/${f
 test('identical clarification does not bypass evidence gate',()=>{
  const f={...fixtures[0],meanings:['같은 체험','같은 체험']};assert.ok(run(f,1,true).needsMeaning);
 });
-test('empty comparison axis does not bypass gate',()=>assert.ok(run({...fixtures[0],axis:''},1,true).needsMeaning));
+test('meaning descriptions need no preference or criterion',()=>assert.ok(run({...fixtures[0],axis:''},1,true).winner));
 test('confirmation from another question is rejected',()=>assert.ok(run({...fixtures[0],overrideBinding:'stale-question'},1,true).needsMeaning));
 test('HTML in user evidence is escaped',()=>{
  const r=run({...fixtures[0],meanings:['<img src=x onerror=alert(1)>','다른 체험']},1,true);

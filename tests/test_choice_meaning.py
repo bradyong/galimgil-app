@@ -11,9 +11,13 @@ DATA = {'question': '어디 갈까?', 'a': '동물원', 'b': '놀이동산', 're
 
 def meaning():
     return {'situation': '외출 장소 선택',
-            'optionA_meaning': {'summary': '동물 관람', 'activity': '동물 보기', 'basis': 'general-meaning', 'quote': '동물원'},
-            'optionB_meaning': {'summary': '놀이기구 체험', 'activity': '놀이기구 타기', 'basis': 'general-meaning', 'quote': '놀이동산'},
+            'optionA_meaning': {'summary': '여러 동물 관람', 'activity': '동물 보기', 'basis': 'general-meaning', 'quote': '동물원',
+                'scene':{'elements':['동물','관람'],'future':'동물 구경하다 내 표정도 구경거리가 될지 몰라.','capture':'관람 끝에 남은 건 내 웃음'}},
+            'optionB_meaning': {'summary': '놀이기구 체험', 'activity': '놀이기구 타기', 'basis': 'general-meaning', 'quote': '놀이동산',
+                'scene':{'elements':['놀이기구','체험'],'future':'놀이기구 타기 전의 허세는 사진에만 남았다.','capture':'체험은 용감하게 표정은 솔직하게'}},
             'meaningful_difference': '관람과 놀이기구 체험', 'useful_comparison_axes': ['체험 종류'],
+            'decision_axes':[{'id':'experience','label':'체험 종류','a':'동물 관람','b':'놀이기구 체험',
+                              'valueA':'observe','valueB':'participate','basis':'general-meaning','quoteA':'동물원','quoteB':'놀이동산'}],
             'evidence': [{'input': 'a', 'quote': '동물원'}, {'input': 'b', 'quote': '놀이동산'}],
             'uncertainty': {'level': 'low', 'reasons': []}}
 
@@ -50,6 +54,40 @@ class Store:
 class SemanticTests(unittest.TestCase):
     def test_schema_and_evidence(self):
         self.assertTrue(cm.validate(meaning(), cm.clean_input(DATA)))
+
+    def test_echoed_option_name_is_not_interpretation(self):
+        value = meaning()
+        value['optionA_meaning']['summary'] = '동물원이라는 선택'
+        self.assertFalse(cm.validate(value, DATA))
+
+    def test_normalization_preserves_raw_response(self):
+        value = meaning(); original = copy.deepcopy(value)
+        value['decision_axes'][0]['id'] = 'activity'
+        original = copy.deepcopy(value)
+        normalized, discarded = cm.normalize(value, DATA)
+        self.assertEqual(value, original)
+        self.assertEqual(normalized['decision_axes'][0]['id'], 'experience')
+
+    def test_no_invented_axis_when_all_axes_are_invalid(self):
+        value = meaning()
+        value['decision_axes'][0].update(id='cost', valueA='low', valueB='high')
+        normalized, discarded = cm.normalize(value, DATA)
+        self.assertEqual(normalized['decision_axes'], [])
+        self.assertTrue(discarded)
+        self.assertTrue(cm.validate(normalized, DATA))
+
+    def test_equal_activities_cannot_be_observe_versus_participate(self):
+        value = meaning()
+        value['optionA_meaning']['activity'] = '방문'
+        value['optionB_meaning']['activity'] = '방문'
+        normalized, _ = cm.normalize(value, DATA)
+        self.assertEqual(normalized['decision_axes'], [])
+
+    def test_unrelated_scene_element_is_removed(self):
+        value = meaning()
+        value['optionA_meaning']['scene']['elements'].append('숙취')
+        normalized, _ = cm.normalize(value, DATA)
+        self.assertNotIn('숙취', normalized['optionA_meaning']['scene']['elements'])
 
     def test_winner_prohibited(self):
         value = meaning(); value['winner'] = 'A'
@@ -113,7 +151,7 @@ class SemanticTests(unittest.TestCase):
 
     def test_provider_request_is_bounded_and_once(self):
         raw={'status':'completed','usage':{'input_tokens':42,'output_tokens':50},
-             'output':[{'content':[{'type':'output_text','text':json.dumps(meaning())}]}]}
+             'output':[{'content':[{'type':'output_text','text':json.dumps({'meaning':meaning(),'writer':None})}]}]}
         class Response:
             def __enter__(self): return self
             def __exit__(self,*args): pass

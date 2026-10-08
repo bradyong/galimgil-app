@@ -1,0 +1,96 @@
+{
+  "6": {
+    "status": "invalid",
+    "canonical_axes": null,
+    "usage": {
+      "input_tokens": 500,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 110,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 610
+    },
+    "bound": 0.000345
+  },
+  "15": {
+    "status": "ready",
+    "canonical_axes": [
+      {
+        "id": "ownership",
+        "valueA": "temporary",
+        "valueB": "own",
+        "quoteA": "필요한 옷을 빌려서 일시적으로 사용한다는 의미",
+        "quoteB": "필요한 옷을 구입하여 소유하고 장기간 사용하는다는 의미",
+        "explanation": "대여는 일시적 사용(임시 소유), 구매는 영구적 소유(장기간 사용)으로 소유 상태가 대조됩니다."
+      }
+    ],
+    "usage": {
+      "input_tokens": 482,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 122,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 604
+    },
+    "bound": 0.0003645
+  },
+  "24": {
+    "status": "invalid",
+    "canonical_axes": null,
+    "usage": {
+      "input_tokens": 508,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 103,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 611
+    },
+    "bound": 0.000333
+  },
+  "25": {
+    "status": "invalid",
+    "canonical_axes": null,
+    "usage": {
+      "input_tokens": 493,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 195,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 688
+    },
+    "bound": 0.00051325
+  },
+  "26": {
+    "status": "invalid",
+    "canonical_axes": null,
+    "usage": {
+      "input_tokens": 488,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 350,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 838
+    },
+    "bound": 0.000822
+  }
+}

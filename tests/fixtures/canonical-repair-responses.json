@@ -1,0 +1,80 @@
+{
+  "6": {
+    "status": "ready",
+    "canonical_axes": [
+      {
+        "id": "activity",
+        "valueA": "active",
+        "valueB": "passive",
+        "quoteA": "운동하고 공부하기",
+        "quoteB": "쉬기",
+        "explanation": "A는 신체 활동과 학습을 수행하는 적극적 행동이고, B는 활동을 중단하고 휴식하는 수동적 선택이다."
+      }
+    ],
+    "usage": {
+      "input_tokens": 586,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 94,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 680
+    },
+    "bound": 0.0003345
+  },
+  "24": {
+    "status": "ready",
+    "canonical_axes": [
+      {
+        "id": "immediacy",
+        "valueA": "later",
+        "valueB": "now",
+        "quoteA": "정해진 모임에 아예 안 가는 게 아니라 예정된 시간보다 늦게 도착해 참석하겠다는 뜻.",
+        "quoteB": "모임에 아예 참석하지 않겠다는 뜻으로, 방문 자체를 하지 않겠다는 선택을 명확히 함.",
+        "explanation": "A는 '늦게 도착해 참석'으로 나중에 가는 행위(later), B는 아예 참석하지 않으므로 '지금/지금에 해당하는 참석 없음'으로 대비(now)."
+      }
+    ],
+    "usage": {
+      "input_tokens": 594,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 157,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 751
+    },
+    "bound": 0.0004625
+  },
+  "25": {
+    "status": "ready",
+    "canonical_axes": [
+      {
+        "id": "activity",
+        "valueA": "passive",
+        "valueB": "active",
+        "quoteA": "상대에게 연락을 하지 않는 상태를 유지하는 것, 즉 연락을 전혀 하지 않음.",
+        "quoteB": "상대에게 실제로 연락을 취하는 행위 — 메시지·통화 등으로 소통을 시도함.",
+        "explanation": "연락하지 않음은 행동을 보류(방관)하는 수동적 상태이고, 연락함은 직접 행위를 수행하는 적극적 선택이다."
+      }
+    ],
+    "usage": {
+      "input_tokens": 579,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 135,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 714
+    },
+    "bound": 0.00041475
+  }
+}

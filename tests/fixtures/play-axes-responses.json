@@ -1,0 +1,695 @@
+{
+  "0": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "활동 방식",
+        "a": {
+          "value": "관찰하며 걷기",
+          "quote": "동물들을 관찰하고 시설을 걷거나 구경하는 장소",
+          "tags": [
+            "relax",
+            "presence"
+          ]
+        },
+        "b": {
+          "value": "탑승·체험 중심",
+          "quote": "놀이기구와 탈거리가 있는 곳에서 놀이기구를 타거나 체험하는 장소",
+          "tags": [
+            "fun",
+            "action"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 640,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 114,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 754
+    },
+    "cost": 0.000388
+  },
+  "2": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "이동 경로의 위치",
+        "a": {
+          "value": "지상 경로",
+          "quote": "도로 위 노선을",
+          "tags": [
+            "practical"
+          ]
+        },
+        "b": {
+          "value": "지하 경로",
+          "quote": "지하 터널을 따라",
+          "tags": [
+            "focus"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 656,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 81,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 737
+    },
+    "cost": 0.000326
+  },
+  "3": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "상태(중고 vs 새)",
+        "a": {
+          "value": "이미 사용된 제품",
+          "quote": "이미 사용된 상태의 노트북을 구입하는 선택",
+          "tags": [
+            "unique"
+          ]
+        },
+        "b": {
+          "value": "공장에서 새로 제조된 제품",
+          "quote": "공장에서 새로 제조된 상태의 노트북을 구입하는 선택",
+          "tags": [
+            "newness"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 658,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 105,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 763
+    },
+    "cost": 0.0003745
+  },
+  "6": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "활동성 vs 휴지",
+        "a": {
+          "value": "활동 지속",
+          "quote": "운동하고 공부한다",
+          "tags": [
+            "energy"
+          ]
+        },
+        "b": {
+          "value": "활동 중단",
+          "quote": "쉰다",
+          "tags": [
+            "relax"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 644,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 78,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 722
+    },
+    "cost": 0.000317
+  },
+  "7": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "행동 vs 숙고",
+        "a": {
+          "value": "직접 행동으로 확정",
+          "quote": "연락하고 약속 잡는다",
+          "tags": [
+            "action"
+          ]
+        },
+        "b": {
+          "value": "결정 연기하고 숙고",
+          "quote": "더 생각한다",
+          "tags": [
+            "focus"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 631,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 84,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 715
+    },
+    "cost": 0.00032575
+  },
+  "9": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "식감 중심 vs 고기·섞임 중심",
+        "a": {
+          "value": "떡 중심의 쫄깃함",
+          "quote": "떡과 어묵 등을 젓가락이나 포크로 집어 먹는",
+          "tags": [
+            "fun",
+            "presence"
+          ]
+        },
+        "b": {
+          "value": "속 재료 섞인 순대",
+          "quote": "고기나 내장 등을 섞어 만든 순대를 썰어",
+          "tags": [
+            "rich",
+            "family"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 653,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 123,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 776
+    },
+    "cost": 0.00040925
+  },
+  "13": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "이동수단의 방식",
+        "a": {
+          "value": "개인 탈것",
+          "quote": "자전거를 타고 이동하는",
+          "tags": [
+            "energy"
+          ]
+        },
+        "b": {
+          "value": "공용 대중교통",
+          "quote": "지하철을 이용해 이동하는",
+          "tags": [
+            "practical"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 616,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 89,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 705
+    },
+    "cost": 0.000332
+  },
+  "14": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "매체형태",
+        "a": {
+          "value": "화면 기반 기기",
+          "quote": "화면 기반 장치로 전자책을 읽는 기기",
+          "tags": [
+            "newness"
+          ]
+        },
+        "b": {
+          "value": "종이 인쇄물",
+          "quote": "종이 인쇄물 형태의 책을 직접 손으로 넘기며 읽는 전통적 독서 매체",
+          "tags": [
+            "comfort"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 657,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 109,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 766
+    },
+    "cost": 0.00038225
+  },
+  "15": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "소유 vs 사용",
+        "a": {
+          "value": "임시 사용",
+          "quote": "빌려서 일시적으로 사용",
+          "tags": [
+            "variety"
+          ]
+        },
+        "b": {
+          "value": "소유 보유",
+          "quote": "구입하여 소유하고 장기간 사용하는",
+          "tags": [
+            "responsibility"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 626,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 85,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 711
+    },
+    "cost": 0.0003265
+  },
+  "16": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "환경 초점",
+        "a": {
+          "value": "사람이 만든 전시 중심",
+          "quote": "전시된 미술 작품",
+          "tags": [
+            "presence"
+          ]
+        },
+        "b": {
+          "value": "수중 생물 관찰 중심",
+          "quote": "수조 안의 해양 생물",
+          "tags": [
+            "unique"
+          ]
+        }
+      },
+      {
+        "label": "관람 대상",
+        "a": {
+          "value": "시각적 작품 감상",
+          "quote": "미술 작품 관람하기",
+          "tags": [
+            "focus"
+          ]
+        },
+        "b": {
+          "value": "생물 관찰 및 움직임 관찰",
+          "quote": "수중 생물 관찰하기",
+          "tags": [
+            "variety"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 631,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 149,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 780
+    },
+    "cost": 0.00045575
+  },
+  "17": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "환경 경관 vs 지형 활동",
+        "a": {
+          "value": "해안 풍경 중심",
+          "quote": "바다 보기/즐기기",
+          "tags": [
+            "relax"
+          ]
+        },
+        "b": {
+          "value": "산악 활동 중심",
+          "quote": "등산/산행하기",
+          "tags": [
+            "adventure"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 630,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 87,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 717
+    },
+    "cost": 0.0003315
+  },
+  "18": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "접촉 방식",
+        "a": {
+          "value": "대면으로 직접 접촉",
+          "quote": "대면으로 친구를 직접 만나서 말로 사과",
+          "tags": [
+            "presence",
+            "responsibility"
+          ]
+        },
+        "b": {
+          "value": "비대면으로 문자 전달",
+          "quote": "문자 메시지로 사과의 내용을 전하고 비대면으로",
+          "tags": [
+            "simple",
+            "safe"
+          ]
+        }
+      },
+      {
+        "label": "상황 마주하기",
+        "a": {
+          "value": "바로 마주하고 직접 해결",
+          "quote": "상황을 바로 마주한다",
+          "tags": [
+            "responsibility",
+            "focus"
+          ]
+        },
+        "b": {
+          "value": "거리 두고 정리한다",
+          "quote": "비대면으로 상황을 정리한다",
+          "tags": [
+            "safe",
+            "balance"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 639,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 265,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 904
+    },
+    "cost": 0.00068975
+  },
+  "19": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "시간적 시점",
+        "a": {
+          "value": "지금 바로",
+          "quote": "지금 즉시 답장을 보내는 행위로, 현재 시점에 메시지에 응답함을 뜻함",
+          "tags": [
+            "action"
+          ]
+        },
+        "b": {
+          "value": "다음 날로 미룸",
+          "quote": "답장을 미루어 다음 날에 보내는 것으로, 현 시점에는 답장을 하지 않고 시간을 둔 뒤 응답함",
+          "tags": [
+            "responsibility"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 640,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 122,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 762
+    },
+    "cost": 0.000404
+  },
+  "22": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "참석성 vs 연습우선",
+        "a": {
+          "value": "모임 참석 후 연습",
+          "quote": "친구 생일 모임에 참석한 다음, 모임이 끝난 뒤에 발표 연습을 한다는 의미",
+          "tags": [
+            "social",
+            "balance"
+          ]
+        },
+        "b": {
+          "value": "모임 불참하고 연습",
+          "quote": "친구 생일 모임 참석을 건너뛰고 대신 발표 연습을 집중적으로 한다는 의미",
+          "tags": [
+            "focus",
+            "responsibility"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 651,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 130,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 781
+    },
+    "cost": 0.00042275
+  },
+  "23": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "장소의 실재성",
+        "a": {
+          "value": "야외에서 실제로 움직이며",
+          "quote": "우산을 쓰고 밖으로 나가 산책하는 동안",
+          "tags": [
+            "adventure"
+          ]
+        },
+        "b": {
+          "value": "실내에 머무르며",
+          "quote": "집 안에 머물면서",
+          "tags": [
+            "comfort"
+          ]
+        }
+      },
+      {
+        "label": "활동의 동시성",
+        "a": {
+          "value": "걷는 동작과 함께 통화",
+          "quote": "산책하는 동안 통화한다는",
+          "tags": [
+            "action"
+          ]
+        },
+        "b": {
+          "value": "정지된 장소에서 통화",
+          "quote": "집에서 통화",
+          "tags": [
+            "relax"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 648,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 161,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 809
+    },
+    "cost": 0.000484
+  },
+  "24": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "참여 여부 vs 불참 확정",
+        "a": {
+          "value": "지각해 참여함",
+          "quote": "늦게 참석한다",
+          "tags": [
+            "social"
+          ]
+        },
+        "b": {
+          "value": "처음부터 불참함",
+          "quote": "참석하지 않는다",
+          "tags": [
+            "responsibility"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 652,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 85,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 737
+    },
+    "cost": 0.000333
+  },
+  "25": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "행동대응 vs 행동개시",
+        "a": {
+          "value": "행동개시 중단 유지",
+          "quote": "연락을 전혀 하지 않음",
+          "tags": [
+            "presence"
+          ]
+        },
+        "b": {
+          "value": "직접 행동 개시",
+          "quote": "실제로 연락을 취하는 행위",
+          "tags": [
+            "action"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 637,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 92,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 729
+    },
+    "cost": 0.00034325
+  },
+  "26": {
+    "status": "ready",
+    "play_axes": [
+      {
+        "label": "장소 초점 vs 집 중심",
+        "a": {
+          "value": "야외 활동 중심",
+          "quote": "야외에서 걷거나 달리며 쓰레기를 줍는 활동을 뜻함",
+          "tags": [
+            "adventure",
+            "social"
+          ]
+        },
+        "b": {
+          "value": "집 안 활동 중심",
+          "quote": "집에서 운동 기구나 동작으로 체력을 기르는 활동을 뜻함",
+          "tags": [
+            "practical",
+            "focus"
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "input_tokens": 632,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 113,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 745
+    },
+    "cost": 0.000384
+  }
+}

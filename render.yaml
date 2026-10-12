@@ -2,7 +2,7 @@ services:
   - type: web
     name: galimgil-app
     runtime: python
-    plan: free
+    plan: 0.5c-512mb
     buildCommand: echo "No build step required"
     startCommand: python server.py
     healthCheckPath: /api/health

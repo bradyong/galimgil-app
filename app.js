@@ -7599,14 +7599,15 @@ function openChoiceCard(card, freshResult = false) {
       <p>${escapeHtml(card.choiceA)} vs ${escapeHtml(card.choiceB)}</p>
     </div>
     <p class="result-reason">${escapeHtml(d.why)}</p>
-    <p class="result-balance">${d.percent === null ? "내가 확인한 기준으로 고른 선택" : `놀이 기울기 · ${escapeHtml(d.winner)} ${d.percent}% / ${escapeHtml(d.loser)} ${100 - d.percent}%`}</p>
-    <p class="fine-print">${d.percent === null ? "별 카드는 재미로만 보세요. 선택 근거와 점수에는 사용하지 않았어요." : "별자리와 선택 규칙으로 만든 놀이용 수치이며 실제 성공 확률이 아니에요."}</p>
     <div class="result-extras">
-      <section class="report-section"><h4>별 한 스푼</h4><p class="zodiac-card-row">${d.cards.map((name) => `<span>${escapeHtml(name)}</span>`).join("")}</p></section>
-      <section class="report-section"><h4>별의 한마디</h4><p>${escapeHtml(d.fortune)}</p></section>
+      ${d.futureStatus === "pending" ? '<div class="future-pending" data-future-pending role="status">미래의 내가 한마디 쓰는 중…</div>' : ""}
       <section class="report-section" data-future-section ${d.future ? "" : "hidden"}><h4>미래의 나 댓글</h4><blockquote class="advice-quote">${escapeHtml(d.future || "")}</blockquote></section>
       ${card.advice ? `<section class="report-section" data-capture-section><h4>캡처 한 줄</h4><blockquote class="advice-quote">${escapeHtml(card.advice)}</blockquote></section>` : ""}
+      <section class="report-section"><h4>별 한 스푼</h4><p class="zodiac-card-row">${d.cards.map((name) => `<span>${escapeHtml(name)}</span>`).join("")}</p></section>
+      <section class="report-section"><h4>별의 한마디</h4><p>${escapeHtml(d.fortune)}</p></section>
     </div>
+    <p class="result-balance">${d.percent === null ? "내가 확인한 기준으로 고른 선택" : `놀이 기울기 · ${escapeHtml(d.winner)} ${d.percent}% / ${escapeHtml(d.loser)} ${100 - d.percent}%`}</p>
+    <p class="fine-print">${d.percent === null ? "별 카드는 재미로만 보세요. 선택 근거와 점수에는 사용하지 않았어요." : "별자리와 선택 규칙으로 만든 놀이용 수치이며 실제 성공 확률이 아니에요."}</p>
     <div class="share-actions" data-ad-result-end>
       <button class="secondary-button" id="downloadChoiceButton" type="button">이미지 저장</button>
       <button class="ghost-button" id="choiceShareButton" type="button">결과 공유</button>

@@ -56,6 +56,7 @@ const ChoiceRuntimeUI = (() => {
     saveArchive();renderArchive();
     const active=document.getElementById('choiceResult');
     if (active.dataset.cardId===card.createdAt) {
+      active.querySelector('[data-future-pending]')?.remove();
       const section=active.querySelector('[data-future-section]');
       section.hidden=!text;section.querySelector('blockquote').textContent=text;
     }
@@ -67,7 +68,7 @@ function createChoiceShareImage(card) {
   const canvas=document.createElement('canvas');canvas.width=1080;
   const ctx=canvas.getContext('2d'),d=card.details,lines=[];
   const add=(text,size,color,gap=24)=>{
-    ctx.font=`600 ${size}px Malgun Gothic, sans-serif`;
+    ctx.font=`600 ${size}px GalimgilSoft, Malgun Gothic, sans-serif`;
     let line='';
     for (const char of String(text)) {
       if (char==='\n'||ctx.measureText(line+char).width>860) {
@@ -77,20 +78,20 @@ function createChoiceShareImage(card) {
     if(line)lines.push({text:line,size,color});
     lines.push({gap});
   };
-  add('갈림길 선택 카드',40,'#f4c866',48);
-  add(card.question,44,'#f7fbff',36);
-  add(`${card.choiceA} vs ${card.choiceB}`,32,'#a9bbc2');
-  add(d.winner,62,'#54d2c2');
-  if(d.percent!==null)add(`놀이 기울기 ${d.percent}% : ${100-d.percent}%`,36,'#f4c866',40);
-  add('별 한 스푼',32,'#f4c866');add(d.cards.join(' · '),38,'#f7fbff',36);
-  if(d.future){add('미래의 나 댓글',32,'#f4c866');add(d.future,42,'#f7fbff',44);}
-  if(card.advice){add('캡처 한 줄',32,'#f4c866');add(card.advice,42,'#f7fbff',44);}
-  if(card.memo)add(`밤 체크인: ${card.memo}`,30,'#a9bbc2');
-  add('놀이용 결과이며 실제 성공 확률이 아닙니다.',28,'#a9bbc2');
+  add('갈림길 선택 카드',40,'#397154',48);
+  add(card.question,44,'#293f35',36);
+  add(`${card.choiceA} vs ${card.choiceB}`,32,'#627361');
+  add(d.winner,62,'#276c57');
+  if(d.percent!==null)add(`놀이 기울기 ${d.percent}% : ${100-d.percent}%`,36,'#397154',40);
+  add('별 한 스푼',32,'#397154');add(d.cards.join(' · '),38,'#293f35',36);
+  if(d.future){add('미래의 나 댓글',32,'#397154');add(d.future,42,'#293f35',44);}
+  if(card.advice){add('캡처 한 줄',32,'#9a5942');add(card.advice,42,'#293f35',44);}
+  if(card.memo)add(`밤 체크인: ${card.memo}`,30,'#627361');
+  add('놀이용 결과이며 실제 성공 확률이 아닙니다.',28,'#627361');
   canvas.height=Math.max(1350,Math.ceil(lines.reduce((y,r)=>y+(r.gap||r.size*1.55),220)));
-  ctx.fillStyle='#0a141a';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#fffcf6';ctx.fillRect(0,0,canvas.width,canvas.height);
   let y=110;
-  for(const row of lines){if(row.gap){y+=row.gap;continue;}ctx.font=`600 ${row.size}px Malgun Gothic, sans-serif`;
+  for(const row of lines){if(row.gap){y+=row.gap;continue;}ctx.font=`600 ${row.size}px GalimgilSoft, Malgun Gothic, sans-serif`;
     ctx.fillStyle=row.color;ctx.fillText(row.text,110,y+row.size);y+=row.size*1.55;}
   return canvas;
 }

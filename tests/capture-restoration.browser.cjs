@@ -22,7 +22,7 @@ const {cases}=require('./canonical-cases.cjs');
   },cases);
   assert.ok(report.display.includes(report.caption));
   assert.ok(report.shared.includes(report.caption));
-  assert.deepEqual(report.order.slice(-2),['미래의 나 댓글','캡처 한 줄']);
+  assert.deepEqual(report.order.slice(0,2),['미래의 나 댓글','캡처 한 줄']);
   for(const width of [320,390,1024]){
    await page.setViewportSize({width,height:844});
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));

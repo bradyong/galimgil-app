@@ -1,0 +1,91 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const out=path.resolve(__dirname,'../../ui-integration-20261013');
+const readiness=fs.readFileSync(path.resolve(__dirname,'../../../galimgil-android/app/src/main/assets/page-ready.js'),'utf8').replaceAll('https://galimgil-app.onrender.com','http://127.0.0.1:8798');
+const saved=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../low-confidence-safety-20261006/future-only-pilot-report.json'),'utf8')).rows.find(r=>r.future_only.pass);
+(async()=>{
+ const browser=await chromium.launch({channel:'msedge',headless:true});
+ const results=[],errors=[];
+ try{
+  for(const width of [320,360,390,1280]){
+   const page=await browser.newPage({viewport:{width,height:844}});
+   await page.addInitScript(()=>{const D=Date;globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:['2026-10-07T12:00:00Z']));}static now(){return 1791244800000;}};});
+   page.on('pageerror',e=>errors.push(e.message));
+   await page.goto('http://127.0.0.1:8798/');
+   assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()),'#071116');
+   assert.equal(await page.evaluate(()=>getComputedStyle(document.querySelector('.app-shell')).backgroundColor),'rgb(255, 252, 246)');
+   await page.evaluate(()=>document.fonts.ready);
+   assert.equal(await page.evaluate(probe=>eval(probe),readiness),true);
+   async function shot(name){
+    await page.evaluate(()=>document.querySelector('.app-content').scrollTop=0);
+    const bounds=await page.evaluate(()=>({root:document.documentElement.scrollWidth<=innerWidth,content:document.querySelector('.app-content').scrollWidth<=document.querySelector('.app-content').clientWidth,nav:[...document.querySelectorAll('.tab')].every(e=>e.getBoundingClientRect().height>=44)}));
+    assert.ok(bounds.root&&bounds.content&&bounds.nav,`${width} ${name} ${JSON.stringify(bounds)}`);
+    await page.screenshot({path:path.join(out,`${name}-${width}.png`)});
+    results.push({width,screen:name,...bounds});
+   }
+   await shot('input');
+   await page.locator('#questionInput').fill(saved.question);
+   await page.locator('#questionInput').press('Enter');
+   assert.equal(await page.evaluate(()=>document.activeElement.id),'choiceA');
+   await page.locator('#choiceA').fill(saved.a);await page.locator('#choiceA').press('Enter');
+   assert.equal(await page.evaluate(()=>document.activeElement.id),'choiceB');
+   await page.locator('#choiceB').fill(saved.b);await page.locator('#choiceB').press('Enter');
+   assert.notEqual(await page.evaluate(()=>document.activeElement.id),'choiceB');
+   assert.ok(await page.locator('#choiceResult').isHidden());
+   await page.locator('#questionInput').fill(saved.question);
+   await page.locator('#choiceA').fill(saved.a);
+   await page.locator('#choiceB').fill(saved.b);
+   await page.locator('#signInput').selectOption({index:0});
+   await page.locator('#choiceSubmitButton').click();
+   await page.locator('#choiceResult.show').waitFor();
+   await page.waitForFunction(()=>!document.querySelector('[data-future-pending]'));
+   await shot('result');
+   assert.equal(await page.evaluate(probe=>eval(probe),readiness),true,'installed APK accepts restored result');
+   await page.locator('[data-capture-section]').scrollIntoViewIfNeeded();
+   await page.screenshot({path:path.join(out,`capture-${width}.png`)});
+   const card=await page.evaluate(()=>JSON.parse(localStorage.getItem('crossroads-choice-cards-v1'))[0]);
+   await page.evaluate(()=>{const e=document.querySelector('[data-capture-section] blockquote');e.textContent=e.textContent.repeat(3);});
+   assert.ok(await page.evaluate(()=>document.querySelector('.app-content').scrollWidth<=document.querySelector('.app-content').clientWidth),'long CAPTURE');
+   await page.locator('[data-capture-section]').scrollIntoViewIfNeeded();
+   await page.screenshot({path:path.join(out,`long-capture-${width}.png`)});
+   await page.evaluate(card=>openChoiceCard(card),card);
+   await page.locator('.tab[data-tab="archive"]').click();await shot('archive');
+   await page.reload();
+   await page.evaluate(card=>openChoiceCard(card),card);
+   assert.equal(await page.locator('[data-capture-section] blockquote').innerText(),card.advice);
+   await page.locator('[data-tab="chemistry"]').click();await shot('chemistry-input');
+   await page.locator('#myNameInput').fill('지수');await page.locator('#theirNameInput').fill('민호');
+   await page.locator('#chemistryForm button[type=submit]').click();
+   await page.locator('#chemistryResult.show').waitFor();
+   await page.locator('#chemistryResult').scrollIntoViewIfNeeded();
+   await page.screenshot({path:path.join(out,`chemistry-result-${width}.png`)});
+   await page.locator('[data-tab="ritual"]').click();await shot('palm-input');
+   await page.route('**/api/palm-reading',route=>route.fulfill({json:Object.fromEntries(['card_keyword','title','summary','visual_note','life_line','head_line','heart_line','fate_line','today_message','ritual'].map(k=>[k,'저장된 테스트 입력으로 확인하는 손금 결과입니다. 실제 AI 분석이 아닙니다.']))}));
+   await page.locator('#palmInput').setInputFiles({name:'fixture.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aRZkAAAAASUVORK5CYII=','base64')});
+   await page.locator('#palmConsent').check();await page.locator('#palmButton').click();
+   await page.locator('#palmResult.show').waitFor();
+   await page.locator('#palmResult').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,`palm-result-${width}.png`)});
+   await page.locator('[data-tab="settings"]').click();await shot('settings');
+   await page.goto('http://127.0.0.1:8798/privacy.html');
+   assert.equal(await page.evaluate(probe=>eval(probe),readiness),true,'installed APK accepts privacy page');
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   await page.screenshot({path:path.join(out,`privacy-${width}.png`),fullPage:true});
+   await page.close();
+  }
+  assert.deepEqual(errors,[]);
+  const before=await browser.newPage({viewport:{width:390,height:844}});
+  const baseline=path.join(out,'baseline');
+  await before.route('**/*',async route=>{
+   const u=new URL(route.request().url());
+   if(u.pathname.startsWith('/api/'))return route.fulfill({json:{ok:true,mode:'fixture-only'}});
+   const target=path.join(baseline,u.pathname==='/'?'index.html':u.pathname);
+   if(!target.startsWith(baseline)||!fs.existsSync(target))return route.fulfill({status:404,body:''});
+   await route.fulfill({path:target});
+  });
+  await before.goto('http://127.0.0.1:8798/');
+  await before.screenshot({path:path.join(out,'before-input-390.png')});
+  await before.close();
+  fs.writeFileSync(path.join(out,'ui-browser-report.json'),JSON.stringify({results,errors,externalAPI:0},null,2));
+  console.log(JSON.stringify({checks:results.length,errors,externalAPI:0}));
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -2,28 +2,27 @@
 <html lang="ko">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#091116">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#fffcf6">
     <title>갈림길</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="soft-lovely.css">
   </head>
   <body>
     <main class="app-shell">
+      <header class="app-brand"><i data-lucide="git-fork" aria-hidden="true"></i><div><strong>갈림길</strong><small>작은 선택, 같이 웃는 하루</small></div></header>
       <nav class="tabbar" aria-label="주요 메뉴">
-        <button class="tab active" data-tab="choice">선택</button>
-        <button class="tab" data-tab="ritual">AI 손금</button>
-        <button class="tab" data-tab="chemistry">케미</button>
-        <button class="tab" data-tab="archive">기록</button>
-        <button class="tab" data-tab="settings">설정</button>
+        <button class="tab active" data-tab="choice"><i data-lucide="git-fork" aria-hidden="true"></i><span>갈림길</span></button>
+        <button class="tab" data-tab="chemistry"><i data-lucide="heart" aria-hidden="true"></i><span>케미</span></button>
+        <button class="tab" data-tab="ritual"><i data-lucide="hand" aria-hidden="true"></i><span>AI 손금</span></button>
+        <button class="tab" data-tab="archive"><i data-lucide="clock-3" aria-hidden="true"></i><span>기록</span></button>
+        <button class="tab" data-tab="settings"><i data-lucide="settings-2" aria-hidden="true"></i><span>설정</span></button>
       </nav>
+      <div class="app-content">
       <section class="home-hero">
-        <img class="hero-bg" src="assets/crossroads-hero.png" alt="">
-        <div class="hero-shade"></div>
         <div class="home-content">
-          <p class="eyebrow">오늘의 선택 놀이</p>
-          <h1>갈림길</h1>
-          <p class="subcopy">이쪽일까, 저쪽일까? 오늘 마음이 가는 쪽을 찾아봐요.</p>
+          <div class="choice-intro"><img src="assets/play-a.png" alt="" class="choice-art"><h1>이거? 저거?<br>오늘은 골라드릴게요.</h1><p class="subcopy">작은 고민 하나, 두 가지 선택.</p></div>
           <form class="panel home-choice-form" id="choiceForm">
             <label>
               <span>고민 한 줄</span>
@@ -31,11 +30,11 @@
             </label>
             <div class="choice-pair" id="manualChoices">
               <label>
-                선택 A
+                <span class="choice-label"><b>A</b> 선택 A</span>
                 <input id="choiceA" type="text" maxlength="80" enterkeyhint="next" placeholder="예: 피자" aria-describedby="choiceFeedback">
               </label>
               <label>
-                선택 B
+                <span class="choice-label"><b>B</b> 선택 B</span>
                 <input id="choiceB" type="text" maxlength="80" enterkeyhint="done" placeholder="예: 치킨" aria-describedby="choiceFeedback">
               </label>
             </div>
@@ -92,16 +91,19 @@
 
       <section class="screen" id="ritual">
         <div class="section-head">
-          <h2>AI 손금 카드</h2>
-          <span>AI palm reading</span>
+          <h2>손바닥에 담긴<br>나의 작은 이야기.</h2>
+          <span>가볍게 들여다보는 AI 손금.</span>
         </div>
         <div class="panel palm-panel">
-          <label class="upload-box" for="palmInput">
-            <input id="palmInput" type="file" accept="image/*" capture="environment">
-            <span class="upload-icon">+</span>
-            <strong>손바닥 촬영하기</strong>
+          <div class="upload-box">
+            <input id="palmInput" type="file" accept="image/*" hidden>
+            <span class="upload-icon"><i data-lucide="hand" aria-hidden="true"></i></span>
+            <div class="palm-photo-actions">
+              <button type="button" id="palmCameraButton" hidden><i data-lucide="camera" aria-hidden="true"></i>사진 촬영하기</button>
+              <button type="button" id="palmAlbumButton"><i data-lucide="image" aria-hidden="true"></i>앨범에서 선택</button>
+            </div>
             <small>카메라로 손 전체와 손금이 선명하게 보이게 촬영해주세요.</small>
-          </label>
+          </div>
           <div class="privacy-note">
             <strong>사진 처리 안내</strong>
             <p>선택한 사진은 해석을 위해 앱 서버를 거쳐 OpenAI API로 전송됩니다.</p>
@@ -124,8 +126,8 @@
 
       <section class="screen" id="chemistry">
         <div class="section-head">
-          <h2>우리 사이 케미는?</h2>
-          <span>chemistry card</span>
+          <h2>우리 사이,<br>어떤 케미일까?</h2>
+          <span>둘이 보면 더 재밌는 오늘의 궁합.</span>
         </div>
         <form class="panel" id="chemistryForm">
           <label>
@@ -180,7 +182,7 @@
 
       <section class="screen" id="archive">
         <div class="section-head">
-          <h2>나의 기록</h2>
+          <h2>쌓여가는 나의 선택</h2>
           <span id="archiveCount">0 cards</span>
         </div>
         <div class="panel share-panel">
@@ -210,8 +212,8 @@
 
       <section class="screen" id="settings">
         <div class="section-head">
-          <h2>설정</h2>
-          <span>beta</span>
+          <h2>편하게 쓰기 위한<br>작은 설정들.</h2>
+          <span>설정</span>
         </div>
         <article class="result-card show">
           <h3>갈림길</h3>
@@ -231,10 +233,13 @@
         <strong>안내</strong>
         <p>갈림길의 모든 리포트는 오락 및 자기성찰용입니다. 실제 미래, 건강, 투자, 법률 판단을 보장하지 않습니다.</p>
       </section>
+      </div>
     </main>
     <script src="choice-input.js"></script>
     <script src="native-ads-events.js"></script>
     <script src="choice-runtime.js"></script>
     <script src="app.js"></script>
+    <script src="assets/lucide.min.js"></script>
+    <script src="ui-shell.js"></script>
   </body>
 </html>

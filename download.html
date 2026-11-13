@@ -15,7 +15,7 @@
     <header><a class="brand" href="https://galimgil-app.onrender.com/download.html" aria-label="갈림길 앱 소개">갈림길<small>작은 선택, 같이 웃는 하루</small></a><span class="header-note">Android 앱</span></header>
     <main>
       <section class="hero" aria-labelledby="intro">
-        <div><div class="eyebrow">오늘의 고민에, 작은 재미 하나</div><h1 id="intro">이거 할까?<br>저거 할까?<br><em>갈림길에서 만나.</em></h1><p class="lead">A/B 선택 고민부터 친구·연인 케미,<br>재미로 보는 AI 손금까지.<br>일상의 궁금함을 가볍게 펼쳐보세요.</p><a class="cta" href="https://play.google.com/store/apps/details?id=com.bradyong.galimgil">Google Play에서 설치하기 <span aria-hidden="true">→</span></a><p class="platform">Android용 · 설치와 앱 정보는 Google Play에서 확인하세요.</p></div>
+        <div><div class="eyebrow">오늘의 고민에, 작은 재미 하나</div><h1 id="intro">이거 할까?<br>저거 할까?<br><em>갈림길에서 만나.</em></h1><p class="lead">A/B 선택 고민부터 친구·연인 케미,<br>재미로 보는 AI 손금까지.<br>일상의 궁금함을 가볍게 펼쳐보세요.</p><a data-play-placement="hero" class="cta" href="https://play.google.com/store/apps/details?id=com.bradyong.galimgil">Google Play에서 설치하기 <span aria-hidden="true">→</span></a><p class="platform">Android용 · 설치와 앱 정보는 Google Play에서 확인하세요.</p></div>
         <div class="choice-art" aria-label="선택 고민의 예시"><div class="tag">이런 고민, 한 번쯤 해봤다면</div><h2>오늘 저녁은<br>어떤 기분으로 먹을까?</h2><div class="options"><div class="option"><b>A</b>따끈한 집밥</div><div class="option"><b>B</b>새로운 맛집</div></div><p class="art-caption">고민 한 줄과 두 가지 선택으로 시작해보세요.<br>위 내용은 기능을 소개하기 위한 예시입니다.</p></div>
       </section>
       <section class="features" aria-label="갈림길의 세 가지 즐길 거리"><p class="section-label">갈림길에서 만나는 세 가지 즐거움</p><div class="feature-grid">
@@ -23,9 +23,29 @@
         <article><span class="number">02 / 케미</span><h3>우리 사이가 궁금할 때</h3><p>이름과 별자리로 친구·연인과의 케미를 가볍게 즐겨보세요. 함께 웃으며 나눌 이야기 하나가 생겨요.</p></article>
         <article><span class="number">03 / AI 손금</span><h3>손바닥에서 찾는 이야기</h3><p>손바닥 사진으로 재미용 AI 해석을 만나보세요. 사진 전송 안내와 동의를 확인한 후 이용할 수 있어요.</p></article>
       </div></section>
-      <section class="closing" aria-label="앱 설치"><p>작은 선택을,<br>조금 더 즐겁게.</p><a class="cta" href="https://play.google.com/store/apps/details?id=com.bradyong.galimgil">갈림길 앱 만나보기 <span aria-hidden="true">→</span></a></section>
+      <section class="closing" aria-label="앱 설치"><p>작은 선택을,<br>조금 더 즐겁게.</p><a data-play-placement="footer" class="cta" href="https://play.google.com/store/apps/details?id=com.bradyong.galimgil">갈림길 앱 만나보기 <span aria-hidden="true">→</span></a></section>
     </main>
     <footer><strong>갈림길 이용 안내</strong><p>선택·케미·AI 손금 결과는 오락 및 자기성찰용입니다. 실제 미래를 예측하거나 건강·투자·법률 판단을 보장하지 않습니다. AI 손금 이용 시 선택한 사진은 해석을 위해 앱 서버를 거쳐 OpenAI API로 전송됩니다.</p><a href="https://galimgil-app.onrender.com/privacy.html">개인정보처리방침</a></footer>
   </div>
+<script>
+(() => {
+  const test = new URLSearchParams(location.search).get('measurement_test') === '1';
+  function record(event, placement) {
+    try {
+      // No cookie, device ID, IP, referrer, or URL is included in this event.
+      const body = JSON.stringify({event, placement, test});
+      if (navigator.sendBeacon && navigator.sendBeacon('/api/landing-event',
+          new Blob([body], {type: 'application/json'}))) return;
+      fetch('/api/landing-event', {method: 'POST', body,
+        headers: {'Content-Type': 'application/json'}, credentials: 'omit',
+        keepalive: true}).catch(() => {});
+    } catch (_) {} // Keep the original direct Play navigation working.
+  }
+  record('landing_view', 'page');
+  document.querySelectorAll('a[data-play-placement]').forEach(link => {
+    link.addEventListener('click', () => record('play_click', link.dataset.playPlacement));
+  });
+})();
+</script>
 </body>
 </html>

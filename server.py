@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 import mimetypes
 import os
 import pathlib
@@ -85,6 +86,32 @@ class AppHandler(BaseHTTPRequestHandler):
         self.wfile.write(content)
 
     def do_POST(self):
+        if self.path == "/api/landing-event":
+            # Aggregate diagnostic events only; never log request bodies or identifiers.
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < length <= 256:
+                    raise ValueError("size")
+                event = json.loads(self.rfile.read(length))
+                if not isinstance(event, dict) or set(event) != {"event", "placement", "test"}:
+                    raise ValueError("schema")
+                if (event["event"], event["placement"]) not in (
+                    ("landing_view", "page"), ("play_click", "hero"), ("play_click", "footer")
+                ) or type(event["test"]) is not bool:
+                    raise ValueError("event")
+            except (ValueError, TypeError):
+                json_response(self, 400, {"error": "invalid_event"})
+                return
+            try:
+                print(json.dumps({"kind": "landing_funnel_v1",
+                    "timestamp": datetime.now(timezone.utc).isoformat(), **event}), flush=True)
+            except OSError:
+                pass  # Analytics failure must not affect the Play link.
+            self.send_response(204)
+            self.send_header("Content-Length", "0")
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            return
         if self.path in ('/api/choice-meaning-only', '/api/choice-play', '/api/choice-future'):
             is_future = self.path == '/api/choice-future'
             try:
@@ -205,3 +232,4 @@ class AppHandler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     print(f"갈림길 앱 서버: http://{HOST}:{PORT}")
     ThreadingHTTPServer((HOST, PORT), AppHandler).serve_forever()
+
